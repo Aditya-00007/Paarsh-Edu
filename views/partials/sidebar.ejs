@@ -1,0 +1,45 @@
+<!-- ================= SIDEBAR ================= -->
+<aside
+  id="sidebar"
+  class="w-[260px] bg-[#212529] min-h-[calc(100vh-60px)] p-4 transition-all duration-300"
+>
+  <ul class="space-y-2">
+
+    <li>
+      <a href="/dashboard"
+        class="block px-3 py-3 rounded-lg text-white bg-[#343a40]">
+        Dashboard
+      </a>
+    </li>
+
+    <% const menuItems = [
+      "Course Management",
+      "Student Management",
+      "Enrollment Management",
+      "Consent Management",
+      "Teacher Management",
+      "Payments",
+      "Enquiries",
+      "Settings"
+    ]; %>
+
+    <% menuItems.forEach(item => { 
+      const path = "/" + item.toLowerCase().replace(/\s+/g, "-");
+    %>
+      <li>
+        <a href="<%= path %>"
+          class="block px-3 py-3 rounded-lg text-[#adb5bd] hover:bg-[#343a40] hover:text-white transition">
+          <%= item %>
+        </a>
+      </li>
+    <% }) %>
+
+    <li class="pt-2 border-t border-white/20">
+      <a href="/logout"
+        class="block px-3 py-3 rounded-lg text-red-400 hover:bg-red-500/20 font-semibold transition">
+        Logout
+      </a>
+    </li>
+
+  </ul>
+</aside>

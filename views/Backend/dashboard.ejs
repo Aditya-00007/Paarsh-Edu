@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>EduPlatform Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="bg-[#f4f6f9]">
+
+  <%- include('partials/header.ejs') %>
+
+<div class="flex">
+  <%- include('partials/sidebar.ejs') %>
+    <!-- DASHBOARD CONTENT -->
+    <main class="flex-1 p-6 space-y-6">
+
+      <!-- ================= STATS ================= -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white rounded-xl shadow-sm p-4">
+          <h6 class="text-gray-600 text-sm">Total Courses</h6>
+          <div class="text-3xl font-bold mt-2">24</div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-4">
+          <h6 class="text-gray-600 text-sm">Total Students</h6>
+          <div class="text-3xl font-bold mt-2">1,280</div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-4">
+          <h6 class="text-gray-600 text-sm">Enrollments</h6>
+          <div class="text-3xl font-bold mt-2">186</div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-4">
+          <h6 class="text-gray-600 text-sm">Revenue</h6>
+          <div class="text-3xl font-bold mt-2">₹4,25,000</div>
+        </div>
+      </div>
+
+      <!-- ================= QUICK ACTION BUTTONS ================= -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        <button class="w-full py-3 rounded-lg bg-blue-600 text-white font-semibold hover:opacity-90">
+          Add New Course
+        </button>
+
+        <button class="w-full py-3 rounded-lg border border-blue-600 text-blue-600 font-semibold hover:bg-blue-600 hover:text-white transition">
+          View Students
+        </button>
+
+        <button class="w-full py-3 rounded-lg border border-green-600 text-green-600 font-semibold hover:bg-green-600 hover:text-white transition">
+          View Payments
+        </button>
+
+        <button class="w-full py-3 rounded-lg border border-gray-900 text-gray-900 font-semibold hover:bg-gray-900 hover:text-white transition">
+          View Teachers
+        </button>
+
+        <button class="w-full py-3 rounded-lg border border-gray-500 text-gray-600 font-semibold hover:bg-gray-600 hover:text-white transition">
+          Manage Enrollments
+        </button>
+      </div>
+
+      <!-- ================= GRAPH + SUMMARY ================= -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+        <div class="lg:col-span-8 bg-white rounded-xl shadow-sm p-4">
+          <h5 class="font-semibold text-lg">Enrollment Analytics (Monthly)</h5>
+          <div class="mt-3">
+            <canvas id="enrollmentChart" height="120"></canvas>
+          </div>
+        </div>
+
+        <div class="lg:col-span-4 bg-white rounded-xl shadow-sm p-4">
+          <h5 class="font-semibold text-lg">Today’s Summary</h5>
+          <ul class="mt-3 space-y-2 text-sm">
+            <li class="flex justify-between border-b pb-2">
+              <span>New Students</span>
+              <b>12</b>
+            </li>
+            <li class="flex justify-between border-b pb-2">
+              <span>New Enrollments</span>
+              <b>8</b>
+            </li>
+            <li class="flex justify-between border-b pb-2">
+              <span>Payments Received</span>
+              <b>₹18,000</b>
+            </li>
+            <li class="flex justify-between">
+              <span>Pending Approvals</span>
+              <b>3</b>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ================= TABLES ================= -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+        <div class="bg-white rounded-xl shadow-sm p-4 overflow-x-auto">
+          <h5 class="font-semibold text-lg mb-3">Recent Enrollments</h5>
+          <table class="w-full text-sm">
+            <thead class="text-gray-600 border-b">
+              <tr>
+                <th class="text-left py-2">Student</th>
+                <th class="text-left py-2">Course</th>
+                <th class="text-left py-2">Status</th>
+                <th class="text-left py-2">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b">
+                <td class="py-3">Tanvi Jige</td>
+                <td class="py-3">Web Dev</td>
+                <td class="py-3">
+                  <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
+                    Paid
+                  </span>
+                </td>
+                <td class="py-3">
+                  <button class="px-3 py-1 rounded-md border border-blue-600 text-blue-600 text-xs hover:bg-blue-600 hover:text-white transition">
+                    View
+                  </button>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="py-3">Arpita Gunjal</td>
+                <td class="py-3">Java</td>
+                <td class="py-3">
+                  <span class="px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-semibold">
+                    Pending
+                  </span>
+                </td>
+                <td class="py-3">
+                  <button class="px-3 py-1 rounded-md border border-blue-600 text-blue-600 text-xs hover:bg-blue-600 hover:text-white transition">
+                    View
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-4 overflow-x-auto">
+          <h5 class="font-semibold text-lg mb-3">New Courses</h5>
+          <table class="w-full text-sm">
+            <thead class="text-gray-600 border-b">
+              <tr>
+                <th class="text-left py-2">Course</th>
+                <th class="text-left py-2">Teacher</th>
+                <th class="text-left py-2">Date</th>
+                <th class="text-left py-2">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b">
+                <td class="py-3">React Basics</td>
+                <td class="py-3">Prof. Sharma</td>
+                <td class="py-3">20 Jan 2026</td>
+                <td class="py-3">
+                  <button class="px-3 py-1 rounded-md border border-blue-600 text-blue-600 text-xs hover:bg-blue-600 hover:text-white transition">
+                    View
+                  </button>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="py-3">DSA</td>
+                <td class="py-3">Dr. Patil</td>
+                <td class="py-3">18 Jan 2026</td>
+                <td class="py-3">
+                  <button class="px-3 py-1 rounded-md border border-blue-600 text-blue-600 text-xs hover:bg-blue-600 hover:text-white transition">
+                    View
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    let isOpen = true;
+    function toggleSidebar() {
+      isOpen = !isOpen;
+      const sidebar = document.getElementById("sidebar");
+      sidebar.style.width = isOpen ? "260px" : "0px";
+      sidebar.style.padding = isOpen ? "16px" : "0px";
+      sidebar.style.overflow = isOpen ? "visible" : "hidden";
+    }
+
+    function toggleDropdown(id) {
+      const el = document.getElementById(id);
+      el.classList.toggle("hidden");
+    }
+
+    new Chart(document.getElementById('enrollmentChart'), {
+      type: 'line',
+      data: {
+        labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+        datasets: [{
+          label: 'Enrollments',
+          data: [40,55,70,60,80,95,110,120,100,130,150,170],
+          borderColor: '#2563eb',
+          backgroundColor: 'rgba(37,99,235,0.1)',
+          tension: 0.4,
+          fill: true
+        }]
+      }
+    });
+  </script>
+
+</body>
+</html>

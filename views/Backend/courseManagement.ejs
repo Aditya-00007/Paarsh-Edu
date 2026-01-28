@@ -28,13 +28,19 @@
                                 <div
                                     class="bg-white rounded-xl shadow-sm p-4 hover:-translate-y-1 hover:shadow-md transition-all">
                                     <h6 class="text-gray-600 text-sm">Total Courses</h6>
-                                    <div class="text-3xl font-bold mt-2">12</div>
+                                    <div class="text-3xl font-bold mt-2">
+                                        <%= courses.length %>
+                                    </div>
                                     <div class="text-xs text-green-600 mt-1">↑ 2 new this month</div>
                                 </div>
                                 <div
                                     class="bg-white rounded-xl shadow-sm p-4 hover:-translate-y-1 hover:shadow-md transition-all">
                                     <h6 class="text-gray-600 text-sm">Active Courses</h6>
-                                    <div class="text-3xl font-bold mt-2">8</div>
+                                    <div class="text-3xl font-bold mt-2">
+                                        <%= courses.filter( course=> course.status === "active"
+                                            ).length;
+                                            %>
+                                    </div>
                                     <div class="text-xs text-green-600 mt-1">↑ 66% active rate</div>
                                 </div>
                                 <div
@@ -286,181 +292,182 @@
 
                         <%- include('../partials/add-course.ejs') %>
 
-                        <!-- ================= ADD CATEGORY PAGE ================= -->
-                        <main class="flex-1 p-6 hidden" id="addCategoryPage">
-                            <div class="bg-white rounded-xl shadow-sm p-6 max-w-3xl">
+                            <!-- ================= ADD CATEGORY PAGE ================= -->
+                            <main class="flex-1 p-6 hidden" id="addCategoryPage">
+                                <div class="bg-white rounded-xl shadow-sm p-6 max-w-3xl">
 
-                                <h2 class="text-2xl font-bold mb-1">Add New Category</h2>
-                                <p class="text-gray-500 text-sm mb-6">
-                                    Dashboard / Course Management / Add Category
-                                </p>
+                                    <h2 class="text-2xl font-bold mb-1">Add New Category</h2>
+                                    <p class="text-gray-500 text-sm mb-6">
+                                        Dashboard / Course Management / Add Category
+                                    </p>
 
-                                <form action="/admin/categories/add" method="POST" class="space-y-6">
+                                    <form action="/admin/categories/add" method="POST" class="space-y-6">
 
-                                    <div>
-                                        <label class="block text-sm font-medium mb-2">Domain *</label>
-                                        <input type="text" name="domain" required
-                                            class="w-full px-4 py-2 border rounded-lg" placeholder="IT / NON-IT">
-                                    </div>
-
-                                    <div>
-                                        <label class="block text-sm font-medium mb-2">Sub Domain *</label>
-                                        <input type="text" name="subDomain" required
-                                            class="w-full px-4 py-2 border rounded-lg"
-                                            placeholder="Programming / Web Development">
-                                    </div>
-
-                                    <div>
-                                        <label class="block text-sm font-medium mb-2">Tagline</label>
-                                        <input type="text" name="tagline" class="w-full px-4 py-2 border rounded-lg"
-                                            placeholder="Learn industry-ready skills">
-                                    </div>
-
-                                    <div>
-                                        <label class="block text-sm font-medium mb-2">Description</label>
-                                        <textarea name="description" class="w-full px-4 py-2 border rounded-lg"
-                                            placeholder="Shown to users"></textarea>
-                                    </div>
-
-                                    <div>
-                                        <label class="block text-sm font-medium mb-2">Status</label>
-                                        <select name="status" class="w-full px-4 py-2 border rounded-lg bg-white">
-                                            <option value="active">Active</option>
-                                            <option value="inactive">Inactive</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="flex gap-3 pt-4 border-t">
-                                        <button type="button" onclick="cancelAddCategory()"
-                                            class="px-6 py-2 border rounded-lg">
-                                            Cancel
-                                        </button>
-
-                                        <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-lg">
-                                            Save Category
-                                        </button>
-                                    </div>
-
-                                </form>
-                            </div>
-                        </main>
-
-
-                        <!-- ================= EDIT COURSE PAGE ================= -->
-                        <main class="flex-1 p-6 hidden" id="editCoursePage">
-                            <div class="bg-white rounded-xl shadow-sm p-6">
-                                <div class="flex items-center justify-between mb-6">
-                                    <div>
-                                        <h2 class="text-2xl font-bold">Edit Course</h2>
-                                        <p class="text-gray-500 text-sm mt-1">Dashboard / Course Management / Edit
-                                            Course</p>
-                                    </div>
-                                    <div class="flex items-center gap-4">
-                                        <div
-                                            class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">
-                                            AD</div>
-                                        <span class="text-sm font-medium">Admin User</span>
-                                    </div>
-                                </div>
-                                <form id="editCourseForm" method="POST" class="space-y-6">
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                                        <!-- Course Title -->
                                         <div>
-                                            <label class="block text-sm font-medium mb-2">Course Title *</label>
-                                            <input type="text" id="editCourseName" name="title" required
-                                                class="w-full px-4 py-2 border rounded-lg" />
-                                        </div>
-
-                                        <!-- Course Fee -->
-                                        <div>
-                                            <label class="block text-sm font-medium mb-2">Course Fee (₹) *</label>
-                                            <input type="number" id="editCourseFee" name="fee" required
-                                                class="w-full px-4 py-2 border rounded-lg" />
-                                        </div>
-
-                                        <!-- Duration -->
-                                        <div>
-                                            <label class="block text-sm font-medium mb-2">Duration *</label>
-                                            <select name="duration" id="editCourseDuration" required
-                                                class="w-full px-4 py-2 border rounded-lg bg-white">
-                                                <option value="1 Month">1 Month</option>
-                                                <option value="2 Months">2 Months</option>
-                                                <option value="3 Months">3 Months</option>
-                                                <option value="6 Months">6 Months</option>
-                                            </select>
-                                        </div>
-
-                                        <!-- Intake Limit -->
-                                        <div>
-                                            <label class="block text-sm font-medium mb-2">Intake Limit *</label>
-                                            <input type="number" name="intakeLimit" id="editCourseIntake" required
-                                                class="w-full px-4 py-2 border rounded-lg" />
-                                        </div>
-
-                                        <!-- Instructor Details -->
-                                        <div class="md:col-span-2">
-                                            <h3 class="text-lg font-semibold mb-2">Instructor</h3>
+                                            <label class="block text-sm font-medium mb-2">Domain *</label>
+                                            <input type="text" name="domain" required
+                                                class="w-full px-4 py-2 border rounded-lg" placeholder="IT / NON-IT">
                                         </div>
 
                                         <div>
-                                            <label class="block text-sm font-medium mb-2">Instructor Name *</label>
-                                            <input type="text" name="instructor[name]" required
-                                                class="w-full px-4 py-2 border rounded-lg" placeholder="John Doe">
-                                        </div>
-
-                                        <div>
-                                            <label class="block text-sm font-medium mb-2">Designation</label>
-                                            <input type="text" name="instructor[designation]"
+                                            <label class="block text-sm font-medium mb-2">Sub Domain *</label>
+                                            <input type="text" name="subDomain" required
                                                 class="w-full px-4 py-2 border rounded-lg"
-                                                placeholder="Senior Software Engineer">
+                                                placeholder="Programming / Web Development">
                                         </div>
 
-                                        <div class="md:col-span-2">
-                                            <label class="block text-sm font-medium mb-2">Instructor Bio</label>
-                                            <textarea name="instructor[bio]" class="w-full px-4 py-2 border rounded-lg"
-                                                placeholder="10+ years experience in industry..."></textarea>
-                                        </div>
-
-
-                                        <!-- Status -->
                                         <div>
-                                            <label class="block text-sm font-medium mb-2">Status *</label>
-                                            <select id="editCourseStatus" name="status" required
-                                                class="w-full px-4 py-2 border rounded-lg bg-white">
+                                            <label class="block text-sm font-medium mb-2">Tagline</label>
+                                            <input type="text" name="tagline" class="w-full px-4 py-2 border rounded-lg"
+                                                placeholder="Learn industry-ready skills">
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">Description</label>
+                                            <textarea name="description" class="w-full px-4 py-2 border rounded-lg"
+                                                placeholder="Shown to users"></textarea>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">Status</label>
+                                            <select name="status" class="w-full px-4 py-2 border rounded-lg bg-white">
                                                 <option value="active">Active</option>
                                                 <option value="inactive">Inactive</option>
                                             </select>
                                         </div>
 
-                                        <!-- Category -->
-                                        <div>
-                                            <label class="block text-sm font-medium mb-2">Category *</label>
-                                            <select id="editCourseCategory" name="category" required
-                                                class="w-full px-4 py-2 border rounded-lg bg-white">
-                                                <% categories.forEach(cat=> { %>
-                                                    <option value="<%= cat._id %>">
-                                                        <%= cat.domain %> - <%= cat.subDomain %>
-                                                    </option>
-                                                    <% }) %>
-                                            </select>
+                                        <div class="flex gap-3 pt-4 border-t">
+                                            <button type="button" onclick="cancelAddCategory()"
+                                                class="px-6 py-2 border rounded-lg">
+                                                Cancel
+                                            </button>
+
+                                            <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-lg">
+                                                Save Category
+                                            </button>
                                         </div>
 
-                                    </div>
+                                    </form>
+                                </div>
+                            </main>
 
-                                    <!-- Actions -->
-                                    <div class="flex gap-3 pt-6 border-t">
-                                        <button type="button" onclick="cancelEditCourse()"
-                                            class="px-6 py-2 border rounded-lg">
-                                            Cancel
-                                        </button>
-                                        <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg">
-                                            Update Course
-                                        </button>
+
+                            <!-- ================= EDIT COURSE PAGE ================= -->
+                            <main class="flex-1 p-6 hidden" id="editCoursePage">
+                                <div class="bg-white rounded-xl shadow-sm p-6">
+                                    <div class="flex items-center justify-between mb-6">
+                                        <div>
+                                            <h2 class="text-2xl font-bold">Edit Course</h2>
+                                            <p class="text-gray-500 text-sm mt-1">Dashboard / Course Management / Edit
+                                                Course</p>
+                                        </div>
+                                        <div class="flex items-center gap-4">
+                                            <div
+                                                class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">
+                                                AD</div>
+                                            <span class="text-sm font-medium">Admin User</span>
+                                        </div>
                                     </div>
-                                </form>
-                            </div>
-                        </main>
+                                    <form id="editCourseForm" method="POST" class="space-y-6">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                                            <!-- Course Title -->
+                                            <div>
+                                                <label class="block text-sm font-medium mb-2">Course Title *</label>
+                                                <input type="text" id="editCourseName" name="title" required
+                                                    class="w-full px-4 py-2 border rounded-lg" />
+                                            </div>
+
+                                            <!-- Course Fee -->
+                                            <div>
+                                                <label class="block text-sm font-medium mb-2">Course Fee (₹) *</label>
+                                                <input type="number" id="editCourseFee" name="fee" required
+                                                    class="w-full px-4 py-2 border rounded-lg" />
+                                            </div>
+
+                                            <!-- Duration -->
+                                            <div>
+                                                <label class="block text-sm font-medium mb-2">Duration *</label>
+                                                <select name="duration" id="editCourseDuration" required
+                                                    class="w-full px-4 py-2 border rounded-lg bg-white">
+                                                    <option value="1 Month">1 Month</option>
+                                                    <option value="2 Months">2 Months</option>
+                                                    <option value="3 Months">3 Months</option>
+                                                    <option value="6 Months">6 Months</option>
+                                                </select>
+                                            </div>
+
+                                            <!-- Intake Limit -->
+                                            <div>
+                                                <label class="block text-sm font-medium mb-2">Intake Limit *</label>
+                                                <input type="number" name="intakeLimit" id="editCourseIntake" required
+                                                    class="w-full px-4 py-2 border rounded-lg" />
+                                            </div>
+
+                                            <!-- Instructor Details -->
+                                            <div class="md:col-span-2">
+                                                <h3 class="text-lg font-semibold mb-2">Instructor</h3>
+                                            </div>
+
+                                            <div>
+                                                <label class="block text-sm font-medium mb-2">Instructor Name *</label>
+                                                <input type="text" name="instructor[name]" required
+                                                    class="w-full px-4 py-2 border rounded-lg" placeholder="John Doe">
+                                            </div>
+
+                                            <div>
+                                                <label class="block text-sm font-medium mb-2">Designation</label>
+                                                <input type="text" name="instructor[designation]"
+                                                    class="w-full px-4 py-2 border rounded-lg"
+                                                    placeholder="Senior Software Engineer">
+                                            </div>
+
+                                            <div class="md:col-span-2">
+                                                <label class="block text-sm font-medium mb-2">Instructor Bio</label>
+                                                <textarea name="instructor[bio]"
+                                                    class="w-full px-4 py-2 border rounded-lg"
+                                                    placeholder="10+ years experience in industry..."></textarea>
+                                            </div>
+
+
+                                            <!-- Status -->
+                                            <div>
+                                                <label class="block text-sm font-medium mb-2">Status *</label>
+                                                <select id="editCourseStatus" name="status" required
+                                                    class="w-full px-4 py-2 border rounded-lg bg-white">
+                                                    <option value="active">Active</option>
+                                                    <option value="inactive">Inactive</option>
+                                                </select>
+                                            </div>
+
+                                            <!-- Category -->
+                                            <div>
+                                                <label class="block text-sm font-medium mb-2">Category *</label>
+                                                <select id="editCourseCategory" name="category" required
+                                                    class="w-full px-4 py-2 border rounded-lg bg-white">
+                                                    <% categories.forEach(cat=> { %>
+                                                        <option value="<%= cat._id %>">
+                                                            <%= cat.domain %> - <%= cat.subDomain %>
+                                                        </option>
+                                                        <% }) %>
+                                                </select>
+                                            </div>
+
+                                        </div>
+
+                                        <!-- Actions -->
+                                        <div class="flex gap-3 pt-6 border-t">
+                                            <button type="button" onclick="cancelEditCourse()"
+                                                class="px-6 py-2 border rounded-lg">
+                                                Cancel
+                                            </button>
+                                            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg">
+                                                Update Course
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </main>
             </div>
 
             <script>

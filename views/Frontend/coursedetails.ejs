@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= course.title %> | Course Details</title>
+
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+  <%- include("partials/header") %>
+
+  <div class="page">
+
+    <!-- Back -->
+    <a href="/courses" class="back-link">← Back to Courses</a>
+
+    <!-- HERO -->
+    <div class="details-hero">
+      <div class="details-left">
+        <h1><%= course.title %></h1>
+        <p class="details-sub"><%= course.shortDescription %></p>
+
+        <div class="details-meta">
+          <span class="chip">📘 <%= course.level %></span>
+          <span class="chip">⏱ <%= course.duration %></span>
+          <span class="chip">👨‍🎓 <%= course.enrolledCount %> Students</span>
+        </div>
+
+        <div class="details-actions">
+          <div class="price-big">₹<%= course.fee %></div>
+          <button class="primary-btn">Enroll Now</button>
+        </div>
+      </div>
+
+      <div class="details-right">
+        <img
+          src="<%= course.thumbnail %>"
+          alt="<%= course.title %>"
+          class="details-img"
+        />
+      </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="details-grid">
+
+      <!-- LEFT CONTENT -->
+      <div class="details-main">
+
+        <!-- Overview -->
+        <div class="box">
+          <h2>Course Overview</h2>
+          <p>
+            <%= course.shortDescription %>
+          </p>
+        </div>
+
+        <!-- What you'll learn -->
+        <div class="box">
+          <h2>What you'll learn</h2>
+          <ul class="learn-list">
+            <li>Build real-world projects and deploy them</li>
+            <li>Master the fundamentals step-by-step</li>
+            <li>Understand industry-level development workflow</li>
+            <li>Improve problem-solving and coding logic</li>
+          </ul>
+        </div>
+
+        <!-- Intro Video -->
+        <div class="box">
+          <h2>Intro Video</h2>
+
+          <div class="video-box">
+            <iframe
+              width="100%"
+              height="320"
+              src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+              title="Course Intro Video"
+              frameborder="0"
+              allowfullscreen
+            ></iframe>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT SIDEBAR -->
+      <div class="details-side">
+
+        <!-- Course Includes -->
+        <div class="box">
+          <h2>This Course Includes</h2>
+          <div class="includes">
+            <p>✅ Lifetime Access</p>
+            <p>✅ Certificate of Completion</p>
+            <p>✅ Doubt Solving Support</p>
+            <p>✅ Assignments + Tests</p>
+            <p>✅ Real Projects</p>
+          </div>
+        </div>
+
+        <!-- Languages -->
+        <div class="box">
+          <h2>Languages</h2>
+          <p>
+            <%= course.languages && course.languages.length
+              ? course.languages.join(", ")
+              : "English" %>
+          </p>
+        </div>
+
+        <!-- Download Syllabus -->
+        <div class="box">
+          <h2>Syllabus</h2>
+          <p class="text-sm" style="margin-top:6px;">
+            Download the complete syllabus PDF for this course.
+          </p>
+
+          <a href="/syllabus.pdf" download class="download-btn">
+            ⬇ Download Syllabus
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <%- include("partials/footer") %>
+</body>
+</html>

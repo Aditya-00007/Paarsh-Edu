@@ -7,7 +7,7 @@ import bodyParser from "body-parser";
 import courseContentRoutes from "./routes/courseContent.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import upload from "./middlewares/upload.js";
-
+import blogRoutes from "./routes/blog.routes.js";
 
 
 dotenv.config();
@@ -21,6 +21,8 @@ app.use(express.json());
 app.use("/api/course-content", courseContentRoutes);
 app.use("/uploads", express.static("uploads"));
 app.use("/admin", adminRoutes);
+app.use("/blog-management", blogRoutes);
+app.use(express.static("public"));
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -66,8 +68,40 @@ app.get("/course-management", async (req, res) =>{
   }
 });
 
-// course preveiw page
+// course preveiw page // admin level
 app.get("/admin/courses/:id/preview", async (req, res) => {
+  try {
+    const course = await Course.findById(req.params.id)
+      .populate("category");
+
+    if (!course) {
+      return res.status(404).send("Course not found");
+    }
+
+    res.render("backend/course-preview", {
+      course,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Failed to load preview");
+  }
+});
+
+
+// get courses
+app.get("/courses", async (req, res) =>{ 
+  try {
+    const courses = await Course.find().sort({ createdAt: -1 });
+    const categories = await Category.find({ status: "active" });
+    res.render("Frontend/allCourses.ejs", { courses,categories});
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Failed to load courses");
+  }
+});
+
+// course preveiw page // student level
+app.get("/courses/:id/preview", async (req, res) => {
   try {
     const course = await Course.findById(req.params.id)
       .populate("category");

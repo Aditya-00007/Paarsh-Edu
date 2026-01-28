@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All Courses</title>
+
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+  <%- include("../partials/Frontend-header") %>
+
+  <div class="page">
+    <h1>All <span>Courses</span></h1>
+
+    <p class="sub">
+      Discover a wide range of courses designed to enhance your skills, boost your knowledge,
+      and help you achieve your goals—learn at your own pace anytime, anywhere!
+    </p>
+
+    <div class="grid">
+      <% courses.forEach(course => { %>
+
+        <div class="card">
+
+          <!-- IMAGE FROM DATABASE -->
+          <img
+            src="<%= course.thumbnail %>"
+            alt="<%= course.title %>"
+          />
+
+          <div class="content">
+            <h2><%= course.title %></h2>
+
+            <p class="desc">
+              <%= course.shortDescription %>
+            </p>
+
+            <div class="tags">
+              <span>⏱ <%= course.duration %></span>
+              <span>📘 <%= course.level %></span>
+              <span>👨‍🎓 <%= course.enrolledCount %></span>
+            </div>
+
+            <div class="Cfooter bg-whi">
+              <p class="price">₹<%= course.fee %></p>
+
+              <a href="/courses/<%= course._id %>" class="details-btn">
+                View Details
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+      <% }) %>
+    </div>
+  </div>
+
+  <%- include("../partials/Frontend-footer") %>
+
+</body>
+</html>

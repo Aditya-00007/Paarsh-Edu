@@ -1,0 +1,32 @@
+<header class="header">
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <a href="/" class="logo">
+                    <span class="logo-text">Paarsh</span>
+                    <span class="logo-tagline">Education & Training</span>
+                </a>
+                
+                <div class="nav-menu" id="navMenu">
+                    <ul class="nav-list">
+                        <li><a href="/" class="nav-link <%= typeof page !== 'undefined' && page === 'home' ? 'active' : '' %>">Home</a></li>
+                        <li><a href="/courses" class="nav-link <%= typeof page !== 'undefined' && page === 'courses' ? 'active' : '' %>">Courses</a></li>
+                        <li><a href="#about" class="nav-link">About</a></li>
+                        <li><a href="#contact" class="nav-link">Contact</a></li>
+                    </ul>
+                    <div class="nav-buttons">
+    <a href="/login" class="btn btn-outline btn-sm">Login</a>
+    <a href="/courses" class="btn btn-primary btn-sm">Enroll Now</a>
+</div>
+
+                </div>
+                
+                <button class="nav-toggle" id="navToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+</header>

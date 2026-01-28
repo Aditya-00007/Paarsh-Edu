@@ -107,22 +107,27 @@
                                             <div class="space-y-2 mb-4 text-sm text-gray-500">
                                                 <p>⏱️ Duration: <%= course.duration %>
                                                 </p>
-                                                <p>👥 Enrolled: <%= course.enrolledCount %>/<%= course.intakeLimit %>
-                                                </p>
+                                                <% if (course.instructor && course.instructor.name) { %>
+                                                    <p class="text-sm text-gray-500">
+                                                        👨‍🏫 <%= course.instructor.name %>
+                                                    </p>
+                                                    <% } %>
 
-                                                <% const percent=course.intakeLimit> 0
-                                                    ? Math.min(
-                                                    Math.round((course.enrolledCount / course.intakeLimit) * 100),
-                                                    100
-                                                    )
-                                                    : 0;
-                                                    %>
 
-                                                    <div class="w-full h-2 bg-gray-200 rounded mt-2">
-                                                        <div class="h-full bg-blue-600 rounded transition-all"
-                                                            style="width: <%= percent %>%">
-                                                        </div>
-                                                    </div>
+                                                        <% const percent=course.intakeLimit> 0
+                                                            ? Math.min(
+                                                            Math.round((course.enrolledCount / course.intakeLimit) *
+                                                            100),
+                                                            100
+                                                            )
+                                                            : 0;
+                                                            %>
+
+                                                            <div class="w-full h-2 bg-gray-200 rounded mt-2">
+                                                                <div class="h-full bg-blue-600 rounded transition-all"
+                                                                    style="width: <%= percent %>%">
+                                                                </div>
+                                                            </div>
 
                                             </div>
 
@@ -257,6 +262,11 @@
                                                                 onclick="openLectureManager('<%= course._id %>', '<%= course.title %>')">
                                                                 📚
                                                             </button>
+                                                            <button class="w-8 h-8 bg-green-50 rounded"
+                                                                title="Preview Course"
+                                                                onclick="previewCourse('<%= course._id %>')">
+                                                                👁️
+                                                            </button>
 
                                                             <button class="w-8 h-8 bg-red-50 rounded"
                                                                 title="Delete Course"
@@ -282,7 +292,8 @@
                                     Dashboard / Course Management / Add Course
                                 </p>
 
-                                <form action="/courses/add" method="POST" class="space-y-6">
+                                <form action="/courses/add" method="POST" class="space-y-6"
+                                    enctype="multipart/form-data">
 
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -314,6 +325,36 @@
                                             <label class="block text-sm font-medium mb-2">Full Description</label>
                                             <textarea name="fullDescription" class="w-full px-4 py-2 border rounded-lg"
                                                 placeholder="Detailed course description"></textarea>
+                                        </div>
+
+                                        <!-- ================= SYLLABUS ================= -->
+                                        <div class="md:col-span-2">
+                                            <h3 class="text-lg font-semibold mt-4">Syllabus</h3>
+                                        </div>
+
+                                        <!-- Syllabus Overview -->
+                                        <div class="md:col-span-2">
+                                            <label class="block text-sm font-medium mb-2">Syllabus Overview</label>
+                                            <textarea name="syllabusOverview" class="w-full px-4 py-2 border rounded-lg"
+                                                placeholder="Brief overview of what this course covers"></textarea>
+                                        </div>
+
+                                        <!-- Syllabus Topics -->
+                                        <div class="md:col-span-2">
+                                            <label class="block text-sm font-medium mb-2">Syllabus Topics</label>
+                                            <input type="text" name="syllabusTopics"
+                                                class="w-full px-4 py-2 border rounded-lg"
+                                                placeholder="Introduction, Basics, Advanced Topics, Projects">
+                                            <p class="text-xs text-gray-500 mt-1">
+                                                Enter topics separated by commas
+                                            </p>
+                                        </div>
+
+                                        <!-- Syllabus PDF -->
+                                        <div class="md:col-span-2">
+                                            <label class="block text-sm font-medium mb-2">Syllabus PDF</label>
+                                            <input type="file" name="syllabusFile" accept=".pdf"
+                                                class="w-full px-4 py-2 border rounded-lg bg-white">
                                         </div>
 
                                         <!-- Thumbnail URL -->
@@ -541,12 +582,30 @@
                                                 class="w-full px-4 py-2 border rounded-lg" />
                                         </div>
 
-                                        <!-- Full Description -->
+                                        <!-- Instructor Details -->
                                         <div class="md:col-span-2">
-                                            <label class="block text-sm font-medium mb-2">Full Description *</label>
-                                            <textarea id="editCourseDescription" name="fullDescription" required
-                                                class="w-full px-4 py-2 border rounded-lg min-h-[120px]"></textarea>
+                                            <h3 class="text-lg font-semibold mb-2">Instructor</h3>
                                         </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">Instructor Name *</label>
+                                            <input type="text" name="instructor[name]" required
+                                                class="w-full px-4 py-2 border rounded-lg" placeholder="John Doe">
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">Designation</label>
+                                            <input type="text" name="instructor[designation]"
+                                                class="w-full px-4 py-2 border rounded-lg"
+                                                placeholder="Senior Software Engineer">
+                                        </div>
+
+                                        <div class="md:col-span-2">
+                                            <label class="block text-sm font-medium mb-2">Instructor Bio</label>
+                                            <textarea name="instructor[bio]" class="w-full px-4 py-2 border rounded-lg"
+                                                placeholder="10+ years experience in industry..."></textarea>
+                                        </div>
+
 
                                         <!-- Status -->
                                         <div>
@@ -661,6 +720,11 @@
                     document.getElementById('topCourses').classList.add('hidden');
                     document.getElementById('allCoursesTable').classList.remove('hidden');
                 }
+                //open preview
+                function previewCourse(courseId) {
+                    window.location.href = `/admin/courses/${courseId}/preview`;
+                }
+
 
                 function hideAllCourses() {
                     document.getElementById('topCourses').classList.remove('hidden');

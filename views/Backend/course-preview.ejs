@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Course Preview | EduPlatform Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Tailwind CDN (REQUIRED – same as dashboard) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome (optional, but you used icons earlier) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+
+<body class="bg-[#f4f6f9]">
+
+    <!-- TOP NAVBAR -->
+    <%- include('../partials/header.ejs') %>
+
+        <div class="flex">
+
+            <!-- SIDEBAR -->
+            <%- include('../partials/sidebar.ejs') %>
+
+                <!-- MAIN CONTENT -->
+                <main class="flex-1 w-full p-6 space-y-6">
+
+                    <!-- PAGE HEADER -->
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            <h1 class="text-2xl font-bold">Course Preview</h1>
+                            <span class="px-3 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">
+                                Preview Mode
+                            </span>
+                        </div>
+
+                        <a href="/course-management" class="px-4 py-2 border rounded-lg text-sm hover:bg-gray-100">
+                            ← Back to Courses
+                        </a>
+                    </div>
+
+                    <!-- PREVIEW CARD -->
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+
+                        <!-- HERO -->
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
+
+                            <!-- LEFT -->
+                            <div class="lg:col-span-2 space-y-4">
+                                <h2 class="text-3xl font-bold text-gray-900">
+                                    <%= course.title %>
+                                </h2>
+
+                                <p class="text-gray-600">
+                                    <%= course.shortDescription %>
+                                </p>
+
+                                <!-- META -->
+                                <div class="flex flex-wrap gap-4 text-sm text-gray-600">
+                                    <span>⏱️ <%= course.duration %></span>
+                                    <span class="capitalize">📈 <%= course.level %></span>
+
+                                    <% if (course.languages?.length) { %>
+                                        <span>🌍 <%= course.languages.join(', ') %></span>
+              <% } %>
+
+              <% if (course.certificate) { %>
+                <span>📜 Certificate</span>
+              <% } %>
+            </div>
+
+            <% if (course.instructor?.name) { %>
+              <p class="text-sm text-gray-500">
+                👨‍🏫 <%= course.instructor.name %>
+                <% if (course.instructor.designation) { %>
+                  — <%= course.instructor.designation %>
+                <% } %>
+              </p>
+            <% } %>
+          </div>
+
+          <!-- RIGHT -->
+          <div class="bg-blue-50 rounded-lg p-6 text-center">
+            <div class="text-3xl font-bold text-blue-600">
+              ₹<%= course.fee %>
+            </div>
+            <p class="text-sm text-gray-600 mt-1">
+              <%= course.paymentType === ' one-time' ? 'One-time payment' : 'Subscription' %>
+                                                </p>
+                                                <p class="text-sm text-gray-600">
+                                                    <%= course.accessType %>
+                                                </p>
+                                                <button
+                                                    class="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg opacity-60 cursor-not-allowed">
+                                                    Enroll (Preview)
+                                                </button>
+                                </div>
+                            </div>
+
+                            <!-- THUMBNAIL -->
+                            <% if (course.thumbnail) { %>
+                                <div class="px-6 pb-6">
+                                    <img src="<%= course.thumbnail %>" alt="<%= course.title %>"
+                                        class="w-full max-h-[360px] object-cover rounded-lg" />
+                                </div>
+                                <% } %>
+
+                                    <!-- DESCRIPTION -->
+                                    <% if (course.fullDescription) { %>
+                                        <div class="px-6 pb-6">
+                                            <h3 class="text-xl font-semibold mb-2">About this course</h3>
+                                            <p class="text-gray-700 leading-relaxed">
+                                                <%= course.fullDescription %>
+                                            </p>
+                                        </div>
+                                        <% } %>
+
+                                            <!-- COURSE INCLUDES -->
+                                            <% if (course.courseIncludes?.length) { %>
+                                                <div class="px-6 pb-6">
+                                                    <h3 class="text-xl font-semibold mb-3">This Course Includes</h3>
+                                                    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                                        <% course.courseIncludes.forEach(item=> { %>
+                                                            <li class="flex items-start gap-2 text-gray-700">
+                                                                ✅ <span>
+                                                                    <%= item %>
+                                                                </span>
+                                                            </li>
+                                                            <% }) %>
+                                                    </ul>
+                                                </div>
+                                                <% } %>
+
+                                                    <!-- SYLLABUS -->
+                                                    <% if (course.syllabusOverview || course.syllabusTopics?.length) {
+                                                        %>
+                                                        <div class="px-6 pb-6">
+                                                            <h3 class="text-xl font-semibold mb-2">Syllabus Overview
+                                                            </h3>
+
+                                                            <% if (course.syllabusOverview) { %>
+                                                                <p class="text-gray-700 mb-3">
+                                                                    <%= course.syllabusOverview %>
+                                                                </p>
+                                                                <% } %>
+
+                                                                    <% if (course.syllabusTopics?.length) { %>
+                                                                        <ul class="list-disc ml-6 text-gray-700">
+                                                                            <% course.syllabusTopics.forEach(topic=> {
+                                                                                %>
+                                                                                <li>
+                                                                                    <%= topic %>
+                                                                                </li>
+                                                                                <% }) %>
+                                                                        </ul>
+                                                                        <% } %>
+
+                                                                            <% if (course.syllabusFile) { %>
+                                                                                <a href="<%= course.syllabusFile %>"
+                                                                                    target="_blank"
+                                                                                    class="inline-block mt-4 text-blue-600 underline">
+                                                                                    📄 Download Syllabus PDF
+                                                                                </a>
+                                                                                <% } %>
+                                                        </div>
+                                                        <% } %>
+                                                            <!-- PREREQUISITES -->
+                                                            <% if (course.prerequisites?.length) { %>
+                                                                <div class="px-6 pb-6">
+                                                                    <h3 class="text-lg font-semibold mb-2">Prerequisites
+                                                                    </h3>
+                                                                    <ul class="list-disc ml-6 text-gray-700">
+                                                                        <% course.prerequisites.forEach(item=> { %>
+                                                                            <li>
+                                                                                <%= item %>
+                                                                            </li>
+                                                                            <% }) %>
+                                                                    </ul>
+                                                                </div>
+                                                                <% } %>
+
+                                                                    <!-- TAGS -->
+                                                                    <% if (course.tags?.length) { %>
+                                                                        <div class="px-6 pb-6">
+                                                                            <h3 class="text-lg font-semibold mb-2">Tags
+                                                                            </h3>
+                                                                            <div class="flex flex-wrap gap-2">
+                                                                                <% course.tags.forEach(tag=> { %>
+                                                                                    <span
+                                                                                        class="px-3 py-1 bg-gray-100 rounded-lg text-sm">
+                                                                                        <%= tag %>
+                                                                                    </span>
+                                                                                    <% }) %>
+                                                                            </div>
+                                                                        </div>
+                                                                        <% } %>
+
+                        </div>
+
+                </main>
+        </div>
+        <script>
+            function toggleSidebar() {
+                const sidebar = document.getElementById("sidebar");
+                if (sidebar) {
+                    sidebar.classList.toggle("-translate-x-full");
+                }
+            }
+
+            function toggleDropdown(id) {
+                const menu = document.getElementById(id);
+                if (menu) {
+                    menu.classList.toggle("hidden");
+                }
+            }
+        </script>
+
+</body>
+
+</html>

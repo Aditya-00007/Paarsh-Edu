@@ -6,6 +6,8 @@ import Category from "./models/Category.js";
 import bodyParser from "body-parser";
 import courseContentRoutes from "./routes/courseContent.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
+import upload from "./middlewares/upload.js";
+
 
 
 dotenv.config();
@@ -51,6 +53,25 @@ app.get("/course-management", async (req, res) =>{
   }
 });
 
+// course preveiw page
+app.get("/admin/courses/:id/preview", async (req, res) => {
+  try {
+    const course = await Course.findById(req.params.id)
+      .populate("category");
+
+    if (!course) {
+      return res.status(404).send("Course not found");
+    }
+
+    res.render("backend/course-preview", {
+      course,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Failed to load preview");
+  }
+});
+
 // app.get("/student-management", async (req, res) => 
 // { res.render("studentManagement.ejs", { title: "Student Management" });
 // } );
@@ -75,79 +96,110 @@ app.get("/course-management", async (req, res) =>{
 // });
 
 // add new course
-app.post("/courses/add", async (req, res) => {
-  try {
-    const {
-      title,
-      shortDescription,
-      fullDescription,
-      thumbnail,
-      introVideo,
-      duration,
-      level,
-      fee,
-      intakeLimit,
-      status,
-      category,
-      languages,
-      tags,
-      prerequisites,
-      certificate,
-    } = req.body;
+app.post(
+  "/courses/add",
+  upload.single("syllabusFile"),
+  async (req, res) => {
+    try {
+      const {
+        title,
+        shortDescription,
+        fullDescription,
+        thumbnail,
+        introVideo,
+        duration,
+        level,
+        fee,
+        intakeLimit,
+        status,
+        category,
+        languages,
+        tags,
+        prerequisites,
+        certificate,
+        syllabusOverview,
+        syllabusTopics,
+      } = req.body;
 
-    await Course.create({
-      title,
-      shortDescription,
-      fullDescription,
-      thumbnail,
-      introVideo,
-      duration,
-      level,
-      fee,
-      intakeLimit,
-      status,
-      category,
+      const courseData = {
+        title,
+        shortDescription,
+        fullDescription,
+        thumbnail,
+        introVideo,
+        duration,
+        level,
+        fee,
+        intakeLimit,
+        status,
+        category,
 
-      // convert comma-separated strings → arrays
-      languages: languages
-        ? languages.split(",").map(l => l.trim())
-        : [],
+        // arrays
+        languages: languages
+          ? languages.split(",").map(l => l.trim())
+          : [],
 
-      tags: tags
-        ? tags.split(",").map(t => t.trim())
-        : [],
+        tags: tags
+          ? tags.split(",").map(t => t.trim())
+          : [],
 
-      prerequisites: prerequisites
-        ? prerequisites.split(",").map(p => p.trim())
-        : [],
+        prerequisites: prerequisites
+          ? prerequisites.split(",").map(p => p.trim())
+          : [],
 
-      certificate: certificate === "true",
+        syllabusOverview,
 
-      enrolledCount: 0,
-    });
+        syllabusTopics: syllabusTopics
+          ? syllabusTopics.split(",").map(t => t.trim())
+          : [],
 
-    res.redirect("/course-management");
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Failed to add course");
+        certificate: certificate === "true",
+
+        enrolledCount: 0,
+      };
+
+      // syllabus PDF
+      if (req.file) {
+        courseData.syllabusFile = `/uploads/syllabus/${req.file.filename}`;
+      }
+
+      await Course.create(courseData);
+
+      res.redirect("/course-management");
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Failed to add course");
+    }
   }
-});
+);
+
 
 
 // update course
 app.post("/admin/courses/update/:id", async (req, res) => {
   try {
+    const updateData = {
+      title: req.body.title,
+      fee: req.body.fee,
+      duration: req.body.duration,
+      intakeLimit: req.body.intakeLimit,
+      fullDescription: req.body.fullDescription,
+      status: req.body.status,
+      category: req.body.category,
+    };
+
+    // ✅ Add instructor ONLY if provided
+    if (req.body.instructor) {
+      updateData.instructor = {
+        name: req.body.instructor.name,
+        bio: req.body.instructor.bio,
+        designation: req.body.instructor.designation,
+      };
+    }
+
     await Course.findByIdAndUpdate(
       req.params.id,
-      {
-        title: req.body.title,
-        fee: req.body.fee,
-        duration: req.body.duration,
-        intakeLimit: req.body.intakeLimit,
-        fullDescription: req.body.fullDescription,
-        status: req.body.status,
-        category: req.body.category,
-      },
+      updateData,
       {
         new: true,
         runValidators: true,
@@ -160,6 +212,7 @@ app.post("/admin/courses/update/:id", async (req, res) => {
     res.status(500).send("Failed to update course");
   }
 });
+
 
 
 // add category

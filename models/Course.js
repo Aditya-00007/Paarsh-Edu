@@ -93,6 +93,22 @@ const courseSchema = new mongoose.Schema(
         type: String,
       },
     ],
+    /* ================= INSTRUCTOR ================= */
+
+    instructor: {
+      name: {
+        type: String,
+        trim: true,
+      },
+      bio: {
+        type: String,
+        trim: true,
+      },
+      designation: {
+        type: String,
+        trim: true,
+      },
+    },
 
     /* ================= CATEGORY & TAGS ================= */
     category: {
@@ -124,9 +140,8 @@ const courseSchema = new mongoose.Schema(
       default: "active",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Course = mongoose.model("Course", courseSchema);
 export default Course;
-

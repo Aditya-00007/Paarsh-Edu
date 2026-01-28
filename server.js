@@ -33,14 +33,27 @@ mongoose
 
 
 // Routes
-app.get("/", async (req, res) => 
-  {res.render("backend/dashboard.ejs", { title: "Dashboard" });
+app.get("/", async (req, res) =>{ 
+  try {
+    const courses = await Course.find().sort({ createdAt: -1 });
+    const categories = await Category.find({ status: "active" });
+    res.render("backend/dashboard.ejs", { courses,categories});
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Failed to load Content");
+  }
 });
 
 app.get("/dashboard", async (req, res) =>{
-   res.render("backend/dashboard.ejs", { title: "Dashboard" });
-} 
- );
+   try {
+    const courses = await Course.find().sort({ createdAt: -1 });
+    const categories = await Category.find({ status: "active" });
+    res.render("backend/dashboard.ejs", { courses,categories});
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Failed to load Content");
+  }
+});
 
 app.get("/course-management", async (req, res) =>{ 
   try {

@@ -4,14 +4,21 @@ import dotenv from "dotenv";
 import Course from "./models/Course.js";
 import Category from "./models/Category.js";
 import bodyParser from "body-parser";
+import courseContentRoutes from "./routes/courseContent.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
+
 
 dotenv.config();
 const app = express();
 const port=3000;
 
+app.set("view engine", "ejs");
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
+app.use("/api/course-content", courseContentRoutes);
+app.use("/uploads", express.static("uploads"));
+app.use("/admin", adminRoutes);
 
 mongoose
   .connect(process.env.MONGO_URI)

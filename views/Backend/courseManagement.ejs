@@ -401,7 +401,7 @@
                                             <div>
                                                 <label class="block text-sm font-medium mb-2">Intake Limit *</label>
                                                 <input type="number" name="intakeLimit" id="editCourseIntake" required
-                                                    class="w-full px-4 py-2 border rounded-lg" />
+                                                    class="w-full px-4 py-2 border rounded-lg" value="10" />
                                             </div>
 
                                             <!-- Instructor Details -->
@@ -437,19 +437,6 @@
                                                     class="w-full px-4 py-2 border rounded-lg bg-white">
                                                     <option value="active">Active</option>
                                                     <option value="inactive">Inactive</option>
-                                                </select>
-                                            </div>
-
-                                            <!-- Category -->
-                                            <div>
-                                                <label class="block text-sm font-medium mb-2">Category *</label>
-                                                <select id="editCourseCategory" name="category" required
-                                                    class="w-full px-4 py-2 border rounded-lg bg-white">
-                                                    <% categories.forEach(cat=> { %>
-                                                        <option value="<%= cat._id %>">
-                                                            <%= cat.domain %> - <%= cat.subDomain %>
-                                                        </option>
-                                                        <% }) %>
                                                 </select>
                                             </div>
 
@@ -580,9 +567,7 @@
                     // Populate fields
                     document.getElementById('editCourseName').value = course.title;
                     document.getElementById('editCourseFee').value = course.fee;
-                    document.getElementById('editCourseDescription').value = course.fullDescription;
-                    document.getElementById('editCourseEnrollments').value =
-                        `${course.enrolledCount}/${course.intakeLimit}`;
+                    document.getElementById("editCourseDuration").value = course.duration;
 
                     document.getElementById('editCourseStatus').value = course.status;
                 }

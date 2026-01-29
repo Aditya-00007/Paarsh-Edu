@@ -1,32 +1,116 @@
-<header class="header">
-    <nav class="navbar">
-        <div class="container">
-            <div class="nav-wrapper">
-                <a href="/" class="logo">
-                    <span class="logo-text">Paarsh</span>
-                    <span class="logo-tagline">Education & Training</span>
-                </a>
-                
-                <div class="nav-menu" id="navMenu">
-                    <ul class="nav-list">
-                        <li><a href="/" class="nav-link <%= typeof page !== 'undefined' && page === 'home' ? 'active' : '' %>">Home</a></li>
-                        <li><a href="/courses" class="nav-link <%= typeof page !== 'undefined' && page === 'courses' ? 'active' : '' %>">Courses</a></li>
-                        <li><a href="#about" class="nav-link">About</a></li>
-                        <li><a href="#contact" class="nav-link">Contact</a></li>
-                    </ul>
-                    <div class="nav-buttons">
-    <a href="/login" class="btn btn-outline btn-sm">Login</a>
-    <a href="/courses" class="btn btn-primary btn-sm">Enroll Now</a>
-</div>
+<header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+  <nav class="max-w-7xl mx-auto px-6 py-4">
+    <div class="flex items-center justify-between">
 
-                </div>
-                
-                <button class="nav-toggle" id="navToggle">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
+      <!-- LOGO -->
+      <a href="/" class="flex flex-col leading-tight">
+        <span class="text-xl font-bold text-sky-500">Paarsh</span>
+        <span class="text-xs text-gray-500">Education & Training</span>
+      </a>
+
+      <!-- DESKTOP MENU -->
+      <div class="hidden md:flex items-center gap-10">
+
+        <!-- LINKS -->
+        <ul class="flex items-center gap-8 text-sm font-medium">
+          <li>
+            <a
+              href="/"
+              class="transition hover:text-sky-500
+              <%= typeof page !== 'undefined' && page === 'home'
+                ? 'text-sky-500'
+                : 'text-gray-700' %>"
+            >
+              Home
+            </a>
+          </li>
+
+          <li>
+            <a
+              href="/courses"
+              class="transition hover:text-sky-500
+              <%= typeof page !== 'undefined' && page === 'courses'
+                ? 'text-sky-500'
+                : 'text-gray-700' %>"
+            >
+              Courses
+            </a>
+          </li>
+
+          <li>
+            <a href="#about" class="text-gray-700 hover:text-sky-500 transition">
+              About
+            </a>
+          </li>
+
+          <li>
+            <a href="#contact" class="text-gray-700 hover:text-sky-500 transition">
+              Contact
+            </a>
+          </li>
+        </ul>
+
+        <!-- BUTTONS -->
+        <div class="flex items-center gap-4">
+          <a
+            href="/login"
+            class="px-4 py-2 text-sm font-medium border border-sky-500 text-sky-500 rounded-full hover:bg-sky-50 transition"
+          >
+            Login
+          </a>
+
+          <a
+            href="/courses"
+            class="px-5 py-2 text-sm font-medium bg-sky-500 text-white rounded-full hover:bg-sky-600 transition"
+          >
+            Enroll Now
+          </a>
         </div>
-    </nav>
+      </div>
+
+      <!-- MOBILE TOGGLE -->
+      <button
+        class="md:hidden p-2 rounded-lg border border-gray-300"
+        onclick="document.getElementById('mobileMenu').classList.toggle('hidden')"
+      >
+        ☰
+      </button>
+    </div>
+
+    <!-- MOBILE MENU -->
+    <div id="mobileMenu" class="hidden md:hidden mt-6 border-t pt-6 space-y-6">
+
+      <ul class="flex flex-col gap-4 text-sm font-medium">
+        <li>
+          <a href="/" class="block text-gray-700 hover:text-sky-500">Home</a>
+        </li>
+        <li>
+          <a href="/courses" class="block text-gray-700 hover:text-sky-500">Courses</a>
+        </li>
+        <li>
+          <a href="#about" class="block text-gray-700 hover:text-sky-500">About</a>
+        </li>
+        <li>
+          <a href="#contact" class="block text-gray-700 hover:text-sky-500">Contact</a>
+        </li>
+      </ul>
+
+      <div class="flex gap-4">
+        <a
+          href="/login"
+          class="flex-1 text-center px-4 py-2 text-sm font-medium border border-sky-500 text-sky-500 rounded-full"
+        >
+          Login
+        </a>
+
+        <a
+          href="/courses"
+          class="flex-1 text-center px-4 py-2 text-sm font-medium bg-sky-500 text-white rounded-full"
+        >
+          Enroll Now
+        </a>
+      </div>
+    </div>
+
+  </nav>
 </header>

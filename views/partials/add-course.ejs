@@ -1,186 +1,176 @@
-
 <!-- ================= ADD COURSE PAGE ================= -->
-                        <main class="flex-1 p-6 hidden" id="addCoursePage">
-                            <div class="bg-white rounded-xl shadow-sm p-6">
-                                <h2 class="text-2xl font-bold mb-1">Add New Course</h2>
-                                <p class="text-gray-500 text-sm mb-6">
-                                    Dashboard / Course Management / Add Course
-                                </p>
+<main class="flex-1 p-6 hidden" id="addCoursePage">
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <h2 class="text-2xl font-bold mb-1">Add New Course</h2>
+        <p class="text-gray-500 text-sm mb-6">
+            Dashboard / Course Management / Add Course
+        </p>
 
-                                <form action="/courses/add" method="POST" class="space-y-6"
-                                    enctype="multipart/form-data">
+        <form action="/courses/add" method="POST" class="space-y-6" enctype="multipart/form-data">
 
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                                        <!-- Course Title -->
-                                        <div>
-                                            <label class="block text-sm font-medium mb-2">Course Title *</label>
-                                            <input type="text" name="title" required
-                                                class="w-full px-4 py-2 border rounded-lg"
-                                                placeholder="Full Stack Web Development">
-                                        </div>
+                <!-- Course Title -->
+                <div>
+                    <label class="block text-sm font-medium mb-2">Course Title *</label>
+                    <input type="text" name="title" required class="w-full px-4 py-2 border rounded-lg"
+                        placeholder="Full Stack Web Development">
+                </div>
 
-                                        <!-- Course Fee -->
-                                        <div>
-                                            <label class="block text-sm font-medium mb-2">Course Fee (₹) *</label>
-                                            <input type="number" name="fee" required
-                                                class="w-full px-4 py-2 border rounded-lg">
-                                        </div>
+                <!-- Course Fee -->
+                <div>
+                    <label class="block text-sm font-medium mb-2">Course Fee (₹) *</label>
+                    <input type="number" name="fee" required class="w-full px-4 py-2 border rounded-lg">
+                </div>
 
-                                        <!-- Short Description -->
-                                        <div class="md:col-span-2">
-                                            <label class="block text-sm font-medium mb-2">Short Description *</label>
-                                            <textarea name="shortDescription" required
-                                                class="w-full px-4 py-2 border rounded-lg"
-                                                placeholder="Brief summary shown on course card"></textarea>
-                                        </div>
+                <!-- Short Description -->
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-2">Short Description *</label>
+                    <textarea name="shortDescription" required class="w-full px-4 py-2 border rounded-lg"
+                        placeholder="Brief summary shown on course card"></textarea>
+                </div>
 
-                                        <!-- Full Description -->
-                                        <div class="md:col-span-2">
-                                            <label class="block text-sm font-medium mb-2">Full Description</label>
-                                            <textarea name="fullDescription" class="w-full px-4 py-2 border rounded-lg"
-                                                placeholder="Detailed course description"></textarea>
-                                        </div>
+                <!-- Full Description -->
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-2">Full Description</label>
+                    <textarea name="fullDescription" class="w-full px-4 py-2 border rounded-lg"
+                        placeholder="Detailed course description"></textarea>
+                </div>
 
-                                        <!-- ================= SYLLABUS ================= -->
-                                        <div class="md:col-span-2">
-                                            <h3 class="text-lg font-semibold mt-4">Syllabus</h3>
-                                        </div>
+                <!-- ================= SYLLABUS ================= -->
+                <div class="md:col-span-2">
+                    <h3 class="text-lg font-semibold mt-4">Syllabus</h3>
+                </div>
 
-                                        <!-- Syllabus Overview -->
-                                        <div class="md:col-span-2">
-                                            <label class="block text-sm font-medium mb-2">Syllabus Overview</label>
-                                            <textarea name="syllabusOverview" class="w-full px-4 py-2 border rounded-lg"
-                                                placeholder="Brief overview of what this course covers"></textarea>
-                                        </div>
+                <!-- Syllabus Overview -->
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-2">Syllabus Overview</label>
+                    <textarea name="syllabusOverview" class="w-full px-4 py-2 border rounded-lg"
+                        placeholder="Brief overview of what this course covers"></textarea>
+                </div>
 
-                                        <!-- Syllabus Topics -->
-                                        <div class="md:col-span-2">
-                                            <label class="block text-sm font-medium mb-2">Syllabus Topics</label>
-                                            <input type="text" name="syllabusTopics"
-                                                class="w-full px-4 py-2 border rounded-lg"
-                                                placeholder="Introduction, Basics, Advanced Topics, Projects">
-                                            <p class="text-xs text-gray-500 mt-1">
-                                                Enter topics separated by commas
-                                            </p>
-                                        </div>
+                <!-- Syllabus Topics -->
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-2">Syllabus Topics</label>
+                    <input type="text" name="syllabusTopics" class="w-full px-4 py-2 border rounded-lg"
+                        placeholder="Introduction, Basics, Advanced Topics, Projects">
+                    <p class="text-xs text-gray-500 mt-1">
+                        Enter topics separated by commas
+                    </p>
+                </div>
 
-                                        <!-- Syllabus PDF -->
-                                        <div class="md:col-span-2">
-                                            <label class="block text-sm font-medium mb-2">Syllabus PDF</label>
-                                            <input type="file" name="syllabusFile" accept=".pdf"
-                                                class="w-full px-4 py-2 border rounded-lg bg-white">
-                                        </div>
+                <!-- Syllabus PDF -->
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-2">Syllabus PDF</label>
+                    <input type="file" name="syllabusFile" accept=".pdf"
+                        class="w-full px-4 py-2 border rounded-lg bg-white">
+                </div>
 
-                                        <!-- Thumbnail URL -->
-                                        <div>
-                                            <label class="block text-sm font-medium mb-2">Thumbnail URL *</label>
-                                            <input type="text" name="thumbnail" required
-                                                class="w-full px-4 py-2 border rounded-lg"
-                                                placeholder="https://image-link.jpg">
-                                        </div>
+                <!-- Thumbnail URL -->
+                <div>
+                    <label class="block text-sm font-medium mb-2">Thumbnail URL *</label>
+                    <input type="text" name="thumbnail" required class="w-full px-4 py-2 border rounded-lg"
+                        placeholder="https://image-link.jpg">
+                </div>
 
-                                        <!-- Intro Video -->
-                                        <div>
-                                            <label class="block text-sm font-medium mb-2">Intro Video URL</label>
-                                            <input type="text" name="introVideo"
-                                                class="w-full px-4 py-2 border rounded-lg">
-                                        </div>
+                <!-- Intro Video -->
+                <div>
+                    <label class="block text-sm font-medium mb-2">Intro Video URL</label>
+                    <input type="text" name="introVideo" class="w-full px-4 py-2 border rounded-lg">
+                </div>
 
-                                        <!-- Duration -->
-                                        <div>
-                                            <label class="block text-sm font-medium mb-2">Duration *</label>
-                                            <select name="duration" required
-                                                class="w-full px-4 py-2 border rounded-lg bg-white">
-                                                <option value="">Select duration</option>
-                                                <option value="1 Month">1 Month</option>
-                                                <option value="2 Months">2 Months</option>
-                                                <option value="3 Months">3 Months</option>
-                                                <option value="6 Months">6 Months</option>
-                                            </select>
-                                        </div>
+                <!-- Duration -->
+                <div>
+                    <label class="block text-sm font-medium mb-2">Duration *</label>
+                    <select name="duration" required class="w-full px-4 py-2 border rounded-lg bg-white">
+                        <option value="">Select duration</option>
+                        <option value="1 Month">1 Month</option>
+                        <option value="2 Months">2 Months</option>
+                        <option value="3 Months">3 Months</option>
+                        <option value="6 Months">6 Months</option>
+                    </select>
+                </div>
 
-                                        <!-- Level -->
-                                        <div>
-                                            <label class="block text-sm font-medium mb-2">Level *</label>
-                                            <select name="level" required
-                                                class="w-full px-4 py-2 border rounded-lg bg-white">
-                                                <option value="">Select level</option>
-                                                <option value="beginner">Beginner</option>
-                                                <option value="intermediate">Intermediate</option>
-                                                <option value="advanced">Advanced</option>
-                                            </select>
-                                        </div>
+                <!-- Level -->
+                <div>
+                    <label class="block text-sm font-medium mb-2">Level *</label>
+                    <select name="level" required class="w-full px-4 py-2 border rounded-lg bg-white">
+                        <option value="">Select level</option>
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                    </select>
+                </div>
 
-                                        <!-- Languages -->
-                                        <div>
-                                            <label class="block text-sm font-medium mb-2">Languages</label>
-                                            <input type="text" name="languages"
-                                                class="w-full px-4 py-2 border rounded-lg" placeholder="English, Hindi">
-                                        </div>
+                <!-- Languages -->
+                <div>
+                    <label class="block text-sm font-medium mb-2">Languages</label>
+                    <input type="text" name="languages" class="w-full px-4 py-2 border rounded-lg"
+                        placeholder="English, Hindi">
+                </div>
 
-                                        <!-- Certificate -->
-                                        <div class="flex items-center gap-2 mt-7">
-                                            <input type="checkbox" name="certificate" value="true">
-                                            <label class="text-sm font-medium">Certificate Available</label>
-                                        </div>
+                <!-- Certificate -->
+                <div class="flex items-center gap-2 mt-7">
+                    <input type="checkbox" name="certificate" value="true">
+                    <label class="text-sm font-medium">Certificate Available</label>
+                </div>
 
-                                        <!-- Intake Limit -->
-                                        <div>
-                                            <label class="block text-sm font-medium mb-2">Intake Limit</label>
-                                            <input type="number" name="intakeLimit" value="10"
-                                                class="w-full px-4 py-2 border rounded-lg">
-                                        </div>
+                <!-- Intake Limit -->
+                <div>
+                    <label class="block text-sm font-medium mb-2">Intake Limit</label>
+                    <input type="number" name="intakeLimit" value="10" class="w-full px-4 py-2 border rounded-lg">
+                </div>
 
-                                        <!-- Category (ObjectId expected) -->
-                                        <div>
-                                            <label class="block text-sm font-medium mb-2">Category *</label>
-                                            <select name="category" required
-                                                class="w-full px-4 py-2 border rounded-lg bg-white">
-                                                <option value="">Select category</option>
-                                                <% categories.forEach(cat=> { %>
-                                                    <option value="<%= cat._id %>">
-                                                        <%= cat.domain %> - <%= cat.subDomain %>
-                                                    </option>
-                                                    <% }) %>
-                                            </select>
-                                        </div>
+                <!-- Category (ObjectId expected) -->
+                <div>
+                    <label class="block text-sm font-medium mb-2">Category *</label>
 
-                                        <!-- Status -->
-                                        <div>
-                                            <label class="block text-sm font-medium mb-2">Status</label>
-                                            <select name="status" class="w-full px-4 py-2 border rounded-lg bg-white">
-                                                <option value="active">Active</option>
-                                                <option value="inactive">Inactive</option>
-                                            </select>
-                                        </div>
+                    <select name="category" required class="w-full px-4 py-2 border rounded-lg bg-white">
 
-                                        <!-- Tags -->
-                                        <div>
-                                            <label class="block text-sm font-medium mb-2">Tags</label>
-                                            <input type="text" name="tags" class="w-full px-4 py-2 border rounded-lg"
-                                                placeholder="mern, backend, node">
-                                        </div>
+                        <option value="">Select Category</option>
 
-                                        <!-- Prerequisites -->
-                                        <div class="md:col-span-2">
-                                            <label class="block text-sm font-medium mb-2">Prerequisites</label>
-                                            <input type="text" name="prerequisites"
-                                                class="w-full px-4 py-2 border rounded-lg"
-                                                placeholder="Basic HTML, JavaScript">
-                                        </div>
+                        <% categories.forEach(cat=> { %>
+                            <option value="<%= cat._id %>">
+                                <%= cat.domain %> – <%= cat.subDomain %>
+                            </option>
+                            <% }) %>
 
-                                    </div>
+                    </select>
+                </div>
 
-                                    <!-- Actions -->
-                                    <div class="flex gap-3 pt-6 border-t">
-                                        <button type="button" onclick="cancelAddCourse()"
-                                            class="px-6 py-2 border rounded-lg">Cancel</button>
-                                        <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg">
-                                            Save Course
-                                        </button>
-                                    </div>
+                <!-- Status -->
+                <div>
+                    <label class="block text-sm font-medium mb-2">Status</label>
+                    <select name="status" class="w-full px-4 py-2 border rounded-lg bg-white">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
 
-                                </form>
-                            </div>
-                        </main>
+                <!-- Tags -->
+                <div>
+                    <label class="block text-sm font-medium mb-2">Tags</label>
+                    <input type="text" name="tags" class="w-full px-4 py-2 border rounded-lg"
+                        placeholder="mern, backend, node">
+                </div>
+
+                <!-- Prerequisites -->
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium mb-2">Prerequisites</label>
+                    <input type="text" name="prerequisites" class="w-full px-4 py-2 border rounded-lg"
+                        placeholder="Basic HTML, JavaScript">
+                </div>
+
+            </div>
+
+            <!-- Actions -->
+            <div class="flex gap-3 pt-6 border-t">
+                <button type="button" onclick="cancelAddCourse()" class="px-6 py-2 border rounded-lg">Cancel</button>
+                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg">
+                    Save Course
+                </button>
+            </div>
+
+        </form>
+    </div>
+</main>

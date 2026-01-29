@@ -123,6 +123,19 @@ const courseSchema = new mongoose.Schema(
       },
     ],
 
+    /* ================= REVIEWS & RATINGS ================= */
+    averageRating: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 5,
+    },
+
+    ratingCount: {
+      type: Number,
+      default: 0,
+    },
+
     /* ================= ADMIN / SYSTEM ================= */
     intakeLimit: {
       type: Number,

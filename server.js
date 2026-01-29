@@ -101,21 +101,19 @@ app.get("/courses", async (req, res) =>{
 });
 
 // course preveiw page // student level
-app.get("/courses/:id/preview", async (req, res) => {
+app.get("/courses/:id", async (req, res) =>{ 
   try {
-    const course = await Course.findById(req.params.id)
-      .populate("category");
-
+    const course = await Course.findById(req.params.id).populate("category");
+    const categories = await Category.find({ status: "active" });
+    
     if (!course) {
       return res.status(404).send("Course not found");
     }
-
-    res.render("backend/course-preview", {
-      course,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Failed to load preview");
+    
+    res.render("Frontend/coursedetails.ejs", { course, categories });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Failed to load course details");
   }
 });
 

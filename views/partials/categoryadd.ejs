@@ -1,0 +1,57 @@
+<main class="flex-1 p-6 hidden" id="addCategoryPage">
+                                <div class="bg-white rounded-xl shadow-sm p-6 max-w-3xl">
+
+                                    <h2 class="text-2xl font-bold mb-1">Add New Category</h2>
+                                    <p class="text-gray-500 text-sm mb-6">
+                                        Dashboard / Course Management / Add Category
+                                    </p>
+
+                                    <form action="/admin/categories/add" method="POST" class="space-y-6">
+
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">Domain *</label>
+                                            <input type="text" name="domain" required
+                                                class="w-full px-4 py-2 border rounded-lg" placeholder="IT / NON-IT">
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">Sub Domain *</label>
+                                            <input type="text" name="subDomain" required
+                                                class="w-full px-4 py-2 border rounded-lg"
+                                                placeholder="Programming / Web Development">
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">Tagline</label>
+                                            <input type="text" name="tagline" class="w-full px-4 py-2 border rounded-lg"
+                                                placeholder="Learn industry-ready skills">
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">Description</label>
+                                            <textarea name="description" class="w-full px-4 py-2 border rounded-lg"
+                                                placeholder="Shown to users"></textarea>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">Status</label>
+                                            <select name="status" class="w-full px-4 py-2 border rounded-lg bg-white">
+                                                <option value="active">Active</option>
+                                                <option value="inactive">Inactive</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="flex gap-3 pt-4 border-t">
+                                            <button type="button" onclick="cancelAddCategory()"
+                                                class="px-6 py-2 border rounded-lg">
+                                                Cancel
+                                            </button>
+
+                                            <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-lg">
+                                                Save Category
+                                            </button>
+                                        </div>
+
+                                    </form>
+                                </div>
+                            </main>

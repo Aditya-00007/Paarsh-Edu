@@ -68,11 +68,15 @@ const courseSchema = new mongoose.Schema(
     },
 
     /* ================= COURSE CONTENT ================= */
-    courseIncludes: [
-      {
-        type: String,
-      },
-    ],
+    courseIncludes: {
+      type: [String],
+      default: [
+        "Entrance Exam",
+        "Job Agreement",
+        "Placement Agreement",
+        "One-to-one Teaching",
+      ],
+    },
 
     syllabusOverview: {
       type: String,

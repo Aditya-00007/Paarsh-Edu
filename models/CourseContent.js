@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const courseContentSchema = new mongoose.Schema(
+const courseSyllabusSchema = new mongoose.Schema(
   {
     course: {
       type: mongoose.Schema.Types.ObjectId,
@@ -8,70 +8,45 @@ const courseContentSchema = new mongoose.Schema(
       required: true,
     },
 
-    /*  SECTION (TOPIC)  */
-    sectionTitle: {
-      type: String, // e.g. "Basics of C"
+    moduleTitle: {
+      type: String, // "Module 1: Web Basics"
       required: true,
     },
 
-    sectionOrder: {
+    moduleOrder: {
       type: Number,
-      default: 0,
-    },
-
-    /*  LECTURE (SUB TOPIC)  */
-    topic: {
-      type: String, // e.g. "Variables"
       required: true,
     },
 
-    subTopic: {
-      type: String, // e.g. "Data types"
-    },
+    items: [
+      {
+        itemType: {
+          type: String,
+          enum: ["topic", "assignment", "test"],
+          required: true,
+        },
 
-    lectureTitle: {
-      type: String,
-      required: true,
-    },
+        title: {
+          type: String, // "HTML Basics", "Assignment 1", "Test 1"
+          required: true,
+        },
 
-    shortDescription: {
-      type: String,
-    },
+        description: {
+          type: String,
+        },
 
-    lectureType: {
-      type: String,
-      enum: ["video", "live"],
-      required: true,
-    },
+        order: {
+          type: Number,
+          required: true,
+        },
 
-    videoUrl: {
-      type: String,
-    },
-
-    liveClass: {
-      meetingLink: String,
-      scheduledAt: Date,
-      duration: String,
-    },
-
-    lectureOrder: {
-      type: Number,
-      default: 0,
-    },
-
-    isPreview: {
-      type: Boolean,
-      default: false,
-    },
- 
-  isPublished: {
-    type: Boolean,
-    default: false, // admin controls visibility
-   },
+        maxScore: {
+          type: Number, // for test/assignment
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
 
-const CourseContent = mongoose.model("CourseContent", courseContentSchema);
-export default CourseContent;
-
+export default mongoose.model("CourseContent", courseSyllabusSchema);

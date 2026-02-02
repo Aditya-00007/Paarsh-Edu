@@ -1,12 +1,9 @@
-<!-- ================= TOP NAVBAR ================= -->
+<!-- TOP NAVBAR -->
 <nav class="bg-white shadow-sm px-6 py-3 flex items-center justify-between">
 
   <!-- Left -->
   <div class="flex items-center gap-3">
-    <button
-      class="px-3 py-2 rounded-md border border-gray-300 hover:bg-gray-100"
-      onclick="toggleSidebar()"
-    >
+    <button class="px-3 py-2 rounded-md border border-gray-300 hover:bg-gray-100" onclick="toggleSidebar()">
       ☰
     </button>
     <span class="font-bold text-lg">🎓 EduPlatform Admin</span>
@@ -16,25 +13,18 @@
   <div class="flex items-center gap-4">
     <input
       class="w-[220px] hidden sm:block px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-      placeholder="Search students, courses..."
-    />
+      placeholder="Search students, courses..." />
 
     <!-- Notifications -->
     <div class="relative">
-      <button
-        class="px-3 py-2 rounded-md bg-gray-100 hover:bg-gray-200 relative"
-        onclick="toggleDropdown('notifMenu')"
-      >
+      <button class="px-3 py-2 rounded-md bg-gray-100 hover:bg-gray-200 relative" onclick="toggleDropdown('notifMenu')">
         🔔
         <span class="absolute -top-2 -right-2 bg-red-600 text-white text-xs px-2 py-[1px] rounded-full">
           3
         </span>
       </button>
 
-      <div
-        id="notifMenu"
-        class="hidden absolute right-0 mt-2 w-48 bg-white shadow-md rounded-lg overflow-hidden"
-      >
+      <div id="notifMenu" class="hidden absolute right-0 mt-2 w-48 bg-white shadow-md rounded-lg overflow-hidden">
         <div class="px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer">New Enrollment</div>
         <div class="px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer">Payment Pending</div>
         <div class="px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer">New Enquiry</div>
@@ -43,17 +33,12 @@
 
     <!-- Admin Dropdown -->
     <div class="relative">
-      <button
-        class="px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-100 text-sm"
-        onclick="toggleDropdown('adminMenu')"
-      >
+      <button class="px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-100 text-sm"
+        onclick="toggleDropdown('adminMenu')">
         Admin ⌄
       </button>
 
-      <div
-        id="adminMenu"
-        class="hidden absolute right-0 mt-2 w-40 bg-white shadow-md rounded-lg overflow-hidden"
-      >
+      <div id="adminMenu" class="hidden absolute right-0 mt-2 w-40 bg-white shadow-md rounded-lg overflow-hidden">
         <div class="px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer">Profile</div>
         <div class="px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer">Settings</div>
         <div class="border-t"></div>

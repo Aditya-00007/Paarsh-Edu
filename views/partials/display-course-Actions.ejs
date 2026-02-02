@@ -1,0 +1,360 @@
+<!-- play lecture  -->
+<div id="lecturePlayer" class="mt-4 hidden">
+  <h3 id="playerTitle" class="font-semibold mb-2"></h3>
+
+  <!-- YouTube -->
+  <iframe id="youtubePlayer" class="w-full h-[360px] rounded-lg hidden" allowfullscreen>
+  </iframe>
+
+  <!-- Cloudinary / MP4 -->
+  <video id="videoPlayer" class="w-full rounded-lg hidden" controls preload="metadata"></video>
+</div>
+<!-- assignment preview -->
+<div id="assignmentPreviewModal"
+  class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+  <div class="bg-white w-[80vw] max-w-3xl rounded-lg shadow-lg flex flex-col">
+    <!-- Header -->
+    <div class="px-6 py-4 border-b flex justify-between items-center">
+      <h2 id="assignmentTitle" class="text-xl font-semibold"></h2>
+      <button onclick="closeAssignmentModal()" class="text-2xl text-gray-500">
+        &times;
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="p-6 space-y-4 text-sm overflow-y-auto flex-1">
+      <input type="hidden" id="editAssignmentId" />
+
+      <div>
+        <label class="font-medium">Title</label>
+        <input id="editAssignmentTitle" class="w-full border px-3 py-2 rounded mt-1" />
+      </div>
+
+      <div>
+        <label class="font-medium">Description</label>
+        <textarea id="editAssignmentDescription" rows="4" class="w-full border px-3 py-2 rounded mt-1"></textarea>
+      </div>
+
+      <div>
+        <label class="font-medium">Max Marks</label>
+        <input type="number" id="editAssignmentMarks" class="w-full border px-3 py-2 rounded mt-1" />
+      </div>
+
+      <a id="assignmentFile" href="#" target="_blank" class="text-blue-600 underline hidden">
+        ⬇ Download Attachment
+      </a>
+    </div>
+
+    <!-- Footer -->
+    <div class="px-6 py-4 border-t flex justify-between">
+      <button onclick="deleteAssignment()" class="px-4 py-2 bg-red-600 text-white rounded">
+        Delete
+      </button>
+
+      <div class="flex gap-2">
+        <button onclick="closeAssignmentModal()" class="px-4 py-2 bg-gray-200 rounded">
+          Cancel
+        </button>
+        <button onclick="saveAssignmentChanges()" class="px-4 py-2 bg-blue-600 text-white rounded">
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Test Preview Modal -->
+<div id="testPreviewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+  <div class="bg-white w-[85vw] max-w-4xl h-[85vh] rounded-lg shadow-lg flex flex-col">
+    <input type="hidden" id="editTestId" />
+    <!-- Header -->
+    <div class="px-6 py-4 border-b flex justify-between items-center">
+      <h2 id="testTitle" class="text-xl font-semibold"></h2>
+      <button onclick="closeTestModal()" class="text-2xl text-gray-500">
+        &times;
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="p-6 overflow-y-auto flex-1 space-y-6 text-sm">
+      <p id="testMeta" class="text-gray-500"></p>
+
+      <div id="testQuestions" class="space-y-4"></div>
+    </div>
+    <div class="px-6 pb-4">
+      <button onclick="addNewQuestion()" class="px-4 py-2 bg-green-600 text-white rounded">
+        + Add Question
+      </button>
+    </div>
+
+    <!-- Footer -->
+    <div class="px-6 py-4 border-t flex justify-between">
+      <button onclick="deleteTest()" class="bg-red-600 text-white px-4 py-2 rounded">
+        Delete
+      </button>
+
+      <div class="flex gap-2">
+        <button onclick="closeTestModal()" class="px-4 py-2 bg-gray-200 rounded">
+          Cancel
+        </button>
+        <button onclick="saveTestChanges()" class="px-4 py-2 bg-purple-600 text-white rounded">
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  // previe test
+  document.addEventListener("click", function (e) {
+    if (!e.target.classList.contains("test-btn")) return;
+
+    document.getElementById("editTestId").value = e.target.dataset.id;
+    document.getElementById("testTitle").innerText = e.target.dataset.title;
+
+    const questions = JSON.parse(
+      decodeURIComponent(e.target.dataset.questions || "[]"),
+    );
+
+    const container = document.getElementById("testQuestions");
+    container.innerHTML = "";
+
+    questions.forEach((q, idx) => {
+      container.innerHTML += `
+      <div
+  class="border p-4 rounded space-y-3 question-block relative"
+  data-correct-index="${q.correctOptionIndex}">
+<button
+      onclick="deleteQuestion(this)"
+      class="absolute top-2 right-2 text-red-600 text-sm">
+      🗑
+    </button>
+        <p class="font-semibold">Question ${idx + 1}</p>
+
+        <!-- Question -->
+        <input
+          class="w-full border p-2 rounded"
+          value="${escapeHTML(q.question)}"
+        />
+
+        <!-- Options -->
+        ${q.options
+          .map(
+            (opt, i) => `
+            <div class="flex items-center gap-2">
+              <input
+  type="text"
+  class="w-full border p-2 rounded option-input ${i === q.correctOptionIndex ? "border-green-600 bg-green-50" : ""
+              }"
+  data-index="${i}"
+  value="${escapeHTML(opt)}"
+/>
+
+              ${i === q.correctOptionIndex
+                ? `<span class="text-green-600 font-semibold">✔ Correct</span>`
+                : ""
+              }
+            </div>
+          `,
+          )
+          .join("")}
+      </div>
+    `;
+    });
+
+    document.getElementById("testPreviewModal").classList.remove("hidden");
+  });
+
+  function escapeHTML(str = "") {
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+  document.addEventListener("click", function (e) {
+    if (!e.target.classList.contains("option-input")) return;
+  });
+
+  function addNewQuestion() {
+    const container = document.getElementById("testQuestions");
+    const index = container.children.length + 1;
+
+    //RANDOM correct option
+    const correctIndex = Math.floor(Math.random() * 4);
+
+    const div = document.createElement("div");
+    div.className = "border p-4 rounded space-y-3 question-block relative";
+    div.dataset.correctIndex = correctIndex; // store once, never auto-change
+
+    div.innerHTML = `
+  <button
+    onclick="deleteQuestion(this)"
+    class="absolute top-2 right-2 text-red-600 text-sm">
+    🗑
+  </button>
+
+  <p class="font-semibold">Question ${index}</p>
+
+  <input
+    class="w-full border p-2 rounded"
+    placeholder="Enter question"
+  />
+
+  ${[0, 1, 2, 3]
+        .map(
+          (i) => `
+    <div class="flex items-center gap-2">
+      <input
+        type="text"
+        class="w-full border p-2 rounded option-input ${i === correctIndex ? "border-green-600 bg-green-50" : ""
+            }"
+        data-index="${i}"
+        placeholder="Option ${i + 1}"
+      />
+      ${i === correctIndex
+              ? `<span class="text-green-600 font-semibold">✔ Correct</span>`
+              : ""
+            }
+    </div>
+  `,
+        )
+        .join("")}
+`;
+
+    container.appendChild(div);
+  }
+
+  function deleteQuestion(btn) {
+    if (!confirm("Delete this question?")) return;
+
+    const block = btn.closest(".question-block");
+    block.remove();
+
+    // Re-number questions
+    document.querySelectorAll(".question-block").forEach((q, i) => {
+      const title = q.querySelector("p");
+      if (title) title.innerText = `Question ${i + 1}`;
+    });
+  }
+
+  function closeTestModal() {
+    document.getElementById("testPreviewModal").classList.add("hidden");
+  }
+  async function saveTestChanges() {
+    const id = document.getElementById("editTestId").value;
+    if (!id) return alert("Test ID missing");
+
+    const questions = [];
+
+    document.querySelectorAll(".question-block").forEach((block) => {
+      const inputs = block.querySelectorAll(".option-input");
+      const questionText = block.querySelector("input").value;
+
+      const options = [];
+      inputs.forEach((input) => options.push(input.value));
+
+      const correctOptionIndex = parseInt(block.dataset.correctIndex ?? 0);
+
+      questions.push({
+        question: questionText,
+        options,
+        correctOptionIndex,
+      });
+    });
+
+    await fetch(`/admin-course/test/update/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ questions }),
+    });
+
+    location.reload();
+  }
+
+  async function deleteTest() {
+    const id = document.getElementById("editTestId").value;
+
+    if (!id) {
+      alert("Test ID missing");
+      return;
+    }
+
+    if (!confirm("Delete this test?")) return;
+
+    await fetch(`/admin-course/test/delete/${id}`, {
+      method: "DELETE",
+    });
+
+    location.reload();
+  }
+  //preview assignment
+  document.addEventListener("click", function (e) {
+    if (!e.target.classList.contains("assignment-btn")) return;
+
+    document.getElementById("editAssignmentId").value = e.target.dataset.id;
+
+    document.getElementById("editAssignmentTitle").value =
+      e.target.dataset.title;
+
+    document.getElementById("editAssignmentDescription").value =
+      decodeURIComponent(e.target.dataset.description || "");
+
+    document.getElementById("editAssignmentMarks").value =
+      e.target.dataset.marks;
+
+    const fileLink = document.getElementById("assignmentFile");
+    if (e.target.dataset.file) {
+      fileLink.href = e.target.dataset.file + "?dl=1";
+      fileLink.classList.remove("hidden");
+    } else {
+      fileLink.classList.add("hidden");
+    }
+
+    document
+      .getElementById("assignmentPreviewModal")
+      .classList.remove("hidden");
+  });
+
+  async function saveAssignmentChanges() {
+    const id = document.getElementById("editAssignmentId").value;
+
+    await fetch(`/admin-course/assignment/update/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: document.getElementById("editAssignmentTitle").value,
+        description: document.getElementById("editAssignmentDescription").value,
+        maxMarks: document.getElementById("editAssignmentMarks").value,
+      }),
+    });
+
+    location.reload();
+  }
+
+  async function deleteAssignment() {
+    const id = document.getElementById("editAssignmentId").value;
+    if (!id) return alert("Assignment ID missing");
+
+    if (!confirm("Delete this assignment?")) return;
+
+    await fetch(`/admin-course/assignment/delete/${id}`, {
+      method: "DELETE",
+    });
+
+    location.reload();
+  }
+
+  function closeAssignmentModal() {
+    document.getElementById("assignmentPreviewModal").classList.add("hidden");
+  }
+  //play lecture
+  document.addEventListener("click", function (e) {
+    if (!e.target.classList.contains("lecture-btn")) return;
+
+    const videoUrl = e.target.dataset.video;
+
+    // Open video in new tab
+    window.open(videoUrl, "_blank", "noopener,noreferrer");
+  });
+</script>

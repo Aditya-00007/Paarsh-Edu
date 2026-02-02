@@ -1,81 +1,77 @@
-<!-- ================= FEATURED COURSES HEADER ================= -->
-                            <div class="flex justify-between items-center">
-                                <h2 class="text-xl font-bold">Featured Courses</h2>
-                                <div class="flex gap-3">
-                                    <button class="px-5 py-2 bg-green-600 text-white rounded-lg"
-                                        onclick="showAddCategoryPage()">
-                                        + Add Category</button>
-                                    <button
-                                        class="px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:opacity-90 transition"
-                                        onclick="showAddCoursePage()">+ Add New Course</button>
-                                    <button
-                                        class="px-5 py-2 border border-blue-600 text-blue-600 rounded-lg text-sm font-semibold hover:bg-blue-600 hover:text-white transition"
-                                        onclick="showAllCourses()">View All Courses</button>
+<!--  FEATURED COURSES HEADER  -->
+<div class="flex justify-between items-center">
+    <h2 class="text-xl font-bold">Featured Courses</h2>
+    <div class="flex gap-3">
+        <button class="px-5 py-2 bg-green-600 text-white rounded-lg" onclick="showAddCategoryPage()">
+            + Add Category</button>
+        <button class="px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:opacity-90 transition"
+            onclick="showAddCoursePage()">+ Add New Course</button>
+        <button
+            class="px-5 py-2 border border-blue-600 text-blue-600 rounded-lg text-sm font-semibold hover:bg-blue-600 hover:text-white transition"
+            onclick="showAllCourses()">View All Courses</button>
+    </div>
+</div>
+
+<!--  COURSE CARDS  -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="topCourses">
+    <% courses.slice(0,4).forEach(course=> { %>
+
+        <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:-translate-y-2 hover:shadow-lg transition-all">
+
+            <div class="w-full h-40 overflow-hidden">
+                <img src="<%= course.thumbnail %>" alt="<%= course.title %>" class="w-full h-full object-cover"
+                    onerror="this.src='/images/course-placeholder.png'" />
+            </div>
+
+
+            <div class="p-4">
+                <h3 class="text-lg font-bold mb-3">
+                    <%= course.title %>
+                </h3>
+
+                <div class="space-y-2 mb-4 text-sm text-gray-500">
+                    <p>⏱️ Duration: <%= course.duration %>
+                    </p>
+                    <% if (course.instructor && course.instructor.name) { %>
+                        <p class="text-sm text-gray-500">
+                            👨‍🏫 <%= course.instructor.name %>
+                        </p>
+                        <% } %>
+
+
+                            <% const percent=course.intakeLimit> 0
+                                ? Math.min(
+                                Math.round((course.enrolledCount / course.intakeLimit) *
+                                100),
+                                100
+                                )
+                                : 0;
+                                %>
+
+                                <div class="w-full h-2 bg-gray-200 rounded mt-2">
+                                    <div class="h-full bg-blue-600 rounded transition-all"
+                                        style="width: <%= percent %>%">
+                                    </div>
                                 </div>
-                            </div>
 
-                            <!-- ================= COURSE CARDS ================= -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="topCourses">
-                                <% courses.slice(0,4).forEach(course=> { %>
+                </div>
 
-                                    <div
-                                        class="bg-white rounded-xl overflow-hidden shadow-sm hover:-translate-y-2 hover:shadow-lg transition-all">
+                <div class="flex justify-between items-center pt-4 border-t">
+                    <span class="text-xl font-bold text-blue-600">
+                        ₹<%= course.fee %>
+                    </span>
 
-                                        <div class="w-full h-40 overflow-hidden">
-                                            <img src="<%= course.thumbnail %>" alt="<%= course.title %>"
-                                                class="w-full h-full object-cover"
-                                                onerror="this.src='/images/course-placeholder.png'" />
-                                        </div>
-
-
-                                        <div class="p-4">
-                                            <h3 class="text-lg font-bold mb-3">
-                                                <%= course.title %>
-                                            </h3>
-
-                                            <div class="space-y-2 mb-4 text-sm text-gray-500">
-                                                <p>⏱️ Duration: <%= course.duration %>
-                                                </p>
-                                                <% if (course.instructor && course.instructor.name) { %>
-                                                    <p class="text-sm text-gray-500">
-                                                        👨‍🏫 <%= course.instructor.name %>
-                                                    </p>
-                                                    <% } %>
-
-
-                                                        <% const percent=course.intakeLimit> 0
-                                                            ? Math.min(
-                                                            Math.round((course.enrolledCount / course.intakeLimit) *
-                                                            100),
-                                                            100
-                                                            )
-                                                            : 0;
-                                                            %>
-
-                                                            <div class="w-full h-2 bg-gray-200 rounded mt-2">
-                                                                <div class="h-full bg-blue-600 rounded transition-all"
-                                                                    style="width: <%= percent %>%">
-                                                                </div>
-                                                            </div>
-
-                                            </div>
-
-                                            <div class="flex justify-between items-center pt-4 border-t">
-                                                <span class="text-xl font-bold text-blue-600">
-                                                    ₹<%= course.fee %>
-                                                </span>
-
-                                                <span class="px-3 py-1 rounded-full text-xs font-semibold
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold
                         <%= course.status === 'active'
                         ? 'bg-green-100 text-green-800'
                         : course.status === 'full'
                         ? 'bg-yellow-100 text-yellow-800'
                         : 'bg-red-100 text-red-800' %>">
-                                                    <%= course.status %>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
+                        <%= course.status %>
+                    </span>
+                </div>
+            </div>
+        </div>
 
-                                    <% }) %>
-                            </div>
+        <% }) %>
+</div>

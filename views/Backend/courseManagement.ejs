@@ -11,171 +11,153 @@
 
 <body class="bg-[#f4f6f9]">
 
-        <%- include('../partials/header.ejs') %>
+    <%- include('../partials/header.ejs') %>
 
-            <div class="flex">
-                <%- include('../partials/sidebar.ejs') %>
+        <div class="flex">
+            <%- include('../partials/sidebar.ejs') %>
 
 
-                        <!-- COURSE MANAGEMENT CONTENT -->
-                        <main class="flex-1 p-6 space-y-6" id="courseManagementPage">
+                <!-- COURSE MANAGEMENT CONTENT -->
+                <main class="flex-1 p-6 space-y-6" id="courseManagementPage">
 
-                           <!-- stata -->
-                             <%- include('../partials/stats.ejs') %>
-                            <!-- ================= CHARTS ================= -->
-                             <%- include('../partials/charts.ejs') %>
+                    <!-- statas -->
+                    <%- include('../partials/stats.ejs') %>
+                        <!--  CHARTS  -->
+                        <%- include('../partials/charts.ejs') %>
                             <!-- //featured -->
                             <%- include('../partials/featuredcourses.ejs') %>
-                            
-                            <!-- ================= ALL COURSES TABLE ================= -->
-                              <%- include('../partials/courses-table.ejs') %>
-                        
-                        </main>
 
-                        <%- include('../partials/add-course.ejs') %>
+                                <!--  ALL COURSES TABLE  -->
+                                <%- include('../partials/courses-table.ejs') %>
 
-                            <!-- ================= ADD CATEGORY PAGE ================= -->
-                            <%- include('../partials/categoryadd.ejs') %>
+                </main>
 
+                <%- include('../partials/add-course.ejs') %>
 
-
-                            <!-- edit -->
-                             <%- include('../partials/updatecourse.ejs') %>
-            <!-- add syllbus  -->
-            <%- include('../partials/syllabus-modal.ejs') %>
-            <script>
-                // Chart.js configurations
-                
-                // syllbus 
-                
-                // Page navigation functions
-                function showAllCourses() {
-                    document.getElementById('topCourses').classList.add('hidden');
-                    document.getElementById('allCoursesTable').classList.remove('hidden');
-                }
-                //open preview
-                function previewCourse(courseId) {
-                    window.location.href = `/admin/courses/${courseId}/preview`;
-                }
+                    <!--  ADD CATEGORY PAGE  -->
+                    <%- include('../partials/categoryadd.ejs') %>
 
 
-                function hideAllCourses() {
-                    document.getElementById('topCourses').classList.remove('hidden');
-                    document.getElementById('allCoursesTable').classList.add('hidden');
-                }
 
-                function showAddCoursePage() {
-                    document.getElementById('courseManagementPage').classList.add('hidden');
-                    document.getElementById('addCoursePage').classList.remove('hidden');
-                    document.getElementById('editCoursePage').classList.add('hidden');
-                }
+                        <!-- edit -->
+                        <%- include('../partials/updatecourse.ejs') %>
+                            <!-- add syllbus  -->
+                            <%- include('../partials/syllabus-modal.ejs') %>
+                                <script>
+                                    // Chart.js configurations
 
-                function cancelAddCourse() {
-                    document.getElementById('addCoursePage').classList.add('hidden');
-                    document.getElementById('courseManagementPage').classList.remove('hidden');
-                    document.getElementById('editCoursePage').classList.add('hidden');
-                }
+                                    // syllbus 
 
-                //handle update and syl;labus
-                const editCourseId = "<%= editCourseId || '' %>";
-
-  if (editCourseId) {
-    const course = <%- JSON.stringify(courses) %>.find(
-      c => c._id === editCourseId
-    );
-
-    if (course) {
-      openEditCourse(course);
-    }
-  }
-                
-                // handle delete
-                async function deleteCourse(courseId) {
-                    const confirmDelete = confirm(
-                        "Are you sure?\nThis will delete the course and ALL its lectures."
-                    );
-
-                    if (!confirmDelete) return;
-
-                    try {
-                        const res = await fetch(`/admin/courses/delete/${courseId}`, {
-                            method: "DELETE",
-                        });
-
-                        const data = await res.json();
-
-                        if (data.success) {
-                            alert("Course deleted successfully");
-                            location.reload();
-                        } else {
-                            alert("Failed to delete course");
-                        }
-                    } catch (error) {
-                        console.error(error);
-                        alert("Server error while deleting course");
-                    }
-                }
+                                    // Page navigation functions
+                                    function showAllCourses() {
+                                        document.getElementById('topCourses').classList.add('hidden');
+                                        document.getElementById('allCoursesTable').classList.remove('hidden');
+                                    }
+                                    //open preview
+                                    function previewCourse(courseId) {
+                                        window.location.href = `/admin-course/courses/${courseId}/preview`;
+                                    }
 
 
-                //preserve origional DOM
-               
+                                    function hideAllCourses() {
+                                        document.getElementById('topCourses').classList.remove('hidden');
+                                        document.getElementById('allCoursesTable').classList.add('hidden');
+                                    }
 
-                // Toggle sidebar
-                function toggleSidebar() {
-                    const sidebar = document.getElementById('sidebar');
-                    if (sidebar.style.display === 'none') {
-                        sidebar.style.display = 'block';
-                    } else {
-                        sidebar.style.display = 'none';
-                    }
-                }
+                                    function showAddCoursePage() {
+                                        document.getElementById('courseManagementPage').classList.add('hidden');
+                                        document.getElementById('addCoursePage').classList.remove('hidden');
+                                        document.getElementById('editCoursePage').classList.add('hidden');
+                                    }
 
-                // Toggle dropdown menus
-                function toggleDropdown(menuId) {
-                    const menu = document.getElementById(menuId);
-                    menu.classList.toggle('hidden');
-                }
-                // add lectures
-                function openLectureManager(courseId, courseTitle) {
-                    window.location.href = `/admin/courses/${courseId}/lectures`;
-                }
+                                    function cancelAddCourse() {
+                                        document.getElementById('addCoursePage').classList.add('hidden');
+                                        document.getElementById('courseManagementPage').classList.remove('hidden');
+                                        document.getElementById('editCoursePage').classList.add('hidden');
+                                    }
+
+                                    //handle update and syl;labus
+                                    const editCourseId = "<%= editCourseId || '' %>";
+
+                                    if (editCourseId) {
+                                        const course = <%- JSON.stringify(courses) %>.find(
+                                            c => c._id === editCourseId
+                                        );
+
+                                        if (course) {
+                                            openEditCourse(course);
+                                        }
+                                    }
+
+                                    // handle delete
+                                    async function deleteCourse(courseId) {
+                                        const confirmDelete = confirm(
+                                            "Are you sure?\nThis will delete the course and ALL its lectures."
+                                        );
+
+                                        if (!confirmDelete) return;
+
+                                        try {
+                                            const res = await fetch(`/admin-course/courses/delete/${courseId}`, {
+                                                method: "DELETE",
+                                            });
+
+                                            const data = await res.json();
+
+                                            if (data.success) {
+                                                alert("Course deleted successfully");
+                                                location.reload();
+                                            } else {
+                                                alert("Failed to delete course");
+                                            }
+                                        } catch (error) {
+                                            console.error(error);
+                                            alert("Server error while deleting course");
+                                        }
+                                    }
 
 
-                // add category 
-                function showAddCategoryPage() {
-                    document.getElementById('courseManagementPage').classList.add('hidden');
-                    document.getElementById('addCoursePage').classList.add('hidden');
-                    document.getElementById('editCoursePage').classList.add('hidden');
-                    document.getElementById('addCategoryPage').classList.remove('hidden');
-                }
+                                    // add lectures
+                                    function openLectureManager(courseId, courseTitle) {
+                                        window.location.href = `/admin-course/courses/${courseId}/lectures`;
+                                    }
 
-                function cancelAddCategory() {
-                    document.getElementById('addCategoryPage').classList.add('hidden');
-                    document.getElementById('courseManagementPage').classList.remove('hidden');
-                }
-                async function publishLecture(id) {
-                    await fetch(`/api/course-content/publish/${id}`, {
-                        method: "PATCH",
-                    });
-                    location.reload();
-                }
 
-                async function unpublishLecture(id) {
-                    await fetch(`/api/course-content/unpublish/${id}`, {
-                        method: "PATCH",
-                    });
-                    location.reload();
-                }
+                                    // add category 
+                                    function showAddCategoryPage() {
+                                        document.getElementById('courseManagementPage').classList.add('hidden');
+                                        document.getElementById('addCoursePage').classList.add('hidden');
+                                        document.getElementById('editCoursePage').classList.add('hidden');
+                                        document.getElementById('addCategoryPage').classList.remove('hidden');
+                                    }
 
-                // Close dropdowns when clicking outside
-                document.addEventListener('click', function (event) {
-                    if (!event.target.closest('.relative')) {
-                        document.querySelectorAll('#notifMenu, #adminMenu').forEach(menu => {
-                            menu.classList.add('hidden');
-                        });
-                    }
-                });
-            </script>
-    </body>
+                                    function cancelAddCategory() {
+                                        document.getElementById('addCategoryPage').classList.add('hidden');
+                                        document.getElementById('courseManagementPage').classList.remove('hidden');
+                                    }
+                                    async function publishLecture(id) {
+                                        await fetch(`/admin-course/publish/${id}`, {
+                                            method: "PATCH",
+                                        });
+                                        location.reload();
+                                    }
+
+                                    async function unpublishLecture(id) {
+                                        await fetch(`/admin-course/unpublish/${id}`, {
+                                            method: "PATCH",
+                                        });
+                                        location.reload();
+                                    }
+
+                                    // Close dropdowns when clicking outside
+                                    document.addEventListener('click', function (event) {
+                                        if (!event.target.closest('.relative')) {
+                                            document.querySelectorAll('#notifMenu, #adminMenu').forEach(menu => {
+                                                menu.classList.add('hidden');
+                                            });
+                                        }
+                                    });
+                                </script>
+</body>
 
 </html>

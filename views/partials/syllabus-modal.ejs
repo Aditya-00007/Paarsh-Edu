@@ -1,7 +1,4 @@
-<div
-  id="syllabusModal"
-  class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50"
->
+<div id="syllabusModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
   <div class="bg-white w-[90vw] h-[85vh] rounded-lg shadow-lg flex flex-col">
 
     <!-- Header -->
@@ -12,7 +9,7 @@
 
     <!-- Body -->
     <div class="flex-1 overflow-auto p-6">
-      <form method="POST" action="/admin/syllabus/add" id="syllabusForm">
+      <form method="POST" action="/admin-course/syllabus/add" id="syllabusForm">
 
         <!-- Course ID (set from edit course) -->
         <input type="hidden" name="course" id="syllabusCourseId" />
@@ -20,11 +17,7 @@
         <!-- Modules container -->
         <div id="modulesContainer" class="space-y-4"></div>
 
-        <button
-          type="button"
-          onclick="addModule()"
-          class="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
-        >
+        <button type="button" onclick="addModule()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded">
           ➕ Add Module
         </button>
       </form>
@@ -32,18 +25,10 @@
 
     <!-- Footer -->
     <div class="px-6 py-4 border-t flex justify-end gap-3">
-      <button
-        type="button"
-        onclick="closeSyllabusModal()"
-        class="px-6 py-2 border rounded"
-      >
+      <button type="button" onclick="closeSyllabusModal()" class="px-6 py-2 border rounded">
         Cancel
       </button>
-      <button
-        type="submit"
-        form="syllabusForm"
-        class="px-6 py-2 bg-green-600 text-white rounded"
-      >
+      <button type="submit" form="syllabusForm" class="px-6 py-2 bg-green-600 text-white rounded">
         Save Syllabus
       </button>
     </div>
@@ -54,13 +39,63 @@
   let moduleIndex = 0;
   let activeModuleIndex = null;
 
-  function openSyllabusModal() {
+  async function openSyllabusModal(courseId) {
     document.getElementById("syllabusModal").classList.remove("hidden");
+    document.getElementById("syllabusCourseId").value = courseId;
+
+    // reset previous UI
+    document.getElementById("modulesContainer").innerHTML = "";
+    moduleIndex = 0;
+    activeModuleIndex = null;
+
+    try {
+      const res = await fetch(`/admin-course/syllabus/${courseId}`);
+      const syllabus = await res.json();
+
+      if (syllabus && syllabus.modules?.length) {
+        loadExistingSyllabus(syllabus.modules);
+      }
+    } catch (err) {
+      console.error("Failed to load syllabus", err);
+    }
   }
+
 
   function closeSyllabusModal() {
     document.getElementById("syllabusModal").classList.add("hidden");
   }
+
+  //load syllabus 
+  function loadExistingSyllabus(modules) {
+    modules.forEach((module, mIdx) => {
+      addModule();
+
+      document.querySelector(
+        `input[name="modules[${mIdx}][moduleTitle]"]`
+      ).value = module.moduleTitle;
+
+      document.querySelector(
+        `input[name="modules[${mIdx}][moduleOrder]"]`
+      ).value = module.moduleOrder;
+
+      module.items.forEach((item, iIdx) => {
+        addItem(mIdx);
+
+        document.querySelector(
+          `select[name="modules[${mIdx}][items][${iIdx}][itemType]"]`
+        ).value = item.itemType;
+
+        document.querySelector(
+          `input[name="modules[${mIdx}][items][${iIdx}][title]"]`
+        ).value = item.title;
+
+        document.querySelector(
+          `input[name="modules[${mIdx}][items][${iIdx}][order]"]`
+        ).value = item.order;
+      });
+    });
+  }
+
 
   function addModule() {
     const container = document.getElementById("modulesContainer");
@@ -79,25 +114,47 @@
 
     moduleDiv.innerHTML = `
       <!-- Module Header -->
-      <div
-        onclick="openModule(${currentIndex})"
-        class="flex justify-between items-center px-4 py-3 bg-gray-100 cursor-pointer"
-      >
-        <input
-          type="text"
-          name="modules[${currentIndex}][moduleTitle]"
-          placeholder="Module title"
-          class="bg-transparent font-semibold outline-none w-1/2"
-          required
-        />
+<div
+  class="flex justify-between items-center px-4 py-3 bg-gray-100"
+>
+  <div class="flex items-center gap-3 w-1/2">
+    <button
+      type="button"
+      onclick="toggleModule(${currentIndex})"
+      class="text-gray-600 text-lg"
+      title="Collapse / Expand"
+    >
+      ⬇
+    </button>
 
-        <input
-          type="number"
-          name="modules[${currentIndex}][moduleOrder]"
-          value="${currentIndex + 1}"
-          class="w-20 border px-2 py-1 rounded"
-        />
-      </div>
+    <input
+      type="text"
+      name="modules[${currentIndex}][moduleTitle]"
+      placeholder="Module title"
+      class="bg-transparent font-semibold outline-none w-full"
+      required
+    />
+  </div>
+
+  <div class="flex items-center gap-2">
+    <input
+      type="number"
+      name="modules[${currentIndex}][moduleOrder]"
+      value="${currentIndex + 1}"
+      class="w-20 border px-2 py-1 rounded"
+    />
+
+    <button
+      type="button"
+      onclick="deleteModule(${currentIndex}, this)"
+      class="text-red-600 text-sm"
+      title="Delete Module"
+    >
+      🗑
+    </button>
+  </div>
+</div>
+
 
       <!-- Module Body -->
       <div id="module-body-${currentIndex}" class="p-4">
@@ -116,7 +173,14 @@
     container.appendChild(moduleDiv);
     moduleIndex++;
   }
+  //collapse module
+  function toggleModule(index) {
+    const body = document.getElementById(`module-body-${index}`);
+    if (!body) return;
 
+    body.classList.toggle("hidden");
+  }
+  // delete module
   function openModule(index) {
     document.querySelectorAll("[id^='module-body-']").forEach(el => {
       el.classList.add("hidden");

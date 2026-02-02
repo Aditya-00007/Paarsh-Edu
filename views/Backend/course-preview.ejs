@@ -23,31 +23,90 @@
           <div class="bg-white rounded-xl shadow-sm mb-8">
 
             <!-- Header -->
-            <div class="px-6 py-4 border-b">
-              <h3 class="text-lg font-bold">Course Syllabus</h3>
+            <div class="px-6 py-4 border-b space-y-2">
+
+              <!-- Top row: Back + Title -->
+              <div class="flex items-center justify-between">
+
+                <h3 class="text-lg font-bold">Course Syllabus</h3>
+
+                <button onclick="goBackToCourseManagement()" class="px-3 py-1.5 border border-gray-300 rounded-md text-sm
+           text-gray-700 hover:bg-gray-100 transition">
+                  ← Back
+                </button>
+
+              </div>
+
+              <!-- Subtitle -->
               <p class="text-sm text-gray-500">
                 Module-wise structure with topics, assignments and tests
               </p>
-              <a href="<%= course.syllabusFile %>?dl=1" download
-                class="inline-flex items-center gap-2 px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                📄 Download Syllabus (PDF)
-              </a>
+
+              <!-- Action -->
+              <button class="mt-2 px-4 py-2 bg-green-600 text-white rounded" onclick="openAddModuleForm()">
+                + Add Module
+              </button>
 
             </div>
+
 
             <!-- Syllabus Content -->
             <div class="p-6 space-y-6">
               <% syllabus.forEach(module=> { %>
 
                 <!-- MODULE -->
-                <div class="border rounded-lg overflow-hidden">
+                <div class="border rounded-lg overflow-visible">
 
-                  <div class="px-4 py-3 bg-gray-100 font-semibold">
-                    📦 <%= module.moduleTitle %>
+                  <div class="px-4 py-3 bg-gray-100 flex items-center justify-between">
+                    <div class="font-semibold">
+                      <button class="text-sm" onclick="toggleModule('<%= module._id %>')"
+                        id="toggle-icon-<%= module._id %>">
+                        ⬇️
+                      </button>
+                      📦 <%= module.moduleTitle %>
+                    </div>
+
+                    <div class="relative">
+                      <button class="text-xs px-3 py-1 bg-green-600 text-white rounded"
+                        onclick="toggleAddItemMenu('<%= module._id %>')">
+                        + Add Item ▾
+                      </button>
+                      <button class="text-xs px-3 py-1 bg-red-600 text-white rounded"
+                        onclick="deleteModule('<%= module._id %>')">
+                        🗑 Delete Module
+                      </button>
+
+                      <div id="addItemMenu-<%= module._id %>"
+                        class="hidden absolute right-0 mt-2 w-40 bg-white border rounded shadow z-50">
+                        <div class="flex justify-end px-2 pt-1">
+                          <button class="text-gray-500 hover:text-red-600 text-sm"
+                            onclick="toggleAddItemMenu('<%= module._id %>')">
+                            ✕
+                          </button>
+                        </div>
+                        <button class="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                          onclick="openAddItemForm('<%= module._id %>', 'topic')">
+                          📘 Topic
+                        </button>
+
+                        <button class="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                          onclick="openAddItemForm('<%= module._id %>', 'assignment')">
+                          📝 Assignment
+                        </button>
+
+                        <button class="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                          onclick="openAddItemForm('<%= module._id %>', 'test')">
+                          🧪 Test
+                        </button>
+                      </div>
+                    </div>
+
                   </div>
 
-                  <div class="p-4 space-y-3">
-                    <% module.items.forEach(item=> { %>
+
+                  <div id="module-body-<%= module._id %>" class="p-4 space-y-3 transition-all duration-300 hidden">
+                    <% module.items .sort((a, b)=> a.order - b.order)
+                      .forEach(item => { %>
 
                       <!-- ITEM -->
                       <div class="pl-3 border-l-4
@@ -76,26 +135,39 @@
                           <!-- Action Buttons -->
                           <div class="flex gap-2">
 
+                            <!-- COMMON ADD ACTIONS -->
                             <% if (item.itemType==='topic' ) { %>
-                              <button class="text-xs px-3 py-1 bg-blue-600 text-white rounded"
+                              <button class="text-xs px-2 py-1 bg-blue-600 text-white rounded"
                                 onclick="openLectureForm('<%= item._id %>', '<%= item.title %>')">
-                                + Add Lecture
+                                + Lecture
                               </button>
                               <% } %>
 
                                 <% if (item.itemType==='assignment' ) { %>
                                   <button class="text-xs px-3 py-1 bg-yellow-600 text-white rounded"
                                     onclick="openAssignmentForm('<%= item._id %>', '<%= item.title %>')">
-                                    + Add Assignment
+                                    + Assignment
                                   </button>
                                   <% } %>
 
                                     <% if (item.itemType==='test' ) { %>
                                       <button class="text-xs px-3 py-1 bg-purple-600 text-white rounded"
                                         onclick="openTestForm('<%= item._id %>', '<%= item.title %>')">
-                                        + Add Test
+                                        + Test
                                       </button>
                                       <% } %>
+
+                                        <!-- COMMON EDIT -->
+                                        <button class="text-xs px-2 py-1 bg-yellow-500 text-white rounded"
+                                          onclick="openEditItemForm('<%= item._id %>', '<%= item.itemType %>', '<%= item.title %>')">
+                                          ✏ Edit
+                                        </button>
+
+                                        <!-- COMMON DELETE -->
+                                        <button class="text-xs px-2 py-1 bg-red-600 text-white rounded"
+                                          onclick="deleteItem('<%= item._id %>', '<%= item.itemType %>')">
+                                          🗑 Delete
+                                        </button>
 
                           </div>
                         </div>
@@ -143,7 +215,7 @@
                                         <% itemAssignments.forEach(a=> { %>
                                           <li>
                                             <button type="button" class="text-blue-600 hover:underline assignment-btn"
-                                              data-title="<%- a.title %>"
+                                              data-id="<%= a._id %>" data-title="<%- a.title %>"
                                               data-description="<%= encodeURIComponent(a.description || '') %>"
                                               data-file="<%= a.attachment || '' %>" data-marks="<%= a.maxMarks %>">
                                               📄 <%= a.title %>
@@ -174,7 +246,8 @@
                                             <% itemTests.forEach(t=> { %>
                                               <li>
                                                 <button type="button" class="text-blue-600 hover:underline test-btn"
-                                                  data-title="<%= t.title %>" data-duration="<%= t.durationMinutes %>"
+                                                  data-id="<%= t._id %>" data-title="<%= t.title %>"
+                                                  data-duration="<%= t.durationMinutes %>"
                                                   data-questions="<%= encodeURIComponent(JSON.stringify(t.questions)) %>">
                                                   📝 <%= t.title %>
                                                 </button>
@@ -206,491 +279,30 @@
           </div>
         </div>
     </div>
+    <!-- Syallbus actions like add lec,assignment,test -->
+    <%- include('../partials/Course-Actions.ejs') %>
 
-    <!-- Addlecture -->
-    <!-- ================= ADD LECTURE MODAL ================= -->
-    <div id="addLectureModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+      <script>
+        function toggleModule(moduleId) {
+          const body = document.getElementById("module-body-" + moduleId);
+          const icon = document.getElementById("toggle-icon-" + moduleId);
 
-      <div class="bg-white w-full max-w-lg rounded-xl shadow-lg p-6">
-
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-lg font-bold">Add Lecture</h3>
-          <button onclick="closeLectureForm()" class="text-gray-500 text-xl">×</button>
-        </div>
-
-        <form method="POST" action="/api/course-content/add-lecture" class="space-y-4" enctype="multipart/form-data">
-
-          <!-- Hidden bindings -->
-          <input type="hidden" name="course" value="<%= course._id %>">
-          <input type="hidden" name="syllabusItemId" id="syllabusItemId">
-
-          <!-- Topic (auto-filled) -->
-          <div>
-            <label class="block text-sm font-medium mb-1">Topic</label>
-            <input type="text" id="topicTitle" class="w-full px-4 py-2 border rounded-lg bg-gray-100" readonly>
-          </div>
-
-          <!-- Lecture Title -->
-          <div>
-            <label class="block text-sm font-medium mb-1">Lecture Title *</label>
-            <input type="text" name="lectureTitle" required class="w-full px-4 py-2 border rounded-lg"
-              placeholder="Introduction to Variables">
-          </div>
-
-          <!-- Lecture Type -->
-          <div>
-            <label class="block text-sm font-medium mb-1">Lecture Type *</label>
-            <select name="lectureType" required class="w-full px-4 py-2 border rounded-lg"
-              onchange="toggleLectureType(this.value)">
-              <option value="">Select</option>
-              <option value="video">Recorded Video</option>
-              <option value="live">Live Class</option>
-            </select>
-          </div>
-
-          <!-- Video Upload -->
-          <div id="videoField" class="hidden space-y-2">
-
-            <div>
-              <label class="block text-sm font-medium mb-1">Upload Video</label>
-              <input type="file" name="video" accept="video/*" class="w-full px-4 py-2 border rounded-lg" />
-            </div>
-
-            <div class="text-center text-xs text-gray-400">OR</div>
-
-            <div>
-              <label class="block text-sm font-medium mb-1">YouTube URL</label>
-              <input type="text" name="youtubeUrl" class="w-full px-4 py-2 border rounded-lg"
-                placeholder="https://youtu.be/xxxxx" />
-            </div>
-            <div class="flex items-center gap-2">
-              <input type="checkbox" name="isPreview" id="isPreview" class="w-4 h-4" />
-              <label for="isPreview" class="text-sm text-gray-700">
-                Mark as Demo / Free Preview Lecture
-              </label>
-            </div>
-          </div>
-
-          <!-- Live Class -->
-          <div id="liveField" class="hidden space-y-3">
-            <div>
-              <label class="block text-sm font-medium mb-1">Meeting Link</label>
-              <input type="text" name="liveClass[meetingLink]" class="w-full px-4 py-2 border rounded-lg">
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium mb-1">Schedule</label>
-              <input type="datetime-local" name="liveClass[scheduledAt]" class="w-full px-4 py-2 border rounded-lg">
-            </div>
-          </div>
-
-          <!-- Actions -->
-          <div class="flex justify-end gap-3 pt-4 border-t">
-            <button type="button" onclick="closeLectureForm()" class="px-4 py-2 border rounded-lg">
-              Cancel
-            </button>
-
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg">
-              Save Lecture
-            </button>
-          </div>
-
-        </form>
-      </div>
-    </div>
-    <!-- ================= ADD ASSIGNMENT MODAL ================= -->
-    <div id="addAssignmentModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
-
-      <div class="bg-white w-full max-w-lg rounded-xl shadow-lg p-6">
-
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-lg font-bold">Add Assignment</h3>
-          <button onclick="closeAssignmentForm()" class="text-gray-500 text-xl">×</button>
-        </div>
-
-        <form method="POST" action="/api/course-content/add-assignment" class="space-y-4">
-
-          <!-- Hidden bindings -->
-          <input type="hidden" name="course" value="<%= course._id %>">
-          <input type="hidden" name="syllabusItemId" id="assignmentSyllabusItemId">
-
-          <!-- Assignment Title -->
-          <div>
-            <label class="block text-sm font-medium mb-1">Assignment Title *</label>
-            <input type="text" name="title" required class="w-full px-4 py-2 border rounded-lg"
-              placeholder="Create Spotify Clone">
-          </div>
-
-          <!-- Task / Description -->
-          <div>
-            <label class="block text-sm font-medium mb-1">Task Description *</label>
-            <textarea name="description" required rows="4" class="w-full px-4 py-2 border rounded-lg"
-              placeholder="Build UI and basic functionality..."></textarea>
-          </div>
-
-          <!-- Instructions -->
-          <div>
-            <label class="block text-sm font-medium mb-1">Instructions (Optional)</label>
-            <textarea name="instructions" rows="3" class="w-full px-4 py-2 border rounded-lg"
-              placeholder="Submit a YouTube video explaining your solution"></textarea>
-          </div>
-
-          <!-- Max Marks -->
-          <div>
-            <label class="block text-sm font-medium mb-1">Max Marks</label>
-            <input type="number" name="maxMarks" value="10" class="w-full px-4 py-2 border rounded-lg">
-          </div>
-
-          <!-- Actions -->
-          <div class="flex justify-end gap-3 pt-4 border-t">
-            <button type="button" onclick="closeAssignmentForm()" class="px-4 py-2 border rounded-lg">
-              Cancel
-            </button>
-
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg">
-              Save Assignment
-            </button>
-          </div>
-
-        </form>
-      </div>
-    </div>
-    <!-- ================= ADD TEST MODAL ================= -->
-    <div id="addTestModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
-
-      <div class="bg-white w-full max-w-2xl rounded-xl shadow-lg p-6 overflow-y-auto max-h-[90vh]">
-
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-lg font-bold">Add Test (MCQ)</h3>
-          <button onclick="closeTestForm()" class="text-gray-500 text-xl">×</button>
-        </div>
-
-        <form method="POST" action="/api/course-content/add-test" class="space-y-4">
-
-          <!-- Hidden bindings -->
-          <input type="hidden" name="course" value="<%= course._id %>">
-          <input type="hidden" name="syllabusItemId" id="testSyllabusItemId">
-
-          <!-- Test Title -->
-          <div>
-            <label class="block text-sm font-medium mb-1">Test Title *</label>
-            <input type="text" name="title" required class="w-full px-4 py-2 border rounded-lg"
-              placeholder="Java Basics Quiz">
-          </div>
-
-          <!-- Duration -->
-          <div>
-            <label class="block text-sm font-medium mb-1">Duration (minutes)</label>
-            <input type="number" name="durationMinutes" value="30" class="w-full px-4 py-2 border rounded-lg">
-          </div>
-
-          <!-- QUESTIONS -->
-          <div id="questionsContainer" class="space-y-6"></div>
-
-          <!-- Add Question -->
-          <button type="button" onclick="addQuestion()" class="px-4 py-2 bg-purple-600 text-white rounded">
-            + Add Question
-          </button>
-
-          <!-- Actions -->
-          <div class="flex justify-end gap-3 pt-4 border-t">
-            <button type="button" onclick="closeTestForm()" class="px-4 py-2 border rounded-lg">
-              Cancel
-            </button>
-
-            <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-lg">
-              Save Test
-            </button>
-          </div>
-
-        </form>
-      </div>
-    </div>
-    <!-- play lecture  -->
-    <div id="lecturePlayer" class="mt-4 hidden">
-      <h3 id="playerTitle" class="font-semibold mb-2"></h3>
-
-      <!-- YouTube -->
-      <iframe id="youtubePlayer" class="w-full h-[360px] rounded-lg hidden" allowfullscreen>
-      </iframe>
-
-      <!-- Cloudinary / MP4 -->
-      <video id="videoPlayer" class="w-full rounded-lg hidden" controls preload="metadata">
-      </video>
-    </div>
-    <!-- assignment preview -->
-    <div id="assignmentPreviewModal"
-      class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-      <div class="bg-white w-[80vw] max-w-3xl rounded-lg shadow-lg flex flex-col">
-
-        <!-- Header -->
-        <div class="px-6 py-4 border-b flex justify-between items-center">
-          <h2 id="assignmentTitle" class="text-xl font-semibold"></h2>
-          <button onclick="closeAssignmentModal()" class="text-2xl text-gray-500">&times;</button>
-        </div>
-
-        <!-- Body -->
-        <div class="p-6 space-y-4 text-sm overflow-y-auto flex-1">
-          <p class="text-gray-700">
-            <strong>Description:</strong>
-          </p>
-          <p id="assignmentDescription" class="text-gray-600  whitespace-pre-wrap"></p>
-
-          <p id="assignmentMarks" class="text-gray-500"></p>
-
-          <a id="assignmentFile" href="#" target="_blank" class="text-blue-600 underline hidden">
-            ⬇ Download Attachment
-          </a>
-        </div>
-
-        <!-- Footer -->
-        <div class="px-6 py-4 border-t text-right">
-          <button onclick="closeAssignmentModal()" class="px-6 py-2 bg-gray-200 rounded">
-            Close
-          </button>
-        </div>
-
-      </div>
-    </div>
-    <!-- //test preveiw -->
-    <!-- Test Preview Modal -->
-    <div id="testPreviewModal"
-      class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-      <div class="bg-white w-[85vw] max-w-4xl h-[85vh] rounded-lg shadow-lg flex flex-col">
-
-        <!-- Header -->
-        <div class="px-6 py-4 border-b flex justify-between items-center">
-          <h2 id="testTitle" class="text-xl font-semibold"></h2>
-          <button onclick="closeTestModal()" class="text-2xl text-gray-500">&times;</button>
-        </div>
-
-        <!-- Body -->
-        <div class="p-6 overflow-y-auto flex-1 space-y-6 text-sm">
-          <p id="testMeta" class="text-gray-500"></p>
-
-          <div id="testQuestions" class="space-y-4"></div>
-        </div>
-
-        <!-- Footer -->
-        <div class="px-6 py-4 border-t text-right">
-          <button onclick="closeTestModal()" class="px-6 py-2 bg-gray-200 rounded">
-            Close
-          </button>
-        </div>
-
-      </div>
-    </div>
-
-    <script>
-      // previe test
-      document.addEventListener("click", function (e) {
-        if (!e.target.classList.contains("test-btn")) return;
-
-        const title = e.target.dataset.title;
-        const duration = e.target.dataset.duration;
-        const questions = JSON.parse(
-          decodeURIComponent(e.target.dataset.questions || "[]")
-        );
-
-        document.getElementById("testTitle").innerText = title;
-        document.getElementById("testMeta").innerText =
-          `${questions.length} Questions · ${duration} Minutes`;
-
-        const container = document.getElementById("testQuestions");
-        container.innerHTML = "";
-
-        questions.forEach((q, idx) => {
-          const div = document.createElement("div");
-          div.className = "border rounded p-4";
-
-          div.innerHTML = `
-        <p class="font-medium mb-2">
-          Q${idx + 1}. ${q.question}
-        </p>
-        <ul class="ml-4 space-y-1">
-          ${q.options
-              .map(
-                (opt, i) => `
-            <li class="${i === q.correctAnswer
-                    ? "text-green-600 font-semibold"
-                    : "text-gray-700"
-                  }">
-             ${String.fromCharCode(65 + i)}. ${escapeHTML(opt)}
-            </li>
-          `
-              )
-              .join("")}
-        </ul>
-      `;
-
-          container.appendChild(div);
-        });
-
-        document.getElementById("testPreviewModal").classList.remove("hidden");
-      });
-      function escapeHTML(str = "") {
-    return str
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
-      function closeTestModal() {
-        document.getElementById("testPreviewModal").classList.add("hidden");
-      }
-      //preview assignment
-      document.addEventListener("click", function (e) {
-        if (!e.target.classList.contains("assignment-btn")) return;
-
-        const title = e.target.dataset.title;
-        const description = decodeURIComponent(e.target.dataset.description || "");
-        const file = e.target.dataset.file;
-        const marks = e.target.dataset.marks;
-
-        document.getElementById("assignmentTitle").innerText = title;
-        document.getElementById("assignmentDescription").innerText = description;
-        document.getElementById("assignmentMarks").innerText =
-          `Maximum Marks: ${marks}`;
-
-        const fileLink = document.getElementById("assignmentFile");
-        if (file) {
-          fileLink.href = file + "?dl=1";
-          fileLink.classList.remove("hidden");
-        } else {
-          fileLink.classList.add("hidden");
+          if (body.classList.contains("hidden")) {
+            body.classList.remove("hidden");
+            icon.innerText = "⬇️";
+          } else {
+            body.classList.add("hidden");
+            icon.innerText = "⬆️";
+          }
         }
-
-        document
-          .getElementById("assignmentPreviewModal")
-          .classList.remove("hidden");
-      });
-
-      function closeAssignmentModal() {
-        document
-          .getElementById("assignmentPreviewModal")
-          .classList.add("hidden");
-      }
-      //play lecture
-      document.addEventListener("click", function (e) {
-        if (!e.target.classList.contains("lecture-btn")) return;
-
-        const videoUrl = e.target.dataset.video;
-
-        // Open video in new tab
-        window.open(videoUrl, "_blank", "noopener,noreferrer");
-      });
-      //test
-      let questionCount = 0;
-
-      function openTestForm(itemId, title) {
-        document.getElementById("testSyllabusItemId").value = itemId;
-
-        document.getElementById("questionsContainer").innerHTML = "";
-        questionCount = 0;
-        addQuestion();
-
-        document.getElementById("addTestModal").classList.remove("hidden");
-        document.getElementById("addTestModal").classList.add("flex");
-      }
-
-      function closeTestForm() {
-        document.getElementById("addTestModal").classList.add("hidden");
-        document.getElementById("addTestModal").classList.remove("flex");
-      }
-
-      function addQuestion() {
-        const index = questionCount++;
-
-        const questionHtml = `
-      <div class="border rounded-lg p-4 space-y-3">
-        <h4 class="font-semibold">Question ${index + 1}</h4>
-
-        <input
-          type="text"
-          name="questions[${index}][question]"
-          required
-          class="w-full px-4 py-2 border rounded-lg"
-          placeholder="Enter question">
-
-        <div class="grid grid-cols-2 gap-3">
-          ${[0, 1, 2, 3].map(i => `
-            <input
-              type="text"
-              name="questions[${index}][options][${i}]"
-              required
-              class="px-3 py-2 border rounded-lg"
-              placeholder="Option ${i + 1}">
-          `).join("")}
-        </div>
-
-        <div class="flex gap-4 items-center">
-          <div>
-            <label class="text-sm">Correct Option</label>
-            <select
-              name="questions[${index}][correctOptionIndex]"
-              class="px-3 py-2 border rounded-lg">
-              <option value="0">Option 1</option>
-              <option value="1">Option 2</option>
-              <option value="2">Option 3</option>
-              <option value="3">Option 4</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="text-sm">Marks</label>
-            <input
-              type="number"
-              name="questions[${index}][marks]"
-              value="1"
-              class="px-3 py-2 border rounded-lg w-24">
-          </div>
-        </div>
-      </div>
-    `;
-
-        document
-          .getElementById("questionsContainer")
-          .insertAdjacentHTML("beforeend", questionHtml);
-      }
-      function openAssignmentForm(itemId, title) {
-        document.getElementById("assignmentSyllabusItemId").value = itemId;
-
-        document.getElementById("addAssignmentModal").classList.remove("hidden");
-        document.getElementById("addAssignmentModal").classList.add("flex");
-      }
-
-      function closeAssignmentForm() {
-        document.getElementById("addAssignmentModal").classList.add("hidden");
-        document.getElementById("addAssignmentModal").classList.remove("flex");
-      }
-      function openLectureForm(topicId, topicTitle) {
-        document.getElementById("syllabusItemId").value = topicId;
-        document.getElementById("topicTitle").value = topicTitle;
-
-        document.getElementById("addLectureModal").classList.remove("hidden");
-        document.getElementById("addLectureModal").classList.add("flex");
-      }
-
-      function closeLectureForm() {
-        document.getElementById("addLectureModal").classList.add("hidden");
-        document.getElementById("addLectureModal").classList.remove("flex");
-      }
-
-      function toggleLectureType(type) {
-        document.getElementById("videoField").classList.add("hidden");
-        document.getElementById("liveField").classList.add("hidden");
-
-        if (type === "video") {
-          document.getElementById("videoField").classList.remove("hidden");
+        function toggleAddItemMenu(moduleId) {
+          const menu = document.getElementById("addItemMenu-" + moduleId);
+          menu.classList.toggle("hidden");
         }
-
-        if (type === "live") {
-          document.getElementById("liveField").classList.remove("hidden");
+        function goBackToCourseManagement() {
+          window.location.href = "/course-management";
         }
-      }
-
-    </script>
+      </script>
 </body>
 
 </html>

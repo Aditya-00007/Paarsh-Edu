@@ -1,4 +1,4 @@
-<!-- ================= EDIT COURSE PAGE ================= -->
+<!--  EDIT COURSE PAGE  -->
 <main class="flex-1 p-6 hidden" id="editCoursePage">
     <div class="bg-white rounded-xl shadow-sm p-6">
         <div class="flex items-center justify-between mb-6">
@@ -82,9 +82,9 @@
                         <option value="inactive">Inactive</option>
                     </select>
                 </div>
-                <button type="button" onclick="openSyllabusModal()"
+                <button type="button" onclick="openSyllabusForCurrentCourse()"
                     class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                    ➕ Add Syllabus
+                    ➕ Add / Edit Syllabus
                 </button>
 
 
@@ -114,17 +114,17 @@
 
         // Set form action
         const form = document.getElementById('editCourseForm');
-        form.action = `/admin/courses/update/${course._id}`;
+        form.action = `/admin-course/courses/update/${course._id}`;
         form.method = "POST";
 
-        // ================= BASIC COURSE FIELDS =================
+        //  BASIC COURSE FIELDS 
         document.getElementById('editCourseName').value = course.title || "";
         document.getElementById('editCourseFee').value = course.fee || "";
         document.getElementById('editCourseDuration').value = course.duration || "";
         document.getElementById('editCourseIntake').value = course.intakeLimit || 10;
         document.getElementById('editCourseStatus').value = course.status || "inactive";
 
-        // ================= INSTRUCTOR FIELDS (FIX) =================
+        //  INSTRUCTOR FIELDS (FIX) 
         const instructor = course.instructor || {};
 
         document.querySelector('input[name="instructor[name]"]').value =
@@ -142,4 +142,15 @@
         document.getElementById('courseManagementPage').classList.remove('hidden');
         document.getElementById('addCoursePage').classList.add('hidden');
     }
+
+    //open syllabus modal
+    function openSyllabusForCurrentCourse() {
+        const courseId = document.getElementById("syllabusCourseId").value;
+        if (!courseId) {
+            alert("Course ID missing");
+            return;
+        }
+        openSyllabusModal(courseId);
+    }
+
 </script>

@@ -1,35 +1,60 @@
+<!-- TOP STATS -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
 
+  <!-- Total Courses -->
+  <div class="bg-white rounded-xl shadow-sm p-4 hover:-translate-y-1 hover:shadow-md transition-all">
+    <div class="flex items-center justify-between">
+      <h6 class="text-gray-600 text-sm">Total Courses</h6>
+      <span class="text-blue-500 text-lg">📚</span>
+    </div>
+    <div class="text-3xl font-bold mt-2">
+      <%= courses.length %>
+    </div>
+    <div class="text-xs text-gray-400 mt-1">
+      All courses created
+    </div>
+  </div>
 
- <!-- ================= STATS ================= -->
-                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                                <div
-                                    class="bg-white rounded-xl shadow-sm p-4 hover:-translate-y-1 hover:shadow-md transition-all">
-                                    <h6 class="text-gray-600 text-sm">Total Courses</h6>
-                                    <div class="text-3xl font-bold mt-2">
-                                        <%= courses.length %>
-                                    </div>
-                                    <div class="text-xs text-green-600 mt-1">↑ 2 new this month</div>
-                                </div>
-                                <div
-                                    class="bg-white rounded-xl shadow-sm p-4 hover:-translate-y-1 hover:shadow-md transition-all">
-                                    <h6 class="text-gray-600 text-sm">Active Courses</h6>
-                                    <div class="text-3xl font-bold mt-2">
-                                        <%= courses.filter( course=> course.status === "active"
-                                            ).length;
-                                            %>
-                                    </div>
-                                    <div class="text-xs text-green-600 mt-1">↑ 66% active rate</div>
-                                </div>
-                                <div
-                                    class="bg-white rounded-xl shadow-sm p-4 hover:-translate-y-1 hover:shadow-md transition-all">
-                                    <h6 class="text-gray-600 text-sm">Total Enrollments</h6>
-                                    <div class="text-3xl font-bold mt-2">87</div>
-                                    <div class="text-xs text-green-600 mt-1">↑ 12% from last month</div>
-                                </div>
-                                <div
-                                    class="bg-white rounded-xl shadow-sm p-4 hover:-translate-y-1 hover:shadow-md transition-all">
-                                    <h6 class="text-gray-600 text-sm">Revenue This Month</h6>
-                                    <div class="text-3xl font-bold mt-2">₹1.2L</div>
-                                    <div class="text-xs text-green-600 mt-1">↑ 18% growth</div>
-                                </div>
-                            </div>
+  <!-- Active Courses -->
+  <div class="bg-white rounded-xl shadow-sm p-4 hover:-translate-y-1 hover:shadow-md transition-all">
+    <div class="flex items-center justify-between">
+      <h6 class="text-gray-600 text-sm">Active Courses</h6>
+      <span class="text-green-500 text-lg">✅</span>
+    </div>
+    <div class="text-3xl font-bold mt-2">
+      <%= courses.filter(course=> course.status === "active").length %>
+    </div>
+    <div class="text-xs text-gray-400 mt-1">
+      Currently published
+    </div>
+  </div>
+
+  <!-- Draft Courses -->
+  <div class="bg-white rounded-xl shadow-sm p-4 hover:-translate-y-1 hover:shadow-md transition-all">
+    <div class="flex items-center justify-between">
+      <h6 class="text-gray-600 text-sm">Draft Courses</h6>
+      <span class="text-yellow-500 text-lg">📝</span>
+    </div>
+    <div class="text-3xl font-bold mt-2">
+      <%= courses.filter(course=> course.status !== "active").length %>
+    </div>
+    <div class="text-xs text-gray-400 mt-1">
+      Not yet published
+    </div>
+  </div>
+
+  <!-- Completion Ready -->
+  <div class="bg-white rounded-xl shadow-sm p-4 hover:-translate-y-1 hover:shadow-md transition-all">
+    <div class="flex items-center justify-between">
+      <h6 class="text-gray-600 text-sm">Completion Ready</h6>
+      <span class="text-purple-500 text-lg">🎯</span>
+    </div>
+    <div class="text-3xl font-bold mt-2">
+      <%= completedCourses %>
+    </div>
+    <div class="text-xs text-gray-400 mt-1">
+      Fully structured courses
+    </div>
+  </div>
+
+</div>

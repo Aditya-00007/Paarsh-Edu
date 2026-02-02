@@ -1,0 +1,453 @@
+<!-- Addlecture -->
+<div id="addLectureModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+  <div class="bg-white w-full max-w-lg rounded-xl shadow-lg p-6">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-bold">Add Lecture</h3>
+      <button onclick="closeLectureForm()" class="text-gray-500 text-xl">
+        ×
+      </button>
+    </div>
+
+    <form method="POST" action="/admin-course/add-lecture" class="space-y-4" enctype="multipart/form-data">
+      <!-- Hidden bindings -->
+      <input type="hidden" name="course" value="<%= course._id %>" />
+      <input type="hidden" name="syllabusItemId" id="syllabusItemId" />
+
+      <!-- Topic (auto-filled) -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Topic</label>
+        <input type="text" id="topicTitle" class="w-full px-4 py-2 border rounded-lg bg-gray-100" readonly />
+      </div>
+
+      <!-- Lecture Title -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Lecture Title *</label>
+        <input type="text" name="lectureTitle" required class="w-full px-4 py-2 border rounded-lg"
+          placeholder="Introduction to Variables" />
+      </div>
+
+      <!-- Lecture Type -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Lecture Type *</label>
+        <select name="lectureType" required class="w-full px-4 py-2 border rounded-lg"
+          onchange="toggleLectureType(this.value)">
+          <option value="">Select</option>
+          <option value="video">Recorded Video</option>
+          <option value="live">Live Class</option>
+        </select>
+      </div>
+
+      <!-- Video Upload -->
+      <div id="videoField" class="hidden space-y-2">
+        <div>
+          <label class="block text-sm font-medium mb-1">Upload Video</label>
+          <input type="file" name="video" accept="video/*" class="w-full px-4 py-2 border rounded-lg" />
+        </div>
+
+        <div class="text-center text-xs text-gray-400">OR</div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">YouTube URL</label>
+          <input type="text" name="youtubeUrl" class="w-full px-4 py-2 border rounded-lg"
+            placeholder="https://youtu.be/xxxxx" />
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" name="isPreview" id="isPreview" class="w-4 h-4" />
+          <label for="isPreview" class="text-sm text-gray-700">
+            Mark as Demo / Free Preview Lecture
+          </label>
+        </div>
+      </div>
+
+      <!-- Live Class -->
+      <div id="liveField" class="hidden space-y-3">
+        <div>
+          <label class="block text-sm font-medium mb-1">Meeting Link</label>
+          <input type="text" name="liveClass[meetingLink]" class="w-full px-4 py-2 border rounded-lg" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Schedule</label>
+          <input type="datetime-local" name="liveClass[scheduledAt]" class="w-full px-4 py-2 border rounded-lg" />
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex justify-end gap-3 pt-4 border-t">
+        <button type="button" onclick="closeLectureForm()" class="px-4 py-2 border rounded-lg">
+          Cancel
+        </button>
+
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg">
+          Save Lecture
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- ADD ASSIGNMENT MODAL -->
+<div id="addAssignmentModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+  <div class="bg-white w-full max-w-lg rounded-xl shadow-lg p-6">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-bold">Add Assignment</h3>
+      <button onclick="closeAssignmentForm()" class="text-gray-500 text-xl">
+        ×
+      </button>
+    </div>
+
+    <form method="POST" action="/admin-course/add-assignment" class="space-y-4">
+      <!-- Hidden bindings -->
+      <input type="hidden" name="course" value="<%= course._id %>" />
+      <input type="hidden" name="syllabusItemId" id="assignmentSyllabusItemId" />
+
+      <!-- Assignment Title -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Assignment Title *</label>
+        <input type="text" name="title" required class="w-full px-4 py-2 border rounded-lg"
+          placeholder="Create Spotify Clone" />
+      </div>
+
+      <!-- Task / Description -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Task Description *</label>
+        <textarea name="description" required rows="4" class="w-full px-4 py-2 border rounded-lg"
+          placeholder="Build UI and basic functionality..."></textarea>
+      </div>
+
+      <!-- Instructions -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Instructions (Optional)</label>
+        <textarea name="instructions" rows="3" class="w-full px-4 py-2 border rounded-lg"
+          placeholder="Submit a YouTube video explaining your solution"></textarea>
+      </div>
+
+      <!-- Max Marks -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Max Marks</label>
+        <input type="number" name="maxMarks" value="10" class="w-full px-4 py-2 border rounded-lg" />
+      </div>
+
+      <!-- Actions -->
+      <div class="flex justify-end gap-3 pt-4 border-t">
+        <button type="button" onclick="closeAssignmentForm()" class="px-4 py-2 border rounded-lg">
+          Cancel
+        </button>
+
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg">
+          Save Assignment
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- ADD TEST MODAL -->
+<div id="addTestModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+  <div class="bg-white w-full max-w-2xl rounded-xl shadow-lg p-6 overflow-y-auto max-h-[90vh]">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-bold">Add Test (MCQ)</h3>
+      <button onclick="closeTestForm()" class="text-gray-500 text-xl">×</button>
+    </div>
+
+    <form method="POST" action="/admin-course/add-test" class="space-y-4">
+      <!-- Hidden bindings -->
+      <input type="hidden" name="course" value="<%= course._id %>" />
+      <input type="hidden" name="syllabusItemId" id="testSyllabusItemId" />
+
+      <!-- Test Title -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Test Title *</label>
+        <input type="text" name="title" required class="w-full px-4 py-2 border rounded-lg"
+          placeholder="Java Basics Quiz" />
+      </div>
+
+      <!-- Duration -->
+      <div>
+        <label class="block text-sm font-medium mb-1">Duration (minutes)</label>
+        <input type="number" name="durationMinutes" value="30" class="w-full px-4 py-2 border rounded-lg" />
+      </div>
+
+      <!-- QUESTIONS -->
+      <div id="questionsContainer" class="space-y-6"></div>
+
+      <!-- Add Question -->
+      <button type="button" onclick="addQuestion()" class="px-4 py-2 bg-purple-600 text-white rounded">
+        + Add Question
+      </button>
+
+      <!-- Actions -->
+      <div class="flex justify-end gap-3 pt-4 border-t">
+        <button type="button" onclick="closeTestForm()" class="px-4 py-2 border rounded-lg">
+          Cancel
+        </button>
+
+        <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-lg">
+          Save Test
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- add item  -->
+<!-- add item  -->
+<div id="addItemModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+  <div class="bg-white p-6 rounded-lg w-96">
+    <h3 class="font-bold mb-4" id="addItemTitle">Add Item</h3>
+
+    <input type="hidden" id="addItemModuleId">
+    <input type="hidden" id="addItemType">
+
+    <!-- Title -->
+    <input type="text" id="addItemName" placeholder="Enter title" class="w-full border px-3 py-2 rounded mb-3" />
+
+    <!-- Order (Optional) -->
+    <input type="number" id="addItemOrder" placeholder="Order (optional)"
+      class="w-full border px-3 py-2 rounded mb-4" />
+
+    <div class="flex justify-end gap-2">
+      <button onclick="closeAddItemForm()">Cancel</button>
+      <button onclick="submitAddItem()" class="px-4 py-2 bg-green-600 text-white rounded">
+        Add
+      </button>
+    </div>
+  </div>
+</div>
+<!-- Add module -->
+<div id="addModuleModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+  <div class="bg-white p-6 rounded-lg w-96">
+    <h3 class="font-bold mb-4">Add Module</h3>
+
+    <input type="text" id="moduleTitle" placeholder="Module title" class="w-full border px-3 py-2 rounded mb-3" />
+
+    <input type="number" id="moduleOrder" placeholder="Module order (optional)"
+      class="w-full border px-3 py-2 rounded mb-4" />
+
+    <div class="flex justify-end gap-2">
+      <button onclick="closeAddModuleForm()">Cancel</button>
+      <button onclick="submitAddModule()" class="px-4 py-2 bg-green-600 text-white rounded">
+        Add
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Display actions  -->
+<%- include('../partials/display-course-Actions.ejs') %>
+  <script>
+    //add / delet module
+    function openAddModuleForm() {
+      document.getElementById("addModuleModal").classList.remove("hidden");
+    }
+
+    function closeAddModuleForm() {
+      document.getElementById("addModuleModal").classList.add("hidden");
+    }
+
+    async function submitAddModule() {
+      const title = document.getElementById("moduleTitle").value;
+      const order = document.getElementById("moduleOrder").value;
+
+      if (!title) return alert("Module title required");
+
+      await fetch("/admin-course/syllabus/module/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          courseId: "<%= course._id %>",
+          moduleTitle: title,
+          order: order || null
+        })
+      });
+
+      location.reload();
+    }
+
+    function deleteModule(moduleId) {
+      if (!confirm("Delete this module and all its content?")) return;
+
+      fetch("/admin-course/syllabus/module/delete/" + moduleId, {
+        method: "DELETE"
+      }).then(() => location.reload());
+    }
+
+    //add item
+    function toggleAddItemMenu(moduleId) {
+      document
+        .getElementById("addItemMenu-" + moduleId)
+        .classList.toggle("hidden");
+    }
+
+    function openAddItemForm(moduleId, type) {
+      document.getElementById("addItemModuleId").value = moduleId;
+      document.getElementById("addItemType").value = type;
+
+      document.getElementById("addItemTitle").innerText =
+        "Add " + type.charAt(0).toUpperCase() + type.slice(1);
+
+      document.getElementById("addItemModal").classList.remove("hidden");
+
+      // close dropdown
+      document.getElementById("addItemMenu-" + moduleId).classList.add("hidden");
+    }
+
+    function closeAddItemForm() {
+      document.getElementById("addItemModal").classList.add("hidden");
+    }
+
+    async function submitAddItem() {
+      const moduleId = document.getElementById("addItemModuleId").value;
+      const itemType = document.getElementById("addItemType").value;
+      const title = document.getElementById("addItemName").value;
+      const orderInput = document.getElementById("addItemOrder").value;
+
+      if (!title) return alert("Title required");
+
+      await fetch("/admin-course/syllabus/item/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          moduleId,
+          itemType,
+          title,
+          order: orderInput || null   //  important
+        })
+      });
+
+      location.reload();
+    }
+
+    function openEditItemForm(itemId, itemType, currentTitle) {
+      const newTitle = prompt(`Edit ${itemType} title:`, currentTitle);
+      if (!newTitle) return;
+
+      fetch("/admin-course/syllabus/item/edit/" + itemId, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: newTitle })
+      }).then(() => location.reload());
+    }
+
+    function deleteItem(itemId, itemType) {
+      const msg = `Delete this ${itemType} and all related data?`;
+      if (!confirm(msg)) return;
+
+      fetch("/admin-course/syllabus/item/delete/" + itemId, {
+        method: "DELETE"
+      }).then(() => location.reload());
+    }
+
+    //test
+    let questionCount = 0;
+
+    function openTestForm(itemId, title) {
+      document.getElementById("testSyllabusItemId").value = itemId;
+
+      document.getElementById("questionsContainer").innerHTML = "";
+      questionCount = 0;
+      addQuestion();
+
+      document.getElementById("addTestModal").classList.remove("hidden");
+      document.getElementById("addTestModal").classList.add("flex");
+    }
+
+    function closeTestForm() {
+      document.getElementById("addTestModal").classList.add("hidden");
+      document.getElementById("addTestModal").classList.remove("flex");
+    }
+
+    function addQuestion() {
+      const index = questionCount++;
+
+      const questionHtml = `
+      <div class="border rounded-lg p-4 space-y-3">
+        <h4 class="font-semibold">Question ${index + 1}</h4>
+
+        <input
+          type="text"
+          name="questions[${index}][question]"
+          required
+          class="w-full px-4 py-2 border rounded-lg"
+          placeholder="Enter question">
+
+        <div class="grid grid-cols-2 gap-3">
+          ${[0, 1, 2, 3]
+          .map(
+            (i) => `
+            <input
+              type="text"
+              name="questions[${index}][options][${i}]"
+              required
+              class="px-3 py-2 border rounded-lg"
+              placeholder="Option ${i + 1}">
+          `,
+          )
+          .join("")}
+        </div>
+
+        <div class="flex gap-4 items-center">
+          <div>
+            <label class="text-sm">Correct Option</label>
+            <select
+              name="questions[${index}][correctOptionIndex]"
+              class="px-3 py-2 border rounded-lg">
+              <option value="0">Option 1</option>
+              <option value="1">Option 2</option>
+              <option value="2">Option 3</option>
+              <option value="3">Option 4</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-sm">Marks</label>
+            <input
+              type="number"
+              name="questions[${index}][marks]"
+              value="1"
+              class="px-3 py-2 border rounded-lg w-24">
+          </div>
+        </div>
+      </div>
+    `;
+
+      document
+        .getElementById("questionsContainer")
+        .insertAdjacentHTML("beforeend", questionHtml);
+    }
+    function openAssignmentForm(itemId, title) {
+      document.getElementById("assignmentSyllabusItemId").value = itemId;
+
+      document.getElementById("addAssignmentModal").classList.remove("hidden");
+      document.getElementById("addAssignmentModal").classList.add("flex");
+    }
+
+    function closeAssignmentForm() {
+      document.getElementById("addAssignmentModal").classList.add("hidden");
+      document.getElementById("addAssignmentModal").classList.remove("flex");
+    }
+    function openLectureForm(topicId, topicTitle) {
+      document.getElementById("syllabusItemId").value = topicId;
+      document.getElementById("topicTitle").value = topicTitle;
+
+      document.getElementById("addLectureModal").classList.remove("hidden");
+      document.getElementById("addLectureModal").classList.add("flex");
+    }
+
+    function closeLectureForm() {
+      document.getElementById("addLectureModal").classList.add("hidden");
+      document.getElementById("addLectureModal").classList.remove("flex");
+    }
+
+    function toggleLectureType(type) {
+      document.getElementById("videoField").classList.add("hidden");
+      document.getElementById("liveField").classList.add("hidden");
+
+      if (type === "video") {
+        document.getElementById("videoField").classList.remove("hidden");
+      }
+
+      if (type === "live") {
+        document.getElementById("liveField").classList.remove("hidden");
+      }
+    }
+  </script>

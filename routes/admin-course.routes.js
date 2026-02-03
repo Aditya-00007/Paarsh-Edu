@@ -13,7 +13,24 @@ const router = express.Router();
 // Manage Chart for course completion
 router.get("/dashboard/course-stats", async (req, res) => {
   try {
-    const courses = await Course.find();
+
+    // Run ALL queries concurrently
+    const [
+      courses,
+      syllabusCourses,
+      assignmentCourses,
+      testCourses
+    ] = await Promise.all([
+      Course.find().select("_id").lean(),
+      CourseContent.distinct("course"),
+      Assignment.distinct("course"),
+      Test.distinct("course")
+    ]);
+
+    //  Convert to Sets for O(1) lookup
+    const syllabusSet = new Set(syllabusCourses.map(id => id.toString()));
+    const assignmentSet = new Set(assignmentCourses.map(id => id.toString()));
+    const testSet = new Set(testCourses.map(id => id.toString()));
 
     let completed = 0;
     let inProgress = 0;
@@ -23,13 +40,11 @@ router.get("/dashboard/course-stats", async (req, res) => {
     let testMissing = 0;
 
     for (const course of courses) {
-      const syllabus = await CourseContent.findOne({ course: course._id });
-      const assignments = await Assignment.findOne({ course: course._id });
-      const tests = await Test.findOne({ course: course._id });
+      const id = course._id.toString();
 
-      const hasSyllabus = syllabus && syllabus.items.length > 0;
-      const hasAssignment = !!assignments;
-      const hasTest = !!tests;
+      const hasSyllabus = syllabusSet.has(id);
+      const hasAssignment = assignmentSet.has(id);
+      const hasTest = testSet.has(id);
 
       if (hasSyllabus && hasAssignment && hasTest) {
         completed++;

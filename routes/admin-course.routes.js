@@ -1,7 +1,7 @@
 import express from "express";
 import Course from "../models/Course.js";
 import CourseContent from "../models/CourseContent.js";
-import Lecture from "../models/Lecture.js";
+import Lecture from "../models/lecture.js";
 import Assignment from "../models/Assignment.js";
 import Test from "../models/Test.js";
 import { uploadLectureVideo } from "../utils/multerCloudinaryVideo.js";

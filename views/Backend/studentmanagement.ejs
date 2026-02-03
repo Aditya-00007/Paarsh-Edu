@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Management</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-[#f4f6f9]">
+
+<!-- HEADER -->
+<%- include("../partials/header") %>
+
+<div class="flex">
+
+  <!-- SIDEBAR -->
+  <%- include("../partials/sidebar") %>
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 p-6">
+
+    <!-- TITLE -->
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold">Student Management</h1>
+      <p class="text-sm text-gray-500">
+        Manage student registrations, enrollments and records
+      </p>
+    </div>
+
+<!-- STATS (LIKE IMAGE 1) -->
+<div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+
+  <!-- TOTAL REGISTERED -->
+  <div class="bg-white p-4 rounded-xl shadow-sm">
+    <p class="text-xs text-gray-500">Total Registered</p>
+    <p class="text-2xl font-bold"><%= enrollments.length %></p>
+    <p class="text-xs text-green-600 mt-1">Active</p>
+  </div>
+
+  <!-- ACTIVE ENROLLMENTS (SAFE ASSUMPTION) -->
+  <div class="bg-white p-4 rounded-xl shadow-sm">
+    <p class="text-xs text-gray-500">Active Enrollments</p>
+    <p class="text-2xl font-bold"><%= enrollments.length %></p>
+    <p class="text-xs text-blue-600 mt-1">Ongoing</p>
+  </div>
+
+  <!-- COMPLETED COURSES (PLACEHOLDER) -->
+  <div class="bg-white p-4 rounded-xl shadow-sm">
+    <p class="text-xs text-gray-500">Completed Courses</p>
+    <p class="text-2xl font-bold">0</p>
+    <p class="text-xs text-green-600 mt-1">Completed</p>
+  </div>
+
+  <!-- PENDING FEES (PLACEHOLDER) -->
+  <div class="bg-white p-4 rounded-xl shadow-sm">
+    <p class="text-xs text-gray-500">Pending Fees</p>
+    <p class="text-2xl font-bold">0</p>
+    <p class="text-xs text-red-600 mt-1">Attention</p>
+  </div>
+
+  <!-- INACTIVE / CANCELLED (PLACEHOLDER) -->
+  <div class="bg-white p-4 rounded-xl shadow-sm">
+    <p class="text-xs text-gray-500">Inactive / Cancelled</p>
+    <p class="text-2xl font-bold">0</p>
+    <p class="text-xs text-orange-600 mt-1">Monitor</p>
+  </div>
+
+</div>
+
+
+    <!-- CANDIDATE LIST -->
+    <div class="bg-white rounded-xl shadow-sm p-5">
+
+      <!-- HEADER -->
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="font-semibold text-lg">Candidate List</h2>
+        <div class="space-x-2">
+          <button class="border px-3 py-1 rounded text-sm">Export CSV</button>
+          <button class="border px-3 py-1 rounded text-sm">Bulk Actions</button>
+        </div>
+      </div>
+
+<!-- FILTERS -->
+<div class="flex flex-wrap gap-3 mb-4">
+  <!-- Course Filter -->
+  <select id="courseFilter" class="border rounded px-3 py-2 text-sm">
+    <option value="all">Filter by Course</option>
+    <% [...new Set(enrollments.map(e => e.course && e.course.title))].forEach(course => { %>
+  <% if (course) { %>
+    <option value="<%= course %>"><%= course %></option>
+  <% } %>
+<% }) %>
+  </select>
+
+  <!-- Gender Filter -->
+  <select id="genderFilter" class="border rounded px-3 py-2 text-sm">
+    <option value="all">Gender</option>
+    <option value="Male">Male</option>
+    <option value="Female">Female</option>
+    <option value="Other">Other</option>
+  </select>
+
+  <!-- City Filter -->
+  <select id="cityFilter" class="border rounded px-3 py-2 text-sm">
+    <option value="all">Select City</option>
+    <% [...new Set(enrollments.map(e => e.student && e.student.city).filter(Boolean))].forEach(city => { %>
+  <option value="<%= city %>"><%= city %></option>
+<% }) %>
+  </select>
+
+  <button
+    onclick="applyFilters()"
+    class="bg-gray-900 text-white px-4 py-2 rounded text-sm"
+  >
+    Apply
+  </button>
+</div>
+      <!-- TABLE -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="text-gray-500 border-b">
+            <tr>
+              <th class="text-left py-2">Candidate</th>
+              <th class="text-left py-2">Course</th>
+              <th class="text-left py-2">Email</th>
+              <th class="text-left py-2">Phone</th>
+              <th class="text-left py-2">Gender</th>
+              <th class="text-left py-2">City</th>
+              <th class="text-left py-2">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody id="studentTable">
+  <% enrollments.forEach(enrollment => { %>
+    <tr
+      class="border-b"
+      data-course="<%= enrollment.course && enrollment.course.title %>"
+      data-gender="<%= enrollment.student && enrollment.student.gender %>"
+      data-city="<%= enrollment.student && enrollment.student.city %>"
+    >
+
+      <!-- Student Name -->
+      <td class="py-3 font-medium">
+        <%= enrollment.student ? enrollment.student.name : "-" %>
+      </td>
+
+      <!-- Course Title -->
+      <td class="py-3">
+        <%= enrollment.course ? enrollment.course.title : "-" %>
+      </td>
+
+      <!-- Email -->
+      <td class="py-3">
+        <%= enrollment.student ? enrollment.student.email : "-" %>
+      </td>
+
+      <!-- Phone -->
+      <td class="py-3">
+        <%= enrollment.student && enrollment.student.phone ? enrollment.student.phone : "-" %>
+      </td>
+
+      <!-- Gender -->
+      <td class="py-3">
+        <%= enrollment.student ? enrollment.student.gender : "-" %>
+      </td>
+
+      <!-- City -->
+      <td class="py-3">
+        <%= enrollment.student && enrollment.student.city ? enrollment.student.city : "-" %>
+      </td>
+
+      <!-- Actions -->
+      <td class="py-3 space-x-3">
+        <% if (enrollment.student) { %>
+          <a
+            href="/student-management/enrollment/<%= enrollment._id %>/view"
+            class="text-blue-600 hover:underline"
+          >
+            View
+          </a>
+        <% } else { %>
+          -
+        <% } %>
+      </td>
+
+    </tr>
+  <% }) %>
+</tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </main>
+</div>
+<script>
+  function applyFilters() {
+    const course = document.getElementById("courseFilter").value;
+    const gender = document.getElementById("genderFilter").value;
+    const city = document.getElementById("cityFilter").value;
+
+    const rows = document.querySelectorAll("#studentTable tr");
+
+    rows.forEach(row => {
+      const rowCourse = row.dataset.course;
+      const rowGender = row.dataset.gender;
+      const rowCity = row.dataset.city;
+
+      let visible = true;
+
+      if (course !== "all" && rowCourse !== course) visible = false;
+      if (gender !== "all" && rowGender !== gender) visible = false;
+      if (city !== "all" && rowCity !== city) visible = false;
+
+      row.style.display = visible ? "" : "none";
+    });
+  }
+</script>
+
+
+</body>
+</html>

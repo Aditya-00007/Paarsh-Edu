@@ -5,6 +5,7 @@ import Course from "./models/Course.js";
 import Category from "./models/Category.js";
 import adminCourseRoutes from "./routes/admin-course.routes.js";
 import blogRoutes from "./routes/blog.routes.js";
+import studentRoutes from "./routes/student.routes.js"
 import CourseContent from "./models/CourseContent.js";
 import Assignment from "./models/Assignment.js";
 import Test from "./models/Test.js";
@@ -18,7 +19,8 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use("/admin-course", adminCourseRoutes);
-app.use("/blog-management", blogRoutes);
+app.use("/admin/blogs", blogRoutes);
+app.use("/student-management", studentRoutes);
 app.use(express.static("public"));
 
 mongoose
@@ -97,37 +99,6 @@ app.get("/course-management", async (req, res) => {
   }
 });
 
-
-// course preveiw page // admin level
-
-// get courses
-app.get("/courses", async (req, res) => {
-  try {
-    const courses = await Course.find().sort({ createdAt: -1 });
-    const categories = await Category.find({ status: "active" });
-    res.render("Frontend/allCourses.ejs", { courses, categories });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Failed to load courses");
-  }
-});
-
-// course preveiw page // student level
-app.get("/courses/:id", async (req, res) => {
-  try {
-    const course = await Course.findById(req.params.id).populate("category");
-    const categories = await Category.find({ status: "active" });
-
-    if (!course) {
-      return res.status(404).send("Course not found");
-    }
-
-    res.render("Frontend/coursedetails.ejs", { course, categories });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Failed to load course details");
-  }
-});
 
 // app.get("/student-management", async (req, res) =>
 // { res.render("studentManagement.ejs", { title: "Student Management" });

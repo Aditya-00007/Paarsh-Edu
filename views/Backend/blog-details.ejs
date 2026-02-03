@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= blog.title %> - Paarsh Education</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/styles/style.css">
+    <style>
+        .blog-detail-hero {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    padding: 60px 0 40px;
+    margin-top: 0;     /* FIX */
+    color: white;
+}
+
+
+        .blog-breadcrumb {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .blog-breadcrumb a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .blog-breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .blog-detail-container {
+            padding: 60px 0;
+        }
+
+        .blog-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 40px;
+        }
+
+        .blog-main-content {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .blog-detail-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 25px;
+            line-height: 1.2;
+        }
+
+        .blog-detail-meta {
+            display: flex;
+            gap: 30px;
+            padding-bottom: 25px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .meta-item i {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .meta-item strong {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .blog-featured-image {
+            width: 100%;
+            border-radius: 15px;
+            margin-bottom: 35px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .blog-content {
+            color: #444;
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        .blog-content h2 {
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin: 35px 0 20px;
+        }
+
+        .blog-content h3 {
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 1.4rem;
+            margin: 30px 0 15px;
+        }
+
+        .blog-content p {
+            margin-bottom: 20px;
+        }
+
+        .blog-content ul,
+        .blog-content ol {
+            margin: 20px 0;
+            padding-left: 30px;
+        }
+
+        .blog-content li {
+            margin-bottom: 10px;
+        }
+
+        .blog-content blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding-left: 20px;
+            margin: 30px 0;
+            font-style: italic;
+            color: #666;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .author-box {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 50px 0;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .author-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .author-info h4 {
+            color: var(--text-dark);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .author-info p {
+            color: #666;
+            margin: 0;
+        }
+
+        .comments-section {
+            margin-top: 60px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary-color);
+            display: inline-block;
+        }
+
+        .comment-item {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .comment-date {
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        .comment-text {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .comment-form {
+            background: #f8f9fa;
+            padding: 35px;
+            border-radius: 15px;
+            margin-top: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .submit-btn {
+            background: var(--primary-color);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .submit-btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Sidebar */
+        .blog-sidebar {
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar-widget {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .widget-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .category-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .category-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-list li:last-child {
+            border-bottom: none;
+        }
+
+        .category-list a {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .category-list a:hover {
+            color: var(--primary-color);
+        }
+
+        .category-count {
+            background: #f0f0f0;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .related-post {
+            display: flex;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .related-post:hover {
+            transform: translateX(5px);
+        }
+
+        .related-post:last-child {
+            border-bottom: none;
+        }
+
+        .related-post-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .related-post-info h4 {
+            color: var(--text-dark);
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .related-post-date {
+            color: #999;
+            font-size: 0.8rem;
+        }
+
+        .newsletter-widget {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .newsletter-widget .widget-title {
+            color: white;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .newsletter-widget p {
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        .newsletter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.newsletter-form input {
+    display: block;
+    width: 100%;
+    min-height: 44px;
+    background: #ffffff;
+    color: #333;
+    box-sizing: border-box;
+}
+
+
+        
+
+        .newsletter-form button {
+    width: 100%;
+    padding: 12px;
+    background: #ffffff;
+    color: var(--primary-color);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+
+        .newsletter-form button:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 1024px) {
+            .blog-detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .blog-sidebar {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .blog-detail-title {
+                font-size: 1.8rem;
+            }
+
+            .blog-main-content {
+                padding: 25px;
+            }
+
+            .author-box {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .blog-detail-meta {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+ <%- include('../partials/header.ejs') %>
+
+<!-- Hero Section -->
+<section class="blog-detail-hero">
+    <div class="container">
+        <div class="blog-breadcrumb">
+            <a href="/">Home</a>
+            <span>/</span>
+            <a href="/blogs">Blogs</a>
+            <span>/</span>
+            <span><%= blog.category %></span>
+        </div>
+    </div>
+</section>
+
+<!-- Blog Detail Section -->
+<section class="blog-detail-container">
+    <div class="container">
+        <div class="blog-detail-grid">
+            
+            <!-- Main Content -->
+            <div class="blog-main-content">
+                <h1 class="blog-detail-title"><%= blog.title %></h1>
+                
+                <div class="blog-detail-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>By <strong><%= blog.author %></strong></span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <span><%= blog.date %></span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-folder"></i>
+                        <span><%= blog.category %></span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-comments"></i>
+                        <span><%= blog.comments ? blog.comments.length : 0 %> Comments</span>
+                    </div>
+                </div>
+
+                <img src="<%= blog.image %>" alt="<%= blog.title %>" class="blog-featured-image">
+
+                <div class="blog-content">
+                    <%- blog.content %>
+                </div>
+
+                <!-- Author Box -->
+                <div class="author-box">
+                    <div class="author-avatar">
+                        <%= blog.author.charAt(0).toUpperCase() %>
+                    </div>
+                    <div class="author-info">
+                        <h4>About <%= blog.author %></h4>
+                        <p>Content creator and educator passionate about sharing knowledge and helping others grow.</p>
+                    </div>
+                </div>
+
+                <!-- Comments Section -->
+                <div class="comments-section">
+                    <h3 class="section-title">Comments (<%= blog.comments ? blog.comments.length : 0 %>)</h3>
+                    
+                    <% if (blog.comments && blog.comments.length > 0) { %>
+                        <% blog.comments.forEach(comment => { %>
+                            <div class="comment-item">
+                                <div class="comment-header">
+                                    <span class="comment-author"><%= comment.name %></span>
+                                    <span class="comment-date">
+                                        <%= new Date(comment.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>
+                                    </span>
+                                </div>
+                                <p class="comment-text"><%= comment.message %></p>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <p style="color: #999; text-align: center; padding: 40px 0;">
+                            No comments yet. Be the first to share your thoughts!
+                        </p>
+                    <% } %>
+
+                    <!-- Comment Form -->
+                    <div class="comment-form">
+                        <h3 class="section-title">Leave a Comment</h3>
+                        <form action="/blogs/<%= blog._id %>/comment" method="POST">
+                            <div class="form-group">
+                                <label for="name">Name *</label>
+                                <input type="text" id="name" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email *</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="message">Your Comment *</label>
+                                <textarea id="message" name="message" required></textarea>
+                            </div>
+                            <button type="submit" class="submit-btn">Post Comment</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="blog-sidebar">
+                
+                <!-- Categories Widget -->
+                <div class="sidebar-widget">
+                    <h3 class="widget-title">Categories</h3>
+                    <ul class="category-list">
+                        <% 
+                        const categoriesMap = {};
+                        if (typeof blogs !== 'undefined' && blogs) {
+                            blogs.forEach(b => {
+                                const cat = b.category || 'Uncategorized';
+                                categoriesMap[cat] = (categoriesMap[cat] || 0) + 1;
+                            });
+                        }
+                        const sortedCats = Object.keys(categoriesMap).sort();
+                        %>
+                        <% if (sortedCats.length > 0) { %>
+                            <% sortedCats.forEach(cat => { %>
+                                <li>
+                                    <a href="/blogs"><%= cat %></a>
+                                    <span class="category-count"><%= categoriesMap[cat] %></span>
+                                </li>
+                            <% }) %>
+                        <% } else { %>
+                            <li style="text-align: center; color: #999;">No categories found</li>
+                        <% } %>
+                    </ul>
+                </div>
+
+                <!-- Related Posts Widget -->
+                <div class="sidebar-widget">
+                    <h3 class="widget-title">Related Posts</h3>
+                    <% if (typeof blogs !== 'undefined' && blogs && blogs.length > 0) { %>
+                        <% blogs.slice(0, 3).forEach(relatedBlog => { %>
+                            <a href="/blogs/<%= relatedBlog._id %>" class="related-post">
+                                <img src="<%= relatedBlog.image %>" alt="<%= relatedBlog.title %>" class="related-post-image">
+                                <div class="related-post-info">
+                                    <h4><%= relatedBlog.title %></h4>
+                                    <p class="related-post-date">
+                                        <i class="fas fa-calendar"></i> <%= relatedBlog.date %>
+                                    </p>
+                                </div>
+                            </a>
+                        <% }) %>
+                    <% } else { %>
+                        <p style="text-align: center; color: #999;">No related posts found</p>
+                    <% } %>
+                </div>
+
+                <!-- Newsletter Widget -->
+                <div class="sidebar-widget newsletter-widget">
+                    <h3 class="widget-title">Newsletter</h3>
+                    <p>Subscribe to get the latest updates and articles delivered to your inbox.</p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Your email address" required>
+                        <button type="submit">Subscribe Now</button>
+                    </form>
+                </div>
+
+            </aside>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- Scroll to Top Button -->
+<button class="scroll-to-top" id="scrollToTop">
+    <i class="fas fa-chevron-up"></i>
+</button>
+
+<script src="/js/main.js"></script>
+
+</body>
+</html>

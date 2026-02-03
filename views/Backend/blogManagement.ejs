@@ -1,679 +1,616 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog Management - E-Learning Admin Panel</title>
+    <title>Blog Management - Paarsh Education Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-</head>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<body class="bg-[#f4f6f9]">
+        :root {
+            --primary-color: #14bdee;
+            --secondary-color: #0099cc;
+            --accent-color: #ffd700;
+            --text-dark: #2c3e50;
+            --bg-light: #f8f9fa;
+            --border-color: #e0e0e0;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+        }
+
+        body {
+            font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+        }
+
+        /* Admin Header */
+        .admin-header {
+            background: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 40px;
+        }
+
+        .admin-header .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .admin-logo i {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .admin-logo span {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .header-actions a {
+            text-decoration: none;
+            color: var(--text-dark);
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-actions a:hover {
+            background: var(--bg-light);
+        }
+
+        .header-actions .view-site {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .header-actions .view-site:hover {
+            background: var(--secondary-color);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 15px rgba(20, 189, 238, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(20, 189, 238, 0.4);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-icon.blue { background: rgba(20, 189, 238, 0.1); color: var(--primary-color); }
+        .stat-icon.green { background: rgba(40, 167, 69, 0.1); color: var(--success); }
+        .stat-icon.orange { background: rgba(255, 193, 7, 0.1); color: var(--warning); }
+        .stat-icon.red { background: rgba(220, 53, 69, 0.1); color: var(--danger); }
+
+        .stat-info h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .stat-info p {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        /* Blogs Table */
+        .blogs-table-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 10px 40px 10px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            width: 300px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .search-box i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .blogs-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .blogs-table thead {
+            background: #f8f9fa;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .blogs-table th {
+            padding: 15px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+        }
+
+        .blogs-table td {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .blogs-table tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        .blogs-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .blog-image {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .blog-title {
+            font-weight: 600;
+            color: var(--text-dark);
+            max-width: 300px;
+            display: block;
+        }
+
+        .blog-excerpt {
+            color: #6c757d;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .category-badge.education { background: rgba(20, 189, 238, 0.1); color: var(--primary-color); }
+        .category-badge.technology { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
+        .category-badge.career { background: rgba(40, 167, 69, 0.1); color: var(--success); }
+        .category-badge.tips { background: rgba(255, 193, 7, 0.1); color: #f59e0b; }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-badge.published {
+            background: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+        }
+
+        .status-badge.draft {
+            background: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+        }
+
+        .status-badge i {
+            font-size: 0.6rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            text-decoration: none;
+        }
+
+        .action-btn.edit {
+            background: rgba(20, 189, 238, 0.1);
+            color: var(--primary-color);
+        }
+
+        .action-btn.edit:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .action-btn.delete {
+            background: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+        }
+
+        .action-btn.delete:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .action-btn.view {
+            background: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+        }
+
+        .action-btn.view:hover {
+            background: var(--success);
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #dee2e6;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 1.3rem;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #6c757d;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .admin-header .container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-box input {
+                width: 100%;
+            }
+
+            .blogs-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<class="bg-[#f4f6f9]">
 
     <%- include('../partials/header.ejs') %>
 
-        <div class="flex">
-            <%- include('../partials/sidebar.ejs') %>
+    <div class="flex min-h-screen">
 
-                <!-- ================= MAIN BLOG MANAGEMENT PAGE ================= -->
-                <main class="flex-1 p-6 space-y-6" id="blogManagementPage">
+        <!-- SIDEBAR (fixed, no shrink) -->
+        <%- include('../partials/sidebar.ejs') %>
 
-                    <!-- ================= STATS ================= -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div
-                            class="bg-white rounded-xl shadow-sm p-4 hover:-translate-y-1 hover:shadow-md transition-all">
-                            <h6 class="text-gray-600 text-sm">Total Blogs</h6>
-                            <div class="text-3xl font-bold mt-2">
-                                <%= blogs.length %>
-                            </div>
-                            <div class="text-xs text-green-600 mt-1">
-                                <%= blogs.filter(b=> b.status === 'published').length %> published
-                            </div>
-                        </div>
-                        <div
-                            class="bg-white rounded-xl shadow-sm p-4 hover:-translate-y-1 hover:shadow-md transition-all">
-                            <h6 class="text-gray-600 text-sm">Published Blogs</h6>
-                            <div class="text-3xl font-bold mt-2">
-                                <%= blogs.filter(b=> b.status === 'published').length %>
-                            </div>
-                            <div class="text-xs text-blue-600 mt-1">Live on website</div>
-                        </div>
-                        <div
-                            class="bg-white rounded-xl shadow-sm p-4 hover:-translate-y-1 hover:shadow-md transition-all">
-                            <h6 class="text-gray-600 text-sm">Draft Blogs</h6>
-                            <div class="text-3xl font-bold mt-2">
-                                <%= blogs.filter(b=> b.status === 'draft').length %>
-                            </div>
-                            <div class="text-xs text-yellow-600 mt-1">Pending publication</div>
-                        </div>
-                        <div
-                            class="bg-white rounded-xl shadow-sm p-4 hover:-translate-y-1 hover:shadow-md transition-all">
-                            <h6 class="text-gray-600 text-sm">Total Views</h6>
-                            <div class="text-3xl font-bold mt-2">
-                                <%= blogs.reduce((sum, b)=> sum + (b.views || 0), 0) %>
-                            </div>
-                            <div class="text-xs text-purple-600 mt-1">All time views</div>
-                        </div>
+        <!-- MAIN CONTENT (flex-1) -->
+        <main class="flex-1 p-6 space-y-6">
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">Blog Management</h1>
+                <a href="/admin/blogs/add" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Create New Blog
+                </a>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-newspaper"></i>
                     </div>
-
-                    <!-- ================= CHARTS ================= -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                        <div class="bg-white rounded-xl shadow-sm p-4">
-                            <h5 class="font-semibold text-lg">Blog Status Distribution</h5>
-                            <p class="text-xs text-gray-500 mt-1">Current blog status breakdown</p>
-                            <div class="mt-3">
-                                <canvas id="blogStatusChart"></canvas>
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-xl shadow-sm p-4">
-                            <h5 class="font-semibold text-lg">Top Categories</h5>
-                            <p class="text-xs text-gray-500 mt-1">Blog distribution by category</p>
-                            <div class="mt-3">
-                                <canvas id="categoryChart"></canvas>
-                            </div>
-                        </div>
+                    <div class="stat-info">
+                        <h3><%= blogs.length %></h3>
+                        <p>Total Blogs</p>
                     </div>
+                </div>
 
-                    <!-- ================= HEADER WITH ACTIONS ================= -->
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-xl font-bold">All Blogs</h2>
-                        <div class="flex gap-3">
-                            <button class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                                onclick="showAddBlogPage()">
-                                + Add New Blog
-                            </button>
-                            <button class="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
-                                onclick="deleteAllBlogs()">
-                                🗑️ Delete All Blogs
-                            </button>
-                        </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="fas fa-check-circle"></i>
                     </div>
-
-                    <!-- ================= SEARCH AND FILTER ================= -->
-                    <div class="bg-white rounded-xl shadow-sm p-4">
-                        <div class="flex gap-3 items-center flex-wrap">
-                            <input type="text" id="blogSearch" placeholder="🔍 Search blogs by title..."
-                                onkeyup="filterBlogs()"
-                                class="flex-1 min-w-64 px-4 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:border-blue-600 transition-colors">
-                            <select
-                                class="px-4 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:border-blue-600 bg-white cursor-pointer min-w-40"
-                                id="statusFilter" onchange="filterBlogs()">
-                                <option value="all">All Status</option>
-                                <option value="published">Published</option>
-                                <option value="draft">Draft</option>
-                                <option value="archived">Archived</option>
-                            </select>
-                            <select
-                                class="px-4 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:border-blue-600 bg-white cursor-pointer min-w-40"
-                                id="categoryFilter" onchange="filterBlogs()">
-                                <option value="all">All Categories</option>
-                                <option value="Technology">Technology</option>
-                                <option value="Education">Education</option>
-                                <option value="Career">Career</option>
-                                <option value="Programming">Programming</option>
-                                <option value="Design">Design</option>
-                                <option value="Business">Business</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
+                    <div class="stat-info">
+                        <h3><%= blogs.filter(b => b.published).length %></h3>
+                        <p>Published</p>
                     </div>
+                </div>
 
-                    <!-- ================= BLOGS TABLE ================= -->
-                    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th
-                                            class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                            Featured Image
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                            Title
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                            Category
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                            Author
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                            Views
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                            Status
-                                        </th>
-                                        <th
-                                            class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                            Actions
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody id="blogTableBody">
-                                    <% if (blogs.length===0) { %>
-                                        <tr>
-                                            <td colspan="7" class="px-6 py-8 text-center text-gray-500">
-                                                No blogs found. Click "Add New Blog" to create your first blog post.
-                                            </td>
-                                        </tr>
-                                        <% } else { %>
-                                            <% blogs.forEach(blog=> { %>
-                                                <tr class="hover:bg-gray-50 border-t blog-row"
-                                                    data-status="<%= blog.status %>"
-                                                    data-category="<%= blog.category %>"
-                                                    data-title="<%= blog.title.toLowerCase() %>">
-
-                                                    <td class="px-6 py-4">
-                                                        <img src="<%= blog.featuredImage && blog.featuredImage.trim() !== '' 
-        ? blog.featuredImage 
-        : '/images/placeholder.jpg' %>" alt="<%= blog.title %>" class="w-16 h-16 object-cover rounded-lg"
-                                                            onerror="this.src='/images/placeholder.jpg'">
-
-                                                    </td>
-
-                                                    <td class="px-6 py-4">
-                                                        <div class="font-semibold text-sm">
-                                                            <%= blog.title %>
-                                                        </div>
-                                                        <div class="text-xs text-gray-500 mt-1">
-                                                            <%= blog.readTime %>
-                                                        </div>
-                                                        <% if (blog.featured) { %>
-                                                            <span
-                                                                class="inline-block mt-1 px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs rounded">
-                                                                ⭐ Featured
-                                                            </span>
-                                                            <% } %>
-                                                    </td>
-
-                                                    <td class="px-6 py-4 text-sm">
-                                                        <span
-                                                            class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">
-                                                            <%= blog.category %>
-                                                        </span>
-                                                    </td>
-
-                                                    <td class="px-6 py-4 text-sm">
-                                                        <%= blog.author?.name || 'Admin' %>
-
-                                                    </td>
-
-                                                    <td class="px-6 py-4 text-sm">
-                                                        <%= blog.views || 0 %>
-                                                    </td>
-
-                                                    <td class="px-6 py-4 text-sm">
-                                                        <span class="px-3 py-1 rounded-full text-xs font-semibold
-                                                <%= blog.status === 'published' 
-                                                    ? 'bg-green-100 text-green-800' 
-                                                    : blog.status === 'draft'
-                                                    ? 'bg-yellow-100 text-yellow-800'
-                                                    : 'bg-gray-100 text-gray-800' %>">
-                                                            <%= blog.status %>
-                                                        </span>
-                                                    </td>
-
-                                                    <td class="px-6 py-4 text-sm">
-                                                        <div class="flex gap-2">
-                                                            <button
-                                                                class="w-8 h-8 bg-blue-50 rounded hover:bg-blue-100 transition"
-                                                                title="Edit Blog"
-                                                                onclick='openEditBlog(<%- JSON.stringify(blog) %>)'>
-                                                                ✏️
-                                                            </button>
-                                                            <button
-                                                                class="w-8 h-8 bg-red-50 rounded hover:bg-red-100 transition"
-                                                                title="Delete Blog"
-                                                                onclick="deleteBlog('<%= blog._id %>')">
-                                                                🗑️
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <% }) %>
-                                                    <% } %>
-                                </tbody>
-                            </table>
-                        </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">
+                        <i class="fas fa-eye"></i>
                     </div>
-                </main>
-
-                <!-- ================= ADD BLOG PAGE ================= -->
-                <main class="flex-1 p-6 hidden" id="addBlogPage">
-                    <div class="bg-white rounded-xl shadow-sm p-6">
-                        <h2 class="text-2xl font-bold mb-1">Add New Blog</h2>
-                        <p class="text-gray-500 text-sm mb-6">
-                            Dashboard / Blog Management / Add Blog
-                        </p>
-
-                        <form action="/blog-management/add" method="POST" class="space-y-6">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                                <!-- Blog Title -->
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium mb-2">Blog Title *</label>
-                                    <input type="text" name="title" required class="w-full px-4 py-2 border rounded-lg"
-                                        placeholder="10 Tips for Learning Web Development">
-                                </div>
-
-                                <!-- Slug -->
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium mb-2">Slug (URL)</label>
-                                    <input type="text" name="slug" class="w-full px-4 py-2 border rounded-lg"
-                                        placeholder="10-tips-for-learning-web-development (auto-generated if empty)">
-                                    <p class="text-xs text-gray-500 mt-1">Leave empty to auto-generate from title</p>
-                                </div>
-
-                                <!-- Excerpt -->
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium mb-2">Excerpt *</label>
-                                    <textarea name="excerpt" required maxlength="200"
-                                        class="w-full px-4 py-2 border rounded-lg"
-                                        placeholder="Brief summary of the blog (max 200 characters)"></textarea>
-                                </div>
-
-                                <!-- Content -->
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium mb-2">Content *</label>
-                                    <textarea name="content" required rows="10"
-                                        class="w-full px-4 py-2 border rounded-lg"
-                                        placeholder="Full blog content..."></textarea>
-                                </div>
-
-                                <!-- Featured Image -->
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium mb-2">Featured Image URL *</label>
-                                    <input type="text" name="featuredImage" required
-                                        class="w-full px-4 py-2 border rounded-lg"
-                                        placeholder="/images/ImageUpload.jpg">
-                                </div>
-
-                                <!-- Author Name -->
-                                <div>
-                                    <label class="block text-sm font-medium mb-2">Author Name</label>
-                                    <input type="text" name="authorName" class="w-full px-4 py-2 border rounded-lg"
-                                        placeholder="Admin" value="Admin">
-                                </div>
-
-                                <!-- Author Avatar -->
-                                <div>
-                                    <label class="block text-sm font-medium mb-2">Author Avatar URL</label>
-                                    <input type="text" name="authorAvatar" class="w-full px-4 py-2 border rounded-lg"
-                                        placeholder="/images/Avatar.jpg">
-                                </div>
-
-                                <!-- Category -->
-                                <div>
-                                    <label class="block text-sm font-medium mb-2">Category *</label>
-                                    <select name="category" required
-                                        class="w-full px-4 py-2 border rounded-lg bg-white">
-                                        <option value="">Select category</option>
-                                        <option value="Technology">Technology</option>
-                                        <option value="Education">Education</option>
-                                        <option value="Career">Career</option>
-                                        <option value="Programming">Programming</option>
-                                        <option value="Design">Design</option>
-                                        <option value="Business">Business</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </div>
-
-                                <!-- Read Time -->
-                                <div>
-                                    <label class="block text-sm font-medium mb-2">Read Time</label>
-                                    <input type="text" name="readTime" class="w-full px-4 py-2 border rounded-lg"
-                                        placeholder="5 min read" value="5 min read">
-                                </div>
-
-                                <!-- Tags -->
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium mb-2">Tags</label>
-                                    <input type="text" name="tags" class="w-full px-4 py-2 border rounded-lg"
-                                        placeholder="web development, javascript, react">
-                                    <p class="text-xs text-gray-500 mt-1">Comma-separated tags</p>
-                                </div>
-
-                                <!-- Status -->
-                                <div>
-                                    <label class="block text-sm font-medium mb-2">Status *</label>
-                                    <select name="status" required class="w-full px-4 py-2 border rounded-lg bg-white">
-                                        <option value="draft">Draft</option>
-                                        <option value="published">Published</option>
-                                        <option value="archived">Archived</option>
-                                    </select>
-                                </div>
-
-                                <!-- Featured -->
-                                <div class="flex items-center gap-2 mt-7">
-                                    <input type="checkbox" name="featured" value="true" id="featuredCheckbox">
-                                    <label for="featuredCheckbox" class="text-sm font-medium">Mark as Featured</label>
-                                </div>
-
-                            </div>
-
-                            <!-- Actions -->
-                            <div class="flex gap-3 pt-6 border-t">
-                                <button type="button" onclick="cancelAddBlog()"
-                                    class="px-6 py-2 border rounded-lg hover:bg-gray-50 transition">
-                                    Cancel
-                                </button>
-                                <button type="submit"
-                                    class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                                    Save Blog
-                                </button>
-                            </div>
-                        </form>
+                    <div class="stat-info">
+                        <h3><%= blogs.reduce((sum, b) => sum + (b.views || 0), 0) %></h3>
+                        <p>Total Views</p>
                     </div>
-                </main>
+                </div>
 
-                <!-- ================= EDIT BLOG PAGE ================= -->
-                <main class="flex-1 p-6 hidden" id="editBlogPage">
-                    <div class="bg-white rounded-xl shadow-sm p-6">
-                        <h2 class="text-2xl font-bold mb-1">Edit Blog</h2>
-                        <p class="text-gray-500 text-sm mb-6">
-                            Dashboard / Blog Management / Edit Blog
-                        </p>
-
-                        <form id="editBlogForm" method="POST" class="space-y-6">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                                <!-- Blog Title -->
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium mb-2">Blog Title *</label>
-                                    <input type="text" id="editBlogTitle" name="title" required
-                                        class="w-full px-4 py-2 border rounded-lg">
-                                </div>
-
-                                <!-- Slug -->
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium mb-2">Slug (URL) *</label>
-                                    <input type="text" id="editBlogSlug" name="slug" required
-                                        class="w-full px-4 py-2 border rounded-lg">
-                                </div>
-
-                                <!-- Excerpt -->
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium mb-2">Excerpt *</label>
-                                    <textarea id="editBlogExcerpt" name="excerpt" required maxlength="200"
-                                        class="w-full px-4 py-2 border rounded-lg"></textarea>
-                                </div>
-
-                                <!-- Content -->
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium mb-2">Content *</label>
-                                    <textarea id="editBlogContent" name="content" required rows="10"
-                                        class="w-full px-4 py-2 border rounded-lg"></textarea>
-                                </div>
-
-                                <!-- Featured Image -->
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium mb-2">Featured Image URL *</label>
-                                    <input type="text" id="editBlogImage" name="featuredImage" required
-                                        class="w-full px-4 py-2 border rounded-lg">
-                                </div>
-
-                                <!-- Author Name -->
-                                <div>
-                                    <label class="block text-sm font-medium mb-2">Author Name</label>
-                                    <input type="text" id="editBlogAuthor" name="authorName"
-                                        class="w-full px-4 py-2 border rounded-lg">
-                                </div>
-
-                                <!-- Category -->
-                                <div>
-                                    <label class="block text-sm font-medium mb-2">Category *</label>
-                                    <select id="editBlogCategory" name="category" required
-                                        class="w-full px-4 py-2 border rounded-lg bg-white">
-                                        <option value="Technology">Technology</option>
-                                        <option value="Education">Education</option>
-                                        <option value="Career">Career</option>
-                                        <option value="Programming">Programming</option>
-                                        <option value="Design">Design</option>
-                                        <option value="Business">Business</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </div>
-
-                                <!-- Read Time -->
-                                <div>
-                                    <label class="block text-sm font-medium mb-2">Read Time</label>
-                                    <input type="text" id="editBlogReadTime" name="readTime"
-                                        class="w-full px-4 py-2 border rounded-lg">
-                                </div>
-
-                                <!-- Tags -->
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium mb-2">Tags</label>
-                                    <input type="text" id="editBlogTags" name="tags"
-                                        class="w-full px-4 py-2 border rounded-lg">
-                                </div>
-
-                                <!-- Status -->
-                                <div>
-                                    <label class="block text-sm font-medium mb-2">Status *</label>
-                                    <select id="editBlogStatus" name="status" required
-                                        class="w-full px-4 py-2 border rounded-lg bg-white">
-                                        <option value="draft">Draft</option>
-                                        <option value="published">Published</option>
-                                        <option value="archived">Archived</option>
-                                    </select>
-                                </div>
-
-                                <!-- Featured -->
-                                <div class="flex items-center gap-2 mt-7">
-                                    <input type="checkbox" id="editBlogFeatured" name="featured" value="true">
-                                    <label for="editBlogFeatured" class="text-sm font-medium">Mark as Featured</label>
-                                </div>
-
-                            </div>
-
-                            <!-- Actions -->
-                            <div class="flex gap-3 pt-6 border-t">
-                                <button type="button" onclick="cancelEditBlog()"
-                                    class="px-6 py-2 border rounded-lg hover:bg-gray-50 transition">
-                                    Cancel
-                                </button>
-                                <button type="submit"
-                                    class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                                    Update Blog
-                                </button>
-                            </div>
-                        </form>
+                <div class="stat-card">
+                    <div class="stat-icon red">
+                        <i class="fas fa-comments"></i>
                     </div>
-                </main>
+                    <div class="stat-info">
+                        <h3><%= blogs.reduce((sum, b) => sum + (b.comments ? b.comments.length : 0), 0) %></h3>
+                        <p>Total Comments</p>
+                    </div>
+                </div>
+            </div>
 
-        </div>
+            <!-- Blogs Table -->
+            <div class="blogs-table-container">
+                <div class="table-header">
+                    <h2>All Blog Posts</h2>
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Search blogs...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </div>
 
-        <script>
-            // Chart.js configurations
-            document.addEventListener('DOMContentLoaded', function () {
-                const blogs = <%- JSON.stringify(blogs) %>;
+                <% if (blogs && blogs.length > 0) { %>
+                    <table class="blogs-table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Blog Post</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Stats</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="blogTableBody">
+                            <% blogs.forEach(blog => { %>
+                                <tr>
+                                    <td>
+                                        <img src="<%= blog.image %>" class="blog-image">
+                                    </td>
+                                    <td>
+                                        <div class="blog-title"><%= blog.title %></div>
+                                        <div class="blog-excerpt"><%= blog.excerpt %></div>
+                                    </td>
+                                    <td><%= blog.category %></td>
+                                    <td>
+                                        <span class="status-badge <%= blog.published ? 'published' : 'draft' %>">
+                                            <%= blog.published ? 'Published' : 'Draft' %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <small>
+                                            <i class="fas fa-eye"></i> <%= blog.views || 0 %><br>
+                                            <i class="fas fa-comment"></i> <%= blog.comments?.length || 0 %>
+                                        </small>
+                                    </td>
+                                    <td><%= blog.date %></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <a href="/admin/blogs/<%= blog._id %>" target="_blank" class="action-btn view">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="/admin/blogs/edit/<%= blog._id %>" class="action-btn edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button class="action-btn delete"
+                                                onclick="deleteBlog('<%= blog._id %>')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h3>No Blogs Yet</h3>
+                        <p>Start creating amazing content!</p>
+                    </div>
+                <% } %>
+            </div>
 
-                // Blog Status Chart
-                const statusCounts = {
-                    published: blogs.filter(b => b.status === 'published').length,
-                    draft: blogs.filter(b => b.status === 'draft').length,
-                    archived: blogs.filter(b => b.status === 'archived').length
-                };
+        </main>
 
-                const statusCtx = document.getElementById('blogStatusChart').getContext('2d');
-                if (window.statusChart) window.statusChart.destroy();
-                window.statusChart = new Chart(statusCtx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Published', 'Draft', 'Archived'],
-                        datasets: [{
-                            data: [statusCounts.published, statusCounts.draft, statusCounts.archived],
-                            backgroundColor: ['#10b981', '#f59e0b', '#6b7280']
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'bottom'
-                            }
-                        }
-                    }
-                });
+    </div>
 
-                // Category Chart
-                const categories = {};
-                blogs.forEach(blog => {
-                    categories[blog.category] = (categories[blog.category] || 0) + 1;
-                });
+    <script>
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const tableRows = document.querySelectorAll('#blogTableBody tr');
 
-                const categoryCtx = document.getElementById('categoryChart').getContext('2d');
-                new Chart(categoryCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: Object.keys(categories),
-                        datasets: [{
-                            label: 'Number of Blogs',
-                            data: Object.values(categories),
-                            backgroundColor: '#3b82f6'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    stepSize: 1
-                                }
-                            }
-                        }
-                    }
-                });
-            });
-
-            // Page navigation
-            function showAddBlogPage() {
-                document.getElementById('blogManagementPage').classList.add('hidden');
-                document.getElementById('addBlogPage').classList.remove('hidden');
-                document.getElementById('editBlogPage').classList.add('hidden');
-            }
-
-            function cancelAddBlog() {
-                document.getElementById('addBlogPage').classList.add('hidden');
-                document.getElementById('blogManagementPage').classList.remove('hidden');
-            }
-
-            function openEditBlog(blog) {
-                document.getElementById('blogManagementPage').classList.add('hidden');
-                document.getElementById('addBlogPage').classList.add('hidden');
-                document.getElementById('editBlogPage').classList.remove('hidden');
-
-                // Set form action
-                const form = document.getElementById('editBlogForm');
-                form.action = `/blog-management/update/${blog._id}`;
-
-                // Populate fields
-                document.getElementById('editBlogTitle').value = blog.title;
-                document.getElementById('editBlogSlug').value = blog.slug;
-                document.getElementById('editBlogExcerpt').value = blog.excerpt;
-                document.getElementById('editBlogContent').value = blog.content;
-                document.getElementById('editBlogImage').value = blog.featuredImage;
-                document.getElementById('editBlogAuthor').value = blog.author.name;
-                document.getElementById('editBlogCategory').value = blog.category;
-                document.getElementById('editBlogReadTime').value = blog.readTime;
-                document.getElementById('editBlogTags').value = blog.tags.join(', ');
-                document.getElementById('editBlogStatus').value = blog.status;
-                document.getElementById('editBlogFeatured').checked = blog.featured;
-            }
-
-            function cancelEditBlog() {
-                document.getElementById('editBlogPage').classList.add('hidden');
-                document.getElementById('blogManagementPage').classList.remove('hidden');
-            }
-
-            // Delete single blog
-            async function deleteBlog(blogId) {
-                if (!confirm('Are you sure you want to delete this blog?')) return;
-
-                try {
-                    const res = await fetch(`/blog-management/delete/${blogId}`, {
-                        method: 'DELETE'
-                    });
-                    const data = await res.json();
-
-                    if (data.success) {
-                        alert('Blog deleted successfully');
-                        location.reload();
-                    } else {
-                        alert('Failed to delete blog');
-                    }
-                } catch (error) {
-                    console.error(error);
-                    alert('Server error while deleting blog');
-                }
-            }
-
-            // Delete all blogs
-            async function deleteAllBlogs() {
-                if (!confirm('⚠️ WARNING: This will delete ALL blogs permanently!\n\nAre you absolutely sure?')) return;
-
-                const confirmText = prompt('Type "DELETE ALL" to confirm:');
-                if (confirmText !== 'DELETE ALL') {
-                    alert('Deletion cancelled');
-                    return;
-                }
-
-                try {
-                    const res = await fetch('/blog-management/delete-all', {
-                        method: 'DELETE'
-                    });
-                    const data = await res.json();
-
-                    if (data.success) {
-                        alert('All blogs deleted successfully');
-                        location.reload();
-                    } else {
-                        alert('Failed to delete blogs');
-                    }
-                } catch (error) {
-                    console.error(error);
-                    alert('Server error while deleting blogs');
-                }
-            }
-
-            // Filter blogs
-            function filterBlogs() {
-                const searchValue = document.getElementById('blogSearch').value.toLowerCase();
-                const statusFilter = document.getElementById('statusFilter').value;
-                const categoryFilter = document.getElementById('categoryFilter').value;
-
-                const rows = document.querySelectorAll('.blog-row');
-
-                rows.forEach(row => {
-                    const title = row.getAttribute('data-title');
-                    const status = row.getAttribute('data-status');
-                    const category = row.getAttribute('data-category');
-
-                    const matchesSearch = title.includes(searchValue);
-                    const matchesStatus = statusFilter === 'all' || status === statusFilter;
-                    const matchesCategory = categoryFilter === 'all' || category === categoryFilter;
-
-                    if (matchesSearch && matchesStatus && matchesCategory) {
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                
+                tableRows.forEach(row => {
+                    const title = row.dataset.title || '';
+                    const category = row.dataset.category || '';
+                    
+                    if (title.includes(query) || category.includes(query)) {
                         row.style.display = '';
                     } else {
                         row.style.display = 'none';
                     }
                 });
-            }
-        </script>
-</body>
+            });
+        }
 
+        // Delete blog function
+        function deleteBlog(blogId) {
+            if (confirm('Are you sure you want to delete this blog? This action cannot be undone.')) {
+                fetch(`/admin/blogs/${blogId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Blog deleted successfully!');
+                        location.reload();
+                    } else {
+                        alert('Error deleting blog: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    alert('Error deleting blog: ' + error.message);
+                });
+            }
+        }
+    </script>
+
+</body>
 </html>

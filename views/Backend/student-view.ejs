@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Details</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-[#f4f6f9]">
+
+<%- include("../partials/header") %>
+<div class="flex">
+<%- include("../partials/sidebar") %>
+
+<main class="flex-1 p-6 space-y-6">
+
+  <!-- ================= HEADER ================= -->
+  <div>
+    <h1 class="text-2xl font-bold">Student Details</h1>
+    <p class="text-gray-500 text-sm">Complete academic & activity overview</p>
+  </div>
+
+  <!-- ================= BASIC INFO ================= -->
+  <div class="bg-white rounded-xl shadow p-6 grid grid-cols-2 gap-6">
+    <div>
+      <p class="text-gray-500 text-sm">Full Name</p>
+      <p class="font-semibold"><%= student.name %></p>
+    </div>
+    <div>
+      <p class="text-gray-500 text-sm">Email</p>
+      <p class="font-semibold"><%= student.email %></p>
+    </div>
+    <div>
+      <p class="text-gray-500 text-sm">Phone</p>
+      <p class="font-semibold"><%= student.phone || "-" %></p>
+    </div>
+    <div>
+      <p class="text-gray-500 text-sm">Gender</p>
+      <p class="font-semibold"><%= student.gender %></p>
+    </div>
+    <div>
+      <p class="text-gray-500 text-sm">City</p>
+      <p class="font-semibold"><%= student.city || "-" %></p>
+    </div>
+    <div>
+      <p class="text-gray-500 text-sm">Education Level</p>
+      <p class="font-semibold"><%= student.educationLevel || "-" %></p>
+    </div>
+  </div>
+
+  <!-- ================= COURSE SUMMARY ================= -->
+  <div class="bg-white rounded-xl shadow p-6 mb-6">
+  <h2 class="font-semibold text-lg mb-4">Course Information</h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-sm">
+
+    <!-- Course Name -->
+    <div>
+      <p class="text-gray-500">Course Name</p>
+      <p class="font-semibold">
+        <%= course ? course.title : "-" %>
+      </p>
+    </div>
+
+    <!-- Instructor (not in DB yet) -->
+    <div>
+      <p class="text-gray-500">Instructor</p>
+      <p class="font-semibold">Not Assigned</p>
+      <p class="text-xs text-gray-400">—</p>
+    </div>
+
+    <!-- Completion -->
+    <div>
+      <p class="text-gray-500">Completion</p>
+      <p class="font-semibold text-blue-600">
+        <%= enrollment ? enrollment.progress : 0 %>% Completed
+      </p>
+    </div>
+
+    <!-- Status -->
+    <div>
+      <p class="text-gray-500">Status</p>
+      <span
+        class="inline-block mt-1 px-3 py-1 text-xs font-semibold rounded-full
+        <%= enrollment.status === 'completed'
+            ? 'bg-green-100 text-green-700'
+            : enrollment.status === 'cancelled'
+            ? 'bg-red-100 text-red-700'
+            : 'bg-blue-100 text-blue-700' %>"
+      >
+        <%= enrollment.status %>
+      </span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============== LIVE & DOUBT SESSION SUMMARY=========-->
+
+<div class="bg-white rounded-xl shadow p-6 mb-6">
+  <h2 class="font-semibold text-lg mb-4">Live & Doubt Sessions</h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-5 gap-4 text-sm">
+    <div>
+      <p class="text-gray-500">Total Sessions</p>
+      <p class="font-semibold">12</p>
+    </div>
+
+    <div>
+      <p class="text-gray-500">Attended</p>
+      <p class="font-semibold text-green-600">9</p>
+    </div>
+
+    <div>
+      <p class="text-gray-500">Missed</p>
+      <p class="font-semibold text-red-500">3</p>
+    </div>
+
+    <div>
+      <p class="text-gray-500">Doubts Raised</p>
+      <p class="font-semibold">5</p>
+    </div>
+
+    <div>
+      <p class="text-gray-500">Attendance %</p>
+      <p class="font-semibold text-blue-600">75%</p>
+    </div>
+  </div>
+</div>
+
+
+  <!-- ================= UPCOMING LIVE SESSION ================= -->
+<div class="bg-white rounded-xl shadow p-6 mb-6">
+  <h2 class="font-semibold text-lg mb-3">Upcoming Session</h2>
+
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+      <p class="font-semibold">React Hooks – Live Doubt Session</p>
+      <p class="text-sm text-gray-500">
+        Instructor: Prof. Rahul Verma
+      </p>
+      <p class="text-sm text-gray-500">
+        📅 20 Feb 2026 | ⏰ 4:00 PM – 5:30 PM
+      </p>
+    </div>
+
+    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+      Upcoming
+    </span>
+  </div>
+</div>
+
+  <!-- ================= SESSION HISTORY TABLE ================= -->
+<div class="bg-white rounded-xl shadow p-6 mb-6">
+  <h2 class="font-semibold text-lg mb-4">Session History</h2>
+
+  <table class="w-full text-sm">
+    <thead class="border-b text-gray-500">
+      <tr>
+        <th class="text-left py-2">Session</th>
+        <th>Type</th>
+        <th>Instructor</th>
+        <th>Date</th>
+        <th>Duration</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr class="border-b">
+        <td class="py-3">Java Basics – Doubt Session</td>
+        <td>Doubt</td>
+        <td>Prof. Patil</td>
+        <td>15 Feb 2026</td>
+        <td>1 hr</td>
+        <td class="text-green-600 font-semibold">Present</td>
+        <td>
+          <a href="#" class="text-blue-600 hover:underline">
+            View Recording
+          </a>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="py-3">OOP Concepts – Live Class</td>
+        <td>Live</td>
+        <td>Prof. Rahul Verma</td>
+        <td>10 Feb 2026</td>
+        <td>1.5 hr</td>
+        <td class="text-red-500 font-semibold">Absent</td>
+        <td class="text-gray-400">—</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ================= ASSIGNMENTS ================= -->
+<%
+  const assignmentList = Array.isArray(assignments) ? assignments : [];
+%>
+
+<div class="bg-white rounded-xl shadow p-6">
+  <h2 class="font-semibold text-lg mb-4">Assignments</h2>
+
+  <table class="w-full text-sm table-fixed">
+    <thead class="border-b text-gray-500">
+      <tr>
+        <th class="text-left py-2 w-1/3">Title</th>
+        <th class="text-center w-1/6">Status</th>
+        <th class="text-center w-1/6">Score</th>
+        <th class="text-center w-1/6">Submitted On</th>
+        <th class="text-center w-1/6">Action</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% if (assignmentList.length === 0) { %>
+        <tr>
+          <td colspan="5" class="py-6 text-center text-gray-400">
+            No assignments submitted yet
+          </td>
+        </tr>
+      <% } else { %>
+
+        <% assignmentList.forEach(a => { %>
+          <tr class="border-b last:border-none hover:bg-gray-50">
+            
+            <!-- TITLE -->
+            <td class="py-3 font-medium">
+              <%= a.assignmentTitle %>
+            </td>
+
+            <!-- STATUS -->
+            <td class="text-center">
+              <% if (a.isChecked) { %>
+                <span class="px-2 py-1 text-xs rounded bg-green-100 text-green-700">
+                  Checked
+                </span>
+              <% } else { %>
+                <span class="px-2 py-1 text-xs rounded bg-yellow-100 text-yellow-700">
+                  Pending
+                </span>
+              <% } %>
+            </td>
+
+            <!-- SCORE -->
+            <td class="text-center">
+              <%= a.score !== null ? a.score : "—" %>
+            </td>
+
+            <!-- DATE -->
+            <td class="text-center">
+              <%= a.submittedAt
+                ? new Date(a.submittedAt).toLocaleDateString("en-IN", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric"
+                  })
+                : "—" %>
+            </td>
+
+            <!-- ACTION -->
+            <td class="text-center">
+              <% if (a.answerVideoUrl) { %>
+                <a
+                  href="<%= a.answerVideoUrl %>"
+                  target="_blank"
+                  class="text-blue-600 hover:underline"
+                >
+                  View
+                </a>
+              <% } else { %>
+                <span class="text-gray-400">—</span>
+              <% } %>
+            </td>
+
+          </tr>
+        <% }) %>
+
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ================= TESTS ================= -->
+<%
+  const testList = Array.isArray(tests) ? tests : [];
+%>
+
+<div class="bg-white rounded-xl shadow p-6">
+  <h2 class="font-semibold text-lg mb-4">Test Attempts</h2>
+
+  <table class="w-full text-sm table-fixed">
+    <thead class="border-b text-gray-500">
+      <tr>
+        <th class="text-left py-2 w-2/5">Test</th>
+        <th class="text-center w-1/5">Score</th>
+        <th class="text-center w-1/5">Percentage</th>
+        <th class="text-center w-1/5">Date</th>
+        <th class="text-center w-1/5">Action</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% if (testList.length === 0) { %>
+        <tr>
+          <td colspan="5" class="py-6 text-center text-gray-400">
+            No test attempts found
+          </td>
+        </tr>
+      <% } else { %>
+
+        <% testList.forEach(t => { %>
+          <tr class="border-b last:border-none hover:bg-gray-50">
+
+            <!-- TEST TITLE -->
+            <td class="py-3 font-medium">
+              <%= t.testTitle %>
+            </td>
+
+            <!-- SCORE -->
+            <td class="text-center">
+              <%= t.score %> / <%= t.totalMarks %>
+            </td>
+
+            <!-- PERCENTAGE -->
+            <td class="text-center">
+              <span class="<%= t.percentage >= 40 ? 'text-green-600' : 'text-red-600' %> font-semibold">
+                <%= t.percentage %>%
+              </span>
+            </td>
+
+            <!-- DATE -->
+            <td class="text-center">
+              <%= t.submittedAt
+                ? new Date(t.submittedAt).toLocaleDateString("en-IN", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric"
+                  })
+                : "—" %>
+            </td>
+
+            <!-- ACTION -->
+            <td class="text-center">
+              <a
+                href="/admin/tests/<%= t._id %>/view"
+                class="text-blue-600 hover:underline"
+              >
+                View Result
+              </a>
+            </td>
+
+          </tr>
+        <% }) %>
+
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+  <!-- ================= PLACEMENTS ================= -->
+  <div class="bg-white rounded-xl shadow p-6">
+    <h3 class="font-semibold text-lg mb-4">Placements</h3>
+
+    <div class="grid grid-cols-4 gap-6 text-sm">
+      <div><p>Eligibility</p><b class="text-green-600">Eligible</b></div>
+      <div><p>Companies Available</p><b>4</b></div>
+      <div><p>Applied</p><b>2</b></div>
+      <div><p>Offer</p><b class="text-blue-600">Pending</b></div>
+    </div>
+  </div>
+  <!-- aik na mjha table jhala a , me course information crad vr kam karu ka ? -->
+  <!-- ================= PAYMENTS ================= -->
+  <div class="bg-white rounded-xl shadow p-6">
+  <h2 class="font-semibold text-lg mb-4">Payment Summary</h2>
+
+  <div class="grid grid-cols-4 gap-6 items-center text-sm">
+    <div>
+      <p class="text-gray-500">Total Fee</p>
+      <p class="font-semibold text-lg">₹25,000</p>
+    </div>
+
+    <div>
+      <p class="text-gray-500">Paid</p>
+      <p class="font-semibold text-lg text-green-600">₹15,000</p>
+    </div>
+
+    <div>
+      <p class="text-gray-500">Pending</p>
+      <p class="font-semibold text-lg text-red-600">₹10,000</p>
+    </div>
+
+    <div class="text-right">
+      <a
+        href="#"
+        class="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg"
+      >
+        View Receipt
+      </a>
+    </div>
+    </div>
+  </div>
+  <div class="flex gap-4 mt-6">
+<!-- Edit Button -->
+<a
+  href="/student-management/<%= student._id %>/edit"
+  class="bg-blue-600 text-white px-6 py-2 rounded">
+  Edit Student
+</a>
+  <!-- MANAGE PAYMENTS -->
+  <a
+    href="/payments/student/<%= student._id %>"
+    class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
+    Manage Payments
+  </a>
+<!-- BACK TO STUDENT LIST -->
+<a
+  href="/student-management"
+  class="border px-6 py-2 rounded hover:bg-gray-100">
+  Back
+</a>
+</div>
+</main>
+</div>
+</body>
+</html>

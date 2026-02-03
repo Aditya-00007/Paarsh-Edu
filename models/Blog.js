@@ -1,81 +1,91 @@
 import mongoose from "mongoose";
 
-const blogSchema = new mongoose.Schema(
-  {
-    title: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    slug: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-    },
-    excerpt: {
-      type: String,
-      required: true,
-      maxlength: 200,
-    },
-    content: {
-      type: String,
-      required: true,
-    },
-    featuredImage: {
-      type: String,
-      required: true,
-    },
-    author: {
-      type: String,
-      default: "Admin",
-    },
-    category: {
-      type: String,
-      required: true,
-      enum: ["Technology", "Education", "Career", "Tutorial", "News", "Other"],
-    },
-    tags: [
-      {
+const commentSchema = new mongoose.Schema({
+    name: {
         type: String,
-      },
-    ],
-    status: {
-      type: String,
-      enum: ["draft", "published", "archived"],
-      default: "draft",
+        required: true
     },
-    views: {
-      type: Number,
-      default: 0,
+    email: {
+        type: String,
+        required: true
     },
-    likes: {
-      type: Number,
-      default: 0,
+    message: {
+        type: String,
+        required: true
     },
-    publishedAt: {
-      type: Date,
-    },
-  },
-  { timestamps: true }
-);
-
-// Auto-generate slug from title
-blogSchema.pre("save", function (next) {
-  if (this.isModified("title")) {
-    this.slug = this.title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "");
-  }
-  
-  // Set publishedAt when status changes to published
-  if (this.isModified("status") && this.status === "published" && !this.publishedAt) {
-    this.publishedAt = new Date();
-  }
-  
-  next();
+    date: {
+        type: Date,
+        default: Date.now
+    }
 });
 
+const blogSchema = new mongoose.Schema({
+    title: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    excerpt: {
+        type: String,
+        required: true,
+        maxLength: 250
+    },
+    content: {
+        type: String,
+        required: true
+    },
+    image: {
+        type: String,
+        required: true
+    },
+    author: {
+        type: String,
+        required: true,
+        default: "Admin"
+    },
+    category: {
+        type: String,
+        required: true,
+        enum: ["Technology", "Education", "Career", "Tips & Tricks", "News", "Tutorial", "Other"],
+        default: "Education"
+    },
+    tags: [{
+        type: String
+    }],
+    comments: [commentSchema],
+    published: {
+        type: Boolean,
+        default: true
+    },
+    views: {
+        type: Number,
+        default: 0
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now
+    }
+}, {
+    timestamps: true
+});
+
+// Virtual for formatted date
+blogSchema.virtual("date").get(function() {
+    return this.createdAt.toLocaleDateString("en-US", { 
+        month: "short", 
+        day: "numeric", 
+        year: "numeric" 
+    });
+});
+
+// Ensure virtuals are included when converting to JSON
+blogSchema.set("toJSON", { virtuals: true });
+blogSchema.set("toObject", { virtuals: true });
+
 const Blog = mongoose.model("Blog", blogSchema);
+
 export default Blog;

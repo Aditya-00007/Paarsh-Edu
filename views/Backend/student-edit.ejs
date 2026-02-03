@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Edit Student</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-[#f4f6f9]">
+
+  <!-- HEADER -->
+  <%- include("../partials/header") %>
+
+  <div class="flex">
+    <!-- SIDEBAR -->
+    <%- include("../partials/sidebar") %>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 p-6 max-w-7xl space-y-6">
+
+      <!-- PAGE TITLE -->
+      <div>
+        <h1 class="text-2xl font-bold">Edit Student</h1>
+        <p class="text-sm text-gray-500">
+          Modify student profile, course, and placement information
+        </p>
+      </div>
+
+      <!-- FORM -->
+      <form
+        action="/student-management/<%= student._id %>/edit"
+        method="POST"
+        class="space-y-6"
+      >
+
+        <!-- ================= BASIC INFORMATION ================= -->
+        <div class="bg-white p-6 rounded-xl shadow-sm">
+          <h2 class="font-semibold mb-4">Basic Information</h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+            <div>
+              <label class="block mb-1">Full Name</label>
+              <input
+                type="text"
+                name="name"
+                value="<%= student.name %>"
+                class="w-full border rounded px-3 py-2"
+                required
+              />
+            </div>
+
+            <div>
+              <label class="block mb-1">Email (Read Only)</label>
+              <input
+                type="email"
+                value="<%= student.email %>"
+                readonly
+                class="w-full border rounded px-3 py-2 bg-gray-100"
+              />
+            </div>
+
+            <div>
+              <label class="block mb-1">Phone</label>
+              <input
+                type="text"
+                name="phone"
+                value="<%= student.phone %>"
+                class="w-full border rounded px-3 py-2"
+              />
+            </div>
+
+            <div>
+              <label class="block mb-1">City</label>
+              <input
+                type="text"
+                name="city"
+                value="<%= student.city %>"
+                class="w-full border rounded px-3 py-2"
+              />
+            </div>
+
+            <div>
+              <label class="block mb-1">Education Level</label>
+              <select
+                name="educationLevel"
+                class="w-full border rounded px-3 py-2"
+              >
+                <option value="Undergraduate"
+                  <%= student.educationLevel === "Undergraduate" ? "selected" : "" %>>
+                  Undergraduate
+                </option>
+                <option value="Graduate"
+                  <%= student.educationLevel === "Graduate" ? "selected" : "" %>>
+                  Graduate
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block mb-1">Gender (Read Only)</label>
+              <input
+                type="text"
+                value="<%= student.gender %>"
+                readonly
+                class="w-full border rounded px-3 py-2 bg-gray-100"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= COURSE INFORMATION ================= -->
+        <div class="bg-white p-6 rounded-xl shadow-sm">
+          <h2 class="font-semibold mb-4">Course Information</h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+            <div>
+              <label class="block mb-1">Course Name</label>
+              <input
+                type="text"
+                name="course"
+                value="<%= student.course %>"
+                class="w-full border rounded px-3 py-2"
+              />
+            </div>
+
+            <div>
+              <label class="block mb-1">Instructor</label>
+              <input
+                type="text"
+                value="Prof. Rahul Verma"
+                readonly
+                class="w-full border rounded px-3 py-2 bg-gray-100"
+              />
+            </div>
+
+            <div>
+              <label class="block mb-1">Course Status</label>
+              <select
+                name="courseStatus"
+                class="w-full border rounded px-3 py-2"
+              >
+                <option value="Ongoing"
+                  <%= student.courseStatus === "Ongoing" ? "selected" : "" %>>
+                  Ongoing
+                </option>
+                <option value="Completed"
+                  <%= student.courseStatus === "Completed" ? "selected" : "" %>>
+                  Completed
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= PLACEMENT INFORMATION ================= -->
+        <div class="bg-white p-6 rounded-xl shadow-sm">
+          <h2 class="font-semibold mb-4">Placement Information</h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+            <div>
+              <label class="block mb-1">Placement Eligible</label>
+              <select
+                name="placementEligible"
+                class="w-full border rounded px-3 py-2"
+              >
+                <option value="Yes"
+                  <%= student.placementEligible === "Yes" ? "selected" : "" %>>
+                  Yes
+                </option>
+                <option value="No"
+                  <%= student.placementEligible === "No" ? "selected" : "" %>>
+                  No
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block mb-1">Applied Companies</label>
+              <input
+                type="text"
+                value="<%= student.appliedCompanies || '0' %> / 4"
+                readonly
+                class="w-full border rounded px-3 py-2 bg-gray-100"
+              />
+            </div>
+
+            <div>
+              <label class="block mb-1">Offer Status</label>
+              <select
+                name="offerStatus"
+                class="w-full border rounded px-3 py-2"
+              >
+                <option value="Pending"
+                  <%= student.offerStatus === "Pending" ? "selected" : "" %>>
+                  Pending
+                </option>
+                <option value="Offered"
+                  <%= student.offerStatus === "Offered" ? "selected" : "" %>>
+                  Offered
+                </option>
+                <option value="Rejected"
+                  <%= student.offerStatus === "Rejected" ? "selected" : "" %>>
+                  Rejected
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= ACTION BUTTONS ================= -->
+        <div class="flex gap-4 pt-2">
+
+          <!-- SAVE -->
+          <button
+            type="submit"
+            class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+          >
+            Save Changes
+          </button>
+
+          <!-- BACK -->
+          <a
+            href="/student-management"
+            class="border px-6 py-2 rounded hover:bg-gray-100"
+          >
+            Back
+          </a>
+
+          <!-- PAYMENTS -->
+          <a
+            href="/payments/student/<%= student._id %>"
+            class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
+          >
+            Manage Payments
+          </a>
+        </div>
+
+      </form>
+    </main>
+  </div>
+
+</body>
+</html>

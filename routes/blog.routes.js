@@ -1,187 +1,156 @@
 import express from "express";
-import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
+import dotenv from "dotenv";
+import Blog from "../models/Blog.js";  
+
+dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
 
 const router = express.Router();
 
-// Get __dirname equivalent in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
-// Path to blogs JSON file
-const BLOGS_FILE = path.join(__dirname, "../data/blogs.json");
+// GET - Blog Management Page (Admin)
+router.get('/', async (req, res) => {
+    try {
 
-// Helper function to read blogs from file
-async function readBlogs() {
-  try {
-    const data = await fs.readFile(BLOGS_FILE, "utf-8");
-    return JSON.parse(data);
-  } catch (error) {
-    // If file doesn't exist, return empty array
-    return [];
-  }
-}
+        //  removed .lean()
+        const blogs = await Blog.find().sort({ createdAt: -1 });
 
-// Helper function to write blogs to file
-async function writeBlogs(blogs) {
-  await fs.writeFile(BLOGS_FILE, JSON.stringify(blogs, null, 2), "utf-8");
-}
+        res.render('Backend/blogManagement', { blogs });
 
-// Helper function to generate slug from title
-function generateSlug(title) {
-  return title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
-
-// Helper function to generate unique ID
-function generateId() {
-  return Date.now().toString() + Math.random().toString(36).substr(2, 9);
-}
-
-// Get all blogs
-router.get("/", async (req, res) => {
-  try {
-    const blogs = await readBlogs();
-    return res.render("Backend/blogManagement.ejs", { blogs });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Error loading blogs");
-  }
-});
-
-// Create new blog
-router.post("/add", async (req, res) => {
-  try {
-    const {
-      title,
-      slug,
-      excerpt,
-      content,
-      featuredImage,
-      authorName,
-      authorAvatar,
-      category,
-      tags,
-      readTime,
-      status,
-      featured,
-    } = req.body;
-
-    const blogs = await readBlogs();
-
-    const newBlog = {
-      _id: generateId(),
-      title,
-      slug: slug || generateSlug(title),
-      excerpt,
-      content,
-      featuredImage,
-      author: {
-        name: authorName || "Admin",
-        avatar: authorAvatar || "",
-      },
-      category: category || "Technology",
-      tags: tags ? tags.split(",").map((t) => t.trim()) : [],
-      views: 0,
-      likes: 0,
-      readTime: readTime || "5 min read",
-      status: status || "draft",
-      featured: featured === "true",
-      publishedAt: status === "published" ? new Date().toISOString() : null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-
-    blogs.unshift(newBlog);
-    await writeBlogs(blogs);
-
-    res.redirect("/blog-management");
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Failed to create blog");
-  }
-});
-
-// Update blog
-router.post("/update/:id", async (req, res) => {
-  try {
-    const {
-      title,
-      slug,
-      excerpt,
-      content,
-      featuredImage,
-      authorName,
-      category,
-      tags,
-      readTime,
-      status,
-      featured,
-    } = req.body;
-
-    const blogs = await readBlogs();
-    const blogIndex = blogs.findIndex((b) => b._id === req.params.id);
-
-    if (blogIndex === -1) {
-      return res.status(404).send("Blog not found");
+    } catch (error) {
+        console.error('Error fetching blogs:', error);
+        res.status(500).send('Error loading blogs');
     }
+});
 
-    const blog = blogs[blogIndex];
+router.get('/:id', async (req, res) => {
+    try {
 
-    // Update blog fields
-    blog.title = title;
-    blog.slug = slug || generateSlug(title);
-    blog.excerpt = excerpt;
-    blog.content = content;
-    blog.featuredImage = featuredImage;
-    blog.author.name = authorName || "Admin";
-    blog.category = category;
-    blog.tags = tags ? tags.split(",").map((t) => t.trim()) : [];
-    blog.readTime = readTime;
-    blog.status = status;
-    blog.featured = featured === "true";
-    blog.updatedAt = new Date().toISOString();
+        //  removed .lean()
+        const blog = await Blog.findById(req.params.id);
 
-    // Set publishedAt if status changed to published
-    if (status === "published" && !blog.publishedAt) {
-      blog.publishedAt = new Date().toISOString();
+        if (!blog) {
+            return res.status(404).render('error', { 
+                message: 'Blog not found' 
+            });
+        }
+
+        // Increment views
+        await Blog.findByIdAndUpdate(req.params.id, { $inc: { views: 1 } });
+
+        //  removed .lean()
+        const blogs = await Blog.find({ published: true })
+            .sort({ createdAt: -1 })
+            .limit(10);
+
+        res.render('Backend/blog-details', { 
+            blog,
+            blogs,
+            page: 'blogs'
+        });
+
+    } catch (error) {
+        console.error('Error fetching blog:', error);
+        res.status(500).render('error', { 
+            message: 'Failed to load blog',
+            error
+        });
     }
-
-    blogs[blogIndex] = blog;
-    await writeBlogs(blogs);
-
-    res.redirect("/blog-management");
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Failed to update blog");
-  }
 });
 
-// Delete single blog
-router.delete("/delete/:id", async (req, res) => {
-  try {
-    const blogs = await readBlogs();
-    const filteredBlogs = blogs.filter((b) => b._id !== req.params.id);
-    await writeBlogs(filteredBlogs);
-    res.json({ success: true });
-  } catch (error) {
-    console.error("DELETE BLOG ERROR:", error);
-    res.status(500).json({ success: false });
-  }
+// GET - Add Blog Page (Admin)
+router.get('/add', (req, res) => {
+    res.render('Backend/add-blog');
 });
 
-// Delete all blogs
-router.delete("/delete-all", async (req, res) => {
-  try {
-    await writeBlogs([]);
-    res.json({ success: true });
-  } catch (error) {
-    console.error("DELETE ALL BLOGS ERROR:", error);
-    res.status(500).json({ success: false });
-  }
+// POST - Create New Blog (Admin)
+router.post('/add', async (req, res) => {
+    try {
+
+        const { title, excerpt, content, image, author, category, tags, published } = req.body;
+
+        const newBlog = new Blog({
+            title,
+            excerpt,
+            content,
+            image,
+            author: author || 'Admin',
+            category,
+            tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
+            published: published === 'on' || published === true
+        });
+
+        await newBlog.save();
+        res.redirect('/admin/blogs');
+
+    } catch (error) {
+        console.error('Error creating blog:', error);
+        res.status(500).send('Error creating blog');
+    }
+});
+
+// GET - Edit Blog Page (Admin)
+router.get('/edit/:id', async (req, res) => {
+    try {
+
+        // ❌ removed .lean()
+        const blog = await Blog.findById(req.params.id);
+
+        if (!blog) {
+            return res.status(404).send('Blog not found');
+        }
+
+        res.render('Backend/edit-blog', { blog });
+
+    } catch (error) {
+        console.error('Error fetching blog:', error);
+        res.status(500).send('Error loading blog');
+    }
+});
+
+
+// POST - Update Blog (Admin)
+router.post('/edit/:id', async (req, res) => {
+    try {
+
+        const { title, excerpt, content, image, author, category, tags, published } = req.body;
+
+        await Blog.findByIdAndUpdate(req.params.id, {
+            title,
+            excerpt,
+            content,
+            image,
+            author,
+            category,
+            tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
+            published: published === 'on' || published === true,
+            updatedAt: Date.now()
+        });
+
+        res.redirect('/admin/blogs');
+
+    } catch (error) {
+        console.error('Error updating blog:', error);
+        res.status(500).send('Error updating blog');
+    }
+});
+
+
+// DELETE - Delete Blog (Admin)
+router.delete('/:id', async (req, res) => {
+    try {
+
+        await Blog.findByIdAndDelete(req.params.id);
+
+        res.json({ success: true, message: 'Blog deleted successfully' });
+
+    } catch (error) {
+        console.error('Error deleting blog:', error);
+        res.status(500).json({ success: false, message: 'Error deleting blog' });
+    }
 });
 
 export default router;

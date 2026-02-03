@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-
 const assignmentSubmissionSchema = new mongoose.Schema(
   {
     /* ================= STUDENT ================= */

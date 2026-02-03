@@ -12,7 +12,7 @@ import Test from "./models/Test.js";
 
 dotenv.config();
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.set("view engine", "ejs");
 
@@ -125,6 +125,6 @@ app.get("/course-management", async (req, res) => {
 
 
 
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
 });

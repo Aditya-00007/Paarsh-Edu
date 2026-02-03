@@ -9,6 +9,9 @@ import studentRoutes from "./routes/student.routes.js"
 import CourseContent from "./models/CourseContent.js";
 import Assignment from "./models/Assignment.js";
 import Test from "./models/Test.js";
+import session from "express-session";
+import authRoutes from "./routes/auth.routes.js";
+import { adminAuth } from "./middlewares/adminAuth.js";
 
 dotenv.config();
 const app = express();
@@ -16,12 +19,20 @@ const PORT = process.env.PORT || 3000;
 
 app.set("view engine", "ejs");
 
+app.use(
+  session({
+    secret: "admin-secret-key",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use("/admin-course", adminCourseRoutes);
-app.use("/admin/blogs", blogRoutes);
-app.use("/student-management", studentRoutes);
+app.use("/admin-course", adminAuth, adminCourseRoutes);
+app.use("/admin/blogs", adminAuth, blogRoutes);
+app.use("/student-management", adminAuth, studentRoutes);
 app.use(express.static("public"));
+
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -32,8 +43,18 @@ mongoose
     console.error(" MongoDB connection error:", err);
   });
 
+// auth routes
+app.use("/auth", authRoutes);
+
 // Routes
-app.get("/", async (req, res) => {
+app.get("/", (req, res) => {
+  if (req.session.admin) {
+    return res.redirect("/dashboard");
+  }
+  res.render("Backend/login.ejs", { error: null });
+});
+
+app.get("/dashboard", adminAuth, async (req, res) => {
   try {
     const courses = await Course.find().sort({ createdAt: -1 });
     const categories = await Category.find({ status: "active" });
@@ -44,18 +65,7 @@ app.get("/", async (req, res) => {
   }
 });
 
-app.get("/dashboard", async (req, res) => {
-  try {
-    const courses = await Course.find().sort({ createdAt: -1 });
-    const categories = await Category.find({ status: "active" });
-    res.render("Backend/dashboard.ejs", { courses, categories });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Failed to load Content");
-  }
-});
-
-app.get("/course-management", async (req, res) => {
+app.get("/course-management", adminAuth, async (req, res) => {
   try {
     const [courses, categories, syllabusCourses, assignmentCourses, testCourses] =
       await Promise.all([

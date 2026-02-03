@@ -37,7 +37,7 @@ app.get("/", async (req, res) => {
   try {
     const courses = await Course.find().sort({ createdAt: -1 });
     const categories = await Category.find({ status: "active" });
-    res.render("backend/dashboard.ejs", { courses, categories });
+    res.render("Backend/dashboard.ejs", { courses, categories });
   } catch (err) {
     console.error(err);
     res.status(500).send("Failed to load Content");
@@ -48,7 +48,7 @@ app.get("/dashboard", async (req, res) => {
   try {
     const courses = await Course.find().sort({ createdAt: -1 });
     const categories = await Category.find({ status: "active" });
-    res.render("backend/dashboard.ejs", { courses, categories });
+    res.render("Backend/dashboard.ejs", { courses, categories });
   } catch (err) {
     console.error(err);
     res.status(500).send("Failed to load Content");
@@ -86,7 +86,7 @@ app.get("/course-management", async (req, res) => {
       }
     }
 
-    res.render("backend/courseManagement.ejs", {
+    res.render("Backend/courseManagement.ejs", {
       courses,
       categories,
       editCourseId: req.query.editCourse || null,

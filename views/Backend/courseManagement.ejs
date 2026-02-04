@@ -49,32 +49,31 @@
                                     // syllbus 
 
                                     // Page navigation functions
-                                    function showAllCourses() {
-                                        document.getElementById('topCourses').classList.add('hidden');
-                                        document.getElementById('allCoursesTable').classList.remove('hidden');
-                                    }
+                                    // function showAllCourses() {
+                                    //     document.getElementById('topCourses').classList.add('hidden');
+                                    //     document.getElementById('allCoursesTable').classList.remove('hidden');
+                                    // }
                                     //open preview
                                     function previewCourse(courseId) {
                                         window.location.href = `/admin-course/courses/${courseId}/preview`;
                                     }
 
 
-                                    function hideAllCourses() {
-                                        document.getElementById('topCourses').classList.remove('hidden');
-                                        document.getElementById('allCoursesTable').classList.add('hidden');
+                                    // function hideAllCourses() {
+                                    //     document.getElementById('topCourses').classList.remove('hidden');
+                                    //     document.getElementById('allCoursesTable').classList.add('hidden');
+                                    // }
+
+                                    function openAddCourseModal() {
+                                        document.getElementById('addCourseModal').classList.remove('hidden');
+                                        document.body.classList.add('overflow-hidden');
                                     }
 
-                                    function showAddCoursePage() {
-                                        document.getElementById('courseManagementPage').classList.add('hidden');
-                                        document.getElementById('addCoursePage').classList.remove('hidden');
-                                        document.getElementById('editCoursePage').classList.add('hidden');
+                                    function closeAddCourseModal() {
+                                        document.getElementById('addCourseModal').classList.add('hidden');
+                                        document.body.classList.remove('overflow-hidden');
                                     }
 
-                                    function cancelAddCourse() {
-                                        document.getElementById('addCoursePage').classList.add('hidden');
-                                        document.getElementById('courseManagementPage').classList.remove('hidden');
-                                        document.getElementById('editCoursePage').classList.add('hidden');
-                                    }
 
                                     //handle update and syl;labus
                                     const editCourseId = "<%= editCourseId || '' %>";
@@ -124,29 +123,14 @@
 
 
                                     // add category 
-                                    function showAddCategoryPage() {
-                                        document.getElementById('courseManagementPage').classList.add('hidden');
-                                        document.getElementById('addCoursePage').classList.add('hidden');
-                                        document.getElementById('editCoursePage').classList.add('hidden');
-                                        document.getElementById('addCategoryPage').classList.remove('hidden');
+                                    function openAddCategoryModal() {
+                                        document.getElementById('addCategoryModal').classList.remove('hidden');
+                                        document.body.classList.add('overflow-hidden');
                                     }
 
-                                    function cancelAddCategory() {
-                                        document.getElementById('addCategoryPage').classList.add('hidden');
-                                        document.getElementById('courseManagementPage').classList.remove('hidden');
-                                    }
-                                    async function publishLecture(id) {
-                                        await fetch(`/admin-course/publish/${id}`, {
-                                            method: "PATCH",
-                                        });
-                                        location.reload();
-                                    }
-
-                                    async function unpublishLecture(id) {
-                                        await fetch(`/admin-course/unpublish/${id}`, {
-                                            method: "PATCH",
-                                        });
-                                        location.reload();
+                                    function closeAddCategoryModal() {
+                                        document.getElementById('addCategoryModal').classList.add('hidden');
+                                        document.body.classList.remove('overflow-hidden');
                                     }
 
                                     // Close dropdowns when clicking outside

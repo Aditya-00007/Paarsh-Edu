@@ -3,7 +3,7 @@
   <ul class="space-y-2">
 
     <li>
-      <a href="/dashboard" class="block px-3 py-3 rounded-lg text-white bg-[#343a40]">
+      <a href="/dashboard" class="block px-3 py-3 rounded-lg text-[#adb5bd] hover:bg-[#343a40] hover:text-white transition">
         Dashboard
       </a>
     </li>
@@ -22,26 +22,24 @@
       </a>
     </li>
 
-    <% const menuItems=[ "Student Management" , "Enrollment Management" , "Consent Management" , "Teacher Management"
-      , "Payments" , "Enquiries" , "Settings" ]; %>
-
-      <% menuItems.forEach(item=> {
+    <% const menuItems=[ "Student Management" , "Consent Management" , "Enquiries"]; %>
+    <% menuItems.forEach(item => {
         const path = "/" + item.toLowerCase().replace(/\s+/g, "-");
-        %>
-        <li>
-          <a href="<%= path %>"
-            class="block px-3 py-3 rounded-lg text-[#adb5bd] hover:bg-[#343a40] hover:text-white transition">
-            <%= item %>
-          </a>
-        </li>
-        <% }) %>
+    %>
+      <li>
+        <a href="<%= path %>"
+          class="block px-3 py-3 rounded-lg text-[#adb5bd] hover:bg-[#343a40] hover:text-white transition">
+          <%= item %>
+        </a>
+      </li>
+    <% }) %>
 
-          <li class="pt-2 border-t border-white/20">
-            <a href="/logout"
-              class="block px-3 py-3 rounded-lg text-red-400 hover:bg-red-500/20 font-semibold transition">
-              Logout
-            </a>
-          </li>
+    <li class="pt-2 border-t border-white/20">
+      <a href="/auth/logout"
+        class="block px-3 py-3 rounded-lg text-red-400 hover:bg-red-500/20 font-semibold transition">
+        Logout
+      </a>
+    </li>
 
   </ul>
 </aside>
@@ -60,4 +58,24 @@
       sidebar.style.display = 'none';
     }
   }
+  //active link
+  (function () {
+    const currentPath = window.location.pathname;
+
+    document.querySelectorAll('#sidebar a').forEach(link => {
+      const linkPath = link.getAttribute('href');
+
+      // Ignore logout
+      if (!linkPath || linkPath === '/auth/logout') return;
+
+      // Exact match OR sub-route match
+      if (
+        currentPath === linkPath ||
+        (currentPath.startsWith(linkPath) && linkPath !== '/')
+      ) {
+        link.classList.add('bg-[#343a40]', 'text-white');
+        link.classList.remove('text-[#adb5bd]');
+      }
+    });
+  })();
 </script>

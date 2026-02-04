@@ -1,147 +1,214 @@
-<!--  EDIT COURSE PAGE  -->
-<main class="flex-1 p-6 hidden" id="editCoursePage">
-    <div class="bg-white rounded-xl shadow-sm p-6">
-        <div class="flex items-center justify-between mb-6">
-            <div>
-                <h2 class="text-2xl font-bold">Edit Course</h2>
-                <p class="text-gray-500 text-sm mt-1">Dashboard / Course Management / Edit
-                    Course</p>
-            </div>
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">
-                    AD</div>
-                <span class="text-sm font-medium">Admin User</span>
-            </div>
-        </div>
-        <form id="editCourseForm" method="POST" class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- EDIT COURSE MODAL -->
+<!-- EDIT COURSE MODAL -->
+<div
+  id="editCourseModal"
+  class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center"
+>
+  <!-- Modal Box -->
+  <div
+    class="bg-white w-[95%] max-w-5xl rounded-xl shadow-lg flex flex-col max-h-[90vh]"
+  >
 
-                <!-- Course Title -->
-                <div>
-                    <label class="block text-sm font-medium mb-2">Course Title *</label>
-                    <input type="text" id="editCourseName" name="title" required
-                        class="w-full px-4 py-2 border rounded-lg" />
-                </div>
+    <!-- HEADER (fixed) -->
+    <div class="flex items-center justify-between px-6 py-4 border-b">
+      <div>
+        <h2 class="text-xl font-bold">Edit Course</h2>
+        <p class="text-gray-500 text-sm">
+          Dashboard / Course Management / Edit Course
+        </p>
+      </div>
 
-                <!-- Course Fee -->
-                <div>
-                    <label class="block text-sm font-medium mb-2">Course Fee (₹) *</label>
-                    <input type="number" id="editCourseFee" name="fee" required
-                        class="w-full px-4 py-2 border rounded-lg" />
-                </div>
-
-                <!-- Duration -->
-                <div>
-                    <label class="block text-sm font-medium mb-2">Duration *</label>
-                    <select name="duration" id="editCourseDuration" required
-                        class="w-full px-4 py-2 border rounded-lg bg-white">
-                        <option value="1 Month">1 Month</option>
-                        <option value="2 Months">2 Months</option>
-                        <option value="3 Months">3 Months</option>
-                        <option value="6 Months">6 Months</option>
-                    </select>
-                </div>
-
-                <!-- Intake Limit -->
-                <div>
-                    <label class="block text-sm font-medium mb-2">Intake Limit *</label>
-                    <input type="number" name="intakeLimit" id="editCourseIntake" required
-                        class="w-full px-4 py-2 border rounded-lg" value="10" />
-                </div>
-
-                <!-- Instructor Details -->
-                <div class="md:col-span-2">
-                    <h3 class="text-lg font-semibold mb-2">Instructor</h3>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Instructor Name *</label>
-                    <input type="text" name="instructor[name]" required class="w-full px-4 py-2 border rounded-lg"
-                        placeholder="John Doe">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2">Designation</label>
-                    <input type="text" name="instructor[designation]" class="w-full px-4 py-2 border rounded-lg"
-                        placeholder="Senior Software Engineer">
-                </div>
-
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium mb-2">Instructor Bio</label>
-                    <textarea name="instructor[bio]" class="w-full px-4 py-2 border rounded-lg"
-                        placeholder="10+ years experience in industry..."></textarea>
-                </div>
-
-
-                <!-- Status -->
-                <div>
-                    <label class="block text-sm font-medium mb-2">Status *</label>
-                    <select id="editCourseStatus" name="status" required
-                        class="w-full px-4 py-2 border rounded-lg bg-white">
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                    </select>
-                </div>
-                <button type="button" onclick="openSyllabusForCurrentCourse()"
-                    class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                    ➕ Add / Edit Syllabus
-                </button>
-
-
-            </div>
-
-            <!-- Actions -->
-            <div class="flex gap-3 pt-6 border-t">
-                <button type="button" onclick="cancelEditCourse()" class="px-6 py-2 border rounded-lg">
-                    Cancel
-                </button>
-                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg">
-                    Update Course
-                </button>
-            </div>
-        </form>
+      <button
+        onclick="closeEditCourseModal()"
+        class="text-gray-500 hover:text-black text-xl"
+      >
+        ✕
+      </button>
     </div>
-</main>
+
+    <!-- BODY (scrollable) -->
+    <div class="px-6 py-4 overflow-y-auto">
+
+      <form
+        id="editCourseForm"
+        method="POST"
+        class="space-y-6"
+      >
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <!-- Course Title -->
+          <div>
+            <label class="block text-sm font-medium mb-2">Course Title *</label>
+            <input
+              type="text"
+              id="editCourseName"
+              name="title"
+              required
+              class="w-full px-4 py-2 border rounded-lg"
+            />
+          </div>
+
+          <!-- Course Fee -->
+          <div>
+            <label class="block text-sm font-medium mb-2">Course Fee (₹) *</label>
+            <input
+              type="number"
+              id="editCourseFee"
+              name="fee"
+              required
+              class="w-full px-4 py-2 border rounded-lg"
+            />
+          </div>
+
+          <!-- Duration -->
+          <div>
+            <label class="block text-sm font-medium mb-2">Duration *</label>
+            <select
+              name="duration"
+              id="editCourseDuration"
+              required
+              class="w-full px-4 py-2 border rounded-lg bg-white"
+            >
+              <option value="1 Month">1 Month</option>
+              <option value="2 Months">2 Months</option>
+              <option value="3 Months">3 Months</option>
+              <option value="6 Months">6 Months</option>
+            </select>
+          </div>
+
+          <!-- Intake Limit -->
+          <div>
+            <label class="block text-sm font-medium mb-2">Intake Limit *</label>
+            <input
+              type="number"
+              name="intakeLimit"
+              id="editCourseIntake"
+              required
+              class="w-full px-4 py-2 border rounded-lg"
+              value="10"
+            />
+          </div>
+
+          <!-- Instructor -->
+          <div class="md:col-span-2">
+            <h3 class="text-lg font-semibold mb-2">Instructor</h3>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-2">Instructor Name *</label>
+            <input
+              type="text"
+              name="instructor[name]"
+              required
+              class="w-full px-4 py-2 border rounded-lg"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-2">Designation</label>
+            <input
+              type="text"
+              name="instructor[designation]"
+              class="w-full px-4 py-2 border rounded-lg"
+            />
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium mb-2">Instructor Bio</label>
+            <textarea
+              name="instructor[bio]"
+              class="w-full px-4 py-2 border rounded-lg"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <!-- Status -->
+          <div>
+            <label class="block text-sm font-medium mb-2">Status *</label>
+            <select
+              id="editCourseStatus"
+              name="status"
+              required
+              class="w-full px-4 py-2 border rounded-lg bg-white"
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+
+          <div class="flex items-end">
+            <button
+              type="button"
+              onclick="openSyllabusForCurrentCourse()"
+              class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            >
+              ➕ Add / Edit Syllabus
+            </button>
+          </div>
+
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="flex justify-end gap-3 pt-6 border-t">
+          <button
+            type="button"
+            onclick="closeEditCourseModal()"
+            class="px-6 py-2 border rounded-lg"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            class="px-6 py-2 bg-blue-600 text-white rounded-lg"
+          >
+            Update Course
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
 </div>
 <script>
     function openEditCourse(course) {
-        // Toggle pages
-        document.getElementById('courseManagementPage').classList.add('hidden');
-        document.getElementById('addCoursePage').classList.add('hidden');
-        document.getElementById('editCoursePage').classList.remove('hidden');
+    // 🔓 Open modal
+    document.getElementById('editCourseModal').classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');
 
-        document.getElementById("syllabusCourseId").value = course._id;
+    // Set syllabus course ID
+    document.getElementById("syllabusCourseId").value = course._id;
 
-        // Set form action
-        const form = document.getElementById('editCourseForm');
-        form.action = `/admin-course/courses/update/${course._id}`;
-        form.method = "POST";
+    // Set form action
+    const form = document.getElementById('editCourseForm');
+    form.action = `/admin-course/courses/update/${course._id}`;
+    form.method = "POST";
 
-        //  BASIC COURSE FIELDS 
-        document.getElementById('editCourseName').value = course.title || "";
-        document.getElementById('editCourseFee').value = course.fee || "";
-        document.getElementById('editCourseDuration').value = course.duration || "";
-        document.getElementById('editCourseIntake').value = course.intakeLimit || 10;
-        document.getElementById('editCourseStatus').value = course.status || "inactive";
+    // BASIC COURSE FIELDS
+    document.getElementById('editCourseName').value = course.title || "";
+    document.getElementById('editCourseFee').value = course.fee || "";
+    document.getElementById('editCourseDuration').value = course.duration || "";
+    document.getElementById('editCourseIntake').value = course.intakeLimit || 10;
+    document.getElementById('editCourseStatus').value = course.status || "inactive";
 
-        //  INSTRUCTOR FIELDS (FIX) 
-        const instructor = course.instructor || {};
+    // INSTRUCTOR FIELDS
+    const instructor = course.instructor || {};
 
-        document.querySelector('input[name="instructor[name]"]').value =
-            instructor.name || "";
+    document.querySelector('input[name="instructor[name]"]').value =
+        instructor.name || "";
 
-        document.querySelector('input[name="instructor[designation]"]').value =
-            instructor.designation || "";
+    document.querySelector('input[name="instructor[designation]"]').value =
+        instructor.designation || "";
 
-        document.querySelector('textarea[name="instructor[bio]"]').value =
-            instructor.bio || "";
-    }
+    document.querySelector('textarea[name="instructor[bio]"]').value =
+        instructor.bio || "";
+}
 
-    function cancelEditCourse() {
-        document.getElementById('editCoursePage').classList.add('hidden');
-        document.getElementById('courseManagementPage').classList.remove('hidden');
-        document.getElementById('addCoursePage').classList.add('hidden');
-    }
+function closeEditCourseModal() {
+    document.getElementById('editCourseModal').classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+}
 
     //open syllabus modal
     function openSyllabusForCurrentCourse() {

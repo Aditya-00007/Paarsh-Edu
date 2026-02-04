@@ -6,7 +6,30 @@
             Dashboard / Course Management / Add Course
         </p>
 
-        <form action="/admin-course/courses/add" method="POST" class="space-y-6" enctype="multipart/form-data">
+        
+    </div>
+</main>
+
+<!-- ADD COURSE MODAL -->
+<div
+  id="addCourseModal"
+  class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center"
+>
+  <!-- Modal Box -->
+  <div class="bg-white w-[95%] max-w-5xl max-h-[90vh] overflow-y-auto rounded-xl shadow-lg p-6">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-2xl font-bold">Add New Course</h2>
+      <button onclick="closeAddCourseModal()" class="text-gray-500 hover:text-black text-xl">
+        ✕
+      </button>
+    </div>
+
+    <p class="text-gray-500 text-sm mb-6">
+      Dashboard / Course Management / Add Course
+    </p>
+    <form action="/admin-course/courses/add" method="POST" class="space-y-6" enctype="multipart/form-data">
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -165,12 +188,13 @@
 
             <!-- Actions -->
             <div class="flex gap-3 pt-6 border-t">
-                <button type="button" onclick="cancelAddCourse()" class="px-6 py-2 border rounded-lg">Cancel</button>
+                <button type="button" onclick="closeAddCourseModal()" class="px-6 py-2 border rounded-lg">Cancel</button>
                 <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg">
                     Save Course
                 </button>
             </div>
 
         </form>
-    </div>
-</main>
+  </div>
+</div>
+

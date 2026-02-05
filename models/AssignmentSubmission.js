@@ -3,11 +3,12 @@ import mongoose from "mongoose";
 const assignmentSubmissionSchema = new mongoose.Schema(
   {
     /* ================= STUDENT ================= */
-    student: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
+    // AssignmentSubmission.js
+student: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Student",
+  required: true
+},
 
     studentName: {
       type: String,

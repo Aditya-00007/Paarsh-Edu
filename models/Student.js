@@ -47,5 +47,6 @@ const StudentSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+
 export default mongoose.model("Student", StudentSchema);
 

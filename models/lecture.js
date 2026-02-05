@@ -47,4 +47,4 @@ const lectureSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("Lecture", lectureSchema);
+export default mongoose.models.Lecture || mongoose.model("Lecture", lectureSchema);

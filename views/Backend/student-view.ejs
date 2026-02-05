@@ -95,106 +95,6 @@
   </div>
 </div>
 
-<!-- ============== LIVE & DOUBT SESSION SUMMARY=========-->
-
-<div class="bg-white rounded-xl shadow p-6 mb-6">
-  <h2 class="font-semibold text-lg mb-4">Live & Doubt Sessions</h2>
-
-  <div class="grid grid-cols-1 md:grid-cols-5 gap-4 text-sm">
-    <div>
-      <p class="text-gray-500">Total Sessions</p>
-      <p class="font-semibold">12</p>
-    </div>
-
-    <div>
-      <p class="text-gray-500">Attended</p>
-      <p class="font-semibold text-green-600">9</p>
-    </div>
-
-    <div>
-      <p class="text-gray-500">Missed</p>
-      <p class="font-semibold text-red-500">3</p>
-    </div>
-
-    <div>
-      <p class="text-gray-500">Doubts Raised</p>
-      <p class="font-semibold">5</p>
-    </div>
-
-    <div>
-      <p class="text-gray-500">Attendance %</p>
-      <p class="font-semibold text-blue-600">75%</p>
-    </div>
-  </div>
-</div>
-
-
-  <!-- ================= UPCOMING LIVE SESSION ================= -->
-<div class="bg-white rounded-xl shadow p-6 mb-6">
-  <h2 class="font-semibold text-lg mb-3">Upcoming Session</h2>
-
-  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-    <div>
-      <p class="font-semibold">React Hooks – Live Doubt Session</p>
-      <p class="text-sm text-gray-500">
-        Instructor: Prof. Rahul Verma
-      </p>
-      <p class="text-sm text-gray-500">
-        📅 20 Feb 2026 | ⏰ 4:00 PM – 5:30 PM
-      </p>
-    </div>
-
-    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
-      Upcoming
-    </span>
-  </div>
-</div>
-
-  <!-- ================= SESSION HISTORY TABLE ================= -->
-<div class="bg-white rounded-xl shadow p-6 mb-6">
-  <h2 class="font-semibold text-lg mb-4">Session History</h2>
-
-  <table class="w-full text-sm">
-    <thead class="border-b text-gray-500">
-      <tr>
-        <th class="text-left py-2">Session</th>
-        <th>Type</th>
-        <th>Instructor</th>
-        <th>Date</th>
-        <th>Duration</th>
-        <th>Status</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <tr class="border-b">
-        <td class="py-3">Java Basics – Doubt Session</td>
-        <td>Doubt</td>
-        <td>Prof. Patil</td>
-        <td>15 Feb 2026</td>
-        <td>1 hr</td>
-        <td class="text-green-600 font-semibold">Present</td>
-        <td>
-          <a href="#" class="text-blue-600 hover:underline">
-            View Recording
-          </a>
-        </td>
-      </tr>
-
-      <tr>
-        <td class="py-3">OOP Concepts – Live Class</td>
-        <td>Live</td>
-        <td>Prof. Rahul Verma</td>
-        <td>10 Feb 2026</td>
-        <td>1.5 hr</td>
-        <td class="text-red-500 font-semibold">Absent</td>
-        <td class="text-gray-400">—</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
 <!-- ================= ASSIGNMENTS ================= -->
 <%
   const assignmentList = Array.isArray(assignments) ? assignments : [];
@@ -206,7 +106,7 @@
   <table class="w-full text-sm table-fixed">
     <thead class="border-b text-gray-500">
       <tr>
-        <th class="text-left py-2 w-1/3">Title</th>
+        <th class="text-left py-2 w-2/5">Title</th>
         <th class="text-center w-1/6">Status</th>
         <th class="text-center w-1/6">Score</th>
         <th class="text-center w-1/6">Submitted On</th>
@@ -225,7 +125,7 @@
 
         <% assignmentList.forEach(a => { %>
           <tr class="border-b last:border-none hover:bg-gray-50">
-            
+
             <!-- TITLE -->
             <td class="py-3 font-medium">
               <%= a.assignmentTitle %>
@@ -246,10 +146,10 @@
 
             <!-- SCORE -->
             <td class="text-center">
-              <%= a.score !== null ? a.score : "—" %>
+              <%= typeof a.score === "number" ? a.score : "—" %>
             </td>
 
-            <!-- DATE -->
+            <!-- SUBMITTED DATE -->
             <td class="text-center">
               <%= a.submittedAt
                 ? new Date(a.submittedAt).toLocaleDateString("en-IN", {
@@ -282,6 +182,7 @@
     </tbody>
   </table>
 </div>
+
 
 
 <!-- ================= TESTS ================= -->
@@ -321,9 +222,10 @@
             </td>
 
             <!-- SCORE -->
-            <td class="text-center">
-              <%= t.score %> / <%= t.totalMarks %>
-            </td>
+          <td class="text-center">
+          <%= typeof t.score === "number" ? t.score : "—" %>
+
+
 
             <!-- PERCENTAGE -->
             <td class="text-center">
@@ -405,11 +307,11 @@
   </div>
   <div class="flex gap-4 mt-6">
 <!-- Edit Button -->
-<a
-  href="/student-management/<%= student._id %>/edit"
+<!-- <a
+  href="/student-management/</%= student._id %>/edit"
   class="bg-blue-600 text-white px-6 py-2 rounded">
   Edit Student
-</a>
+</a> -->
   <!-- MANAGE PAYMENTS -->
   <a
     href="/payments/student/<%= student._id %>"

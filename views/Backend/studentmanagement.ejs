@@ -74,10 +74,6 @@
       <!-- HEADER -->
       <div class="flex justify-between items-center mb-4">
         <h2 class="font-semibold text-lg">Candidate List</h2>
-        <div class="space-x-2">
-          <button class="border px-3 py-1 rounded text-sm">Export CSV</button>
-          <button class="border px-3 py-1 rounded text-sm">Bulk Actions</button>
-        </div>
       </div>
 
 <!-- FILTERS -->
@@ -90,14 +86,6 @@
     <option value="<%= course %>"><%= course %></option>
   <% } %>
 <% }) %>
-  </select>
-
-  <!-- Gender Filter -->
-  <select id="genderFilter" class="border rounded px-3 py-2 text-sm">
-    <option value="all">Gender</option>
-    <option value="Male">Male</option>
-    <option value="Female">Female</option>
-    <option value="Other">Other</option>
   </select>
 
   <!-- City Filter -->
@@ -172,12 +160,19 @@
       <!-- Actions -->
       <td class="py-3 space-x-3">
         <% if (enrollment.student) { %>
-          <a
-            href="/student-management/enrollment/<%= enrollment._id %>/view"
+          <!-- <a
+            href="/student-management/enrollment/</%= enrollment._id %>/view"
             class="text-blue-600 hover:underline"
           >
             View
-          </a>
+          </a> -->
+          <a
+  href="/student-management/enrollment/<%= enrollment._id %>/view"
+  class="text-blue-600 hover:underline"
+>
+  View
+</a>
+
         <% } else { %>
           -
         <% } %>
@@ -196,20 +191,17 @@
 <script>
   function applyFilters() {
     const course = document.getElementById("courseFilter").value;
-    const gender = document.getElementById("genderFilter").value;
     const city = document.getElementById("cityFilter").value;
 
     const rows = document.querySelectorAll("#studentTable tr");
 
     rows.forEach(row => {
       const rowCourse = row.dataset.course;
-      const rowGender = row.dataset.gender;
       const rowCity = row.dataset.city;
 
       let visible = true;
 
       if (course !== "all" && rowCourse !== course) visible = false;
-      if (gender !== "all" && rowGender !== gender) visible = false;
       if (city !== "all" && rowCity !== city) visible = false;
 
       row.style.display = visible ? "" : "none";

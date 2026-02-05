@@ -1,13 +1,11 @@
 import express from "express";
+const router = express.Router();
 
 import Student from "../models/Student.js";
 import Enrollment from "../models/Enrollment.js";
 import AssignmentSubmission from "../models/AssignmentSubmission.js";
 import TestAttempt from "../models/TestAttempt.js";
-import Course from "../models/Course.js"
-
-const router = express.Router();
-
+import Course from "../models/Course.js";
 
 /* ================= STUDENT LIST ================= */
 router.get("/", async (req, res) => {
@@ -37,7 +35,6 @@ router.get("/enrollment/:enrollmentId/view", async (req, res) => {
       .populate("course", "title duration level fee")
       .lean();
 
-    // ✅ NULL CHECKS (CRITICAL)
     if (!enrollment) {
       return res.status(404).send("Enrollment not found");
     }

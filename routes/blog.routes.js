@@ -26,45 +26,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.get('/:id', async (req, res) => {
-    try {
-
-        //  removed .lean()
-        const blog = await Blog.findById(req.params.id);
-
-        if (!blog) {
-            return res.status(404).render('error', { 
-                message: 'Blog not found' 
-            });
-        }
-
-        // Increment views
-        await Blog.findByIdAndUpdate(req.params.id, { $inc: { views: 1 } });
-
-        //  removed .lean()
-        const blogs = await Blog.find({ published: true })
-            .sort({ createdAt: -1 })
-            .limit(10);
-
-        res.render('Backend/blog-details', { 
-            blog,
-            blogs,
-            page: 'blogs'
-        });
-
-    } catch (error) {
-        console.error('Error fetching blog:', error);
-        res.status(500).render('error', { 
-            message: 'Failed to load blog',
-            error
-        });
-    }
-});
-
-// GET - Add Blog Page (Admin)
-router.get('/add', (req, res) => {
-    res.render('Backend/add-blog');
-});
 
 // POST - Create New Blog (Admin)
 router.post('/add', async (req, res) => {
@@ -89,6 +50,36 @@ router.post('/add', async (req, res) => {
     } catch (error) {
         console.error('Error creating blog:', error);
         res.status(500).send('Error creating blog');
+    }
+});
+
+router.get('/:id', async (req, res) => {
+    try {
+
+        //  removed .lean()
+        const blog = await Blog.findById(req.params.id);
+
+        if (!blog) {
+            return res.status(404).send('Blog not found');
+        }
+
+        // Increment views
+        await Blog.findByIdAndUpdate(req.params.id, { $inc: { views: 1 } });
+
+        //  removed .lean()
+        const blogs = await Blog.find({ published: true })
+            .sort({ createdAt: -1 })
+            .limit(10);
+
+        res.render('Backend/blog-details', { 
+            blog,
+            blogs,
+            page: 'blogs'
+        });
+
+    } catch (error) {
+        console.error('Error fetching blog:', error);
+        res.status(500).send('Failed to load blog');
     }
 });
 

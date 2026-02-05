@@ -12,6 +12,13 @@ import Test from "./models/Test.js";
 import session from "express-session";
 import authRoutes from "./routes/auth.routes.js";
 import { adminAuth } from "./middlewares/adminAuth.js";
+import enquiryRoutes from "./routes/enquiry.routes.js"
+import methodOverride from "method-override"
+import adminStudentsRoutes from "./routes/adminStudents.js"
+import studentManagementRoutes from "./routes/studentManagement.js"
+import Student from "./models/Student.js";
+import Enrollment from "./models/Enrollment.js";
+import Enquiries from "./models/Enquiries.js";
 
 dotenv.config();
 const app = express();
@@ -28,11 +35,12 @@ app.use(
 );
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(methodOverride("_method"));
 app.use("/admin-course", adminAuth, adminCourseRoutes);
 app.use("/admin/blogs", adminAuth, blogRoutes);
 app.use("/student-management", adminAuth, studentRoutes);
 app.use(express.static("public"));
-
+app.use("/enquiries", adminAuth, enquiryRoutes);
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -45,6 +53,13 @@ mongoose
 
 // auth routes
 app.use("/auth", authRoutes);
+//  Student Management (Enrollment-based views)
+app.use(studentManagementRoutes);
+
+
+
+//  Admin student routes
+
 
 // Routes
 app.get("/", (req, res) => {
@@ -58,7 +73,10 @@ app.get("/dashboard", adminAuth, async (req, res) => {
   try {
     const courses = await Course.find().sort({ createdAt: -1 });
     const categories = await Category.find({ status: "active" });
-    res.render("Backend/dashboard.ejs", { courses, categories });
+    const totalStudents = await Student.countDocuments();
+    const totalEnrollments = await Enrollment.countDocuments();
+    const totalEnquirires = await Enquiries.countDocuments();
+    res.render("Backend/dashboard.ejs", { courses, categories,totalEnrollments,totalStudents,totalEnquirires });
   } catch (err) {
     console.error(err);
     res.status(500).send("Failed to load Content");
@@ -109,29 +127,7 @@ app.get("/course-management", adminAuth, async (req, res) => {
   }
 });
 
-
-// app.get("/student-management", async (req, res) =>
-// { res.render("studentManagement.ejs", { title: "Student Management" });
-// } );
-
-// app.get("/teacher-management", async (req, res) =>
-//   {res.render("teacherManagement.ejs", { title: "Teacher Management" })});
-
-// app.get("/enrollment-management", async (req, res) =>
-//   {res.render("enrollmentManagement.ejs", { title: "Enrollment Management" })});
-
-// app.get("/consent-management", async (req, res) =>
-//   {res.render("consentManagement.ejs", { title: "Consent Management" })});
-
-// app.get("/payments", async (req, res) =>
-//   {res.render("payments.ejs", { title: "Payments" })});
-
-// app.get("/enquiries", async (req, res) =>
-//   {res.render("enquiries.ejs", { title: "Enquiries" })});
-
-// app.get("/settings", async (req, res) =>
-//   {res.render("settings", { title: "Settings" });
-// });
+app.use("/", adminStudentsRoutes);
 
 
 

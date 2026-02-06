@@ -1,5 +1,6 @@
 import express from "express";
 import Course from "../models/Course.js";
+import Category from "../models/Category.js";
 import CourseContent from "../models/CourseContent.js";
 import Lecture from "../models/lecture.js";
 import Assignment from "../models/Assignment.js";

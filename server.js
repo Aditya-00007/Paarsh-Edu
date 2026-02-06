@@ -19,6 +19,7 @@ import studentManagementRoutes from "./routes/studentManagement.js"
 import Student from "./models/Student.js";
 import Enrollment from "./models/Enrollment.js";
 import Enquiries from "./models/Enquiries.js";
+import PlacemntRoutes from "./routes/placements.routes.js"
 
 dotenv.config();
 const app = express();
@@ -41,6 +42,7 @@ app.use("/admin/blogs", adminAuth, blogRoutes);
 app.use("/student-management", adminAuth, studentRoutes);
 app.use(express.static("public"));
 app.use("/enquiries", adminAuth, enquiryRoutes);
+app.use("/placement-management", adminAuth, PlacemntRoutes);
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -55,7 +57,6 @@ mongoose
 app.use("/auth", authRoutes);
 //  Student Management (Enrollment-based views)
 app.use(studentManagementRoutes);
-
 
 
 //  Admin student routes

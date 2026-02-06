@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>View Enquiry</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-[#f4f6f9]">
+
+<!-- HEADER -->
+<%- include("../partials/header") %>
+
+<div class="flex">
+
+  <!-- SIDEBAR -->
+  <%- include("../partials/sidebar") %>
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 p-6">
+
+    <!-- TITLE -->
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold">View Enquiry</h1>
+      <p class="text-sm text-gray-500">
+        Detailed student enquiry information
+      </p>
+    </div>
+
+    <!-- STUDENT DETAILS -->
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+      <h2 class="font-semibold text-lg mb-4">Student Details</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+        <p><strong>Name:</strong> <%= enquiry.name %></p>
+        <p><strong>Email:</strong> <%= enquiry.email %></p>
+        <p><strong>Phone:</strong> <%= enquiry.phone %></p>
+
+        <p>
+          <strong>Status:</strong>
+          <span class="ml-2 px-2 py-1 rounded-full text-xs font-semibold
+            <%= enquiry.status === 'new' ? 'bg-blue-100 text-blue-700' :
+                enquiry.status === 'contacted' ? 'bg-yellow-100 text-yellow-700' :
+                enquiry.status === 'enrolled' ? 'bg-green-100 text-green-700' :
+                'bg-gray-200 text-gray-700' %>">
+            <%= enquiry.status %>
+          </span>
+        </p>
+
+        <p>
+          <strong>Created At:</strong>
+          <%= enquiry.createdAt.toLocaleString() %>
+        </p>
+      </div>
+    </div>
+
+    <!-- STUDENT STATUS MESSAGE (WHAT STUDENT SEES) -->
+    <div class="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-6">
+      <h2 class="font-semibold text-sm mb-2">Student View</h2>
+
+      <% if (enquiry.status === "new") { %>
+        <p class="text-sm text-blue-700">
+          📩 Your enquiry has been received. Our team will contact you shortly.
+        </p>
+      <% } else if (enquiry.status === "contacted") { %>
+        <p class="text-sm text-yellow-700">
+          📞 Our admissions team has contacted you. Please check your phone or email.
+        </p>
+      <!-- </% } else if (enquiry.status === "enrolled") { %>
+        <p class="text-sm text-green-700">
+          🎉 You are successfully enrolled in the course.
+        </p> -->
+      <% } else { %>
+        <p class="text-sm text-gray-600">
+          ❌ This enquiry has been closed.
+        </p>
+      <% } %>
+    </div>
+
+    <!-- MESSAGE -->
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+      <h2 class="font-semibold text-lg mb-4">Student Message</h2>
+      <p class="text-sm text-gray-700">
+        <%= enquiry.message %>
+      </p>
+    </div>
+
+    <!-- ADMIN ACTION -->
+    <form
+      action="/enquiries/<%= enquiry._id %>?_method=PUT"
+      method="POST"
+      class="bg-white rounded-xl shadow-sm p-6"
+    >
+      <h2 class="font-semibold text-lg mb-4">Admin Action</h2>
+
+      <!-- STATUS -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Update Status</label>
+        <select
+          name="status"
+          class="border rounded px-3 py-2 w-full text-sm"
+          <%= enquiry.status === "closed" ? "disabled" : "" %>
+        >
+          <option value="new" <%= enquiry.status === "new" ? "selected" : "" %>>New</option>
+          <option value="contacted" <%= enquiry.status === "contacted" ? "selected" : "" %>>Contacted</option>
+          <!-- <option value="enrolled" </%= enquiry.status === "enrolled" ? "selected" : "" %>>Enrolled</option> -->
+          <option value="closed" <%= enquiry.status === "closed" ? "selected" : "" %>>Closed</option>
+        </select>
+
+        <% if (enquiry.status === "closed") { %>
+          <p class="text-xs text-red-500 mt-1">
+            This enquiry is closed and cannot be modified.
+          </p>
+        <% } %>
+      </div>
+
+      <!-- ADMIN REMARK -->
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Admin Remark</label>
+        <textarea
+          name="adminRemark"
+          rows="3"
+          class="border rounded px-3 py-2 w-full text-sm"
+          placeholder="Add follow-up notes..."
+          <%= enquiry.status === "closed" ? "disabled" : "" %>
+        ><%= enquiry.adminRemark %></textarea>
+      </div>
+
+      <!-- CONTACTED AT -->
+      <p class="text-sm text-gray-500 mb-4">
+        <strong>Contacted At:</strong>
+        <%= enquiry.contactedAt ? enquiry.contactedAt.toLocaleString() : "Not Contacted Yet" %>
+      </p>
+
+      <!-- BUTTONS -->
+      <div class="flex gap-3">
+        <% if (enquiry.status !== "closed") { %>
+          <button
+            type="submit"
+            class="bg-gray-900 text-white px-5 py-2 rounded text-sm hover:bg-black"
+          >
+            Save Changes
+          </button>
+        <% } %>
+
+        <a
+          href="/enquiries"
+          class="px-5 py-2 border rounded text-sm"
+        >
+          Back to Enquiries
+        </a>
+      </div>
+    </form>
+
+  </main>
+</div>
+
+</body>
+</html>

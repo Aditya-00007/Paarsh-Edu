@@ -37,6 +37,12 @@ const enrollmentSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    // placments
+    placementStatus: {
+      type: String,
+      enum: ["inactive", "active"],
+      default: "inactive",
+    },
   },
   {
     timestamps: true,

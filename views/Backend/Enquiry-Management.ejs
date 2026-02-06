@@ -52,13 +52,13 @@
         <p class="text-xs text-blue-600 mt-1">Follow-up</p>
       </div>
 
-      <div class="bg-white p-4 rounded-xl shadow-sm">
+      <!-- <div class="bg-white p-4 rounded-xl shadow-sm">
         <p class="text-xs text-gray-500">Enrolled</p>
         <p class="text-2xl font-bold">
-          <%= enquiries.filter(e => e.status === "enrolled").length %>
+          </%= enquiries.filter(e => e.status === "enrolled").length %>
         </p>
         <p class="text-xs text-green-600 mt-1">Converted</p>
-      </div>
+      </div> -->
 
       <div class="bg-white p-4 rounded-xl shadow-sm">
         <p class="text-xs text-gray-500">Closed</p>
@@ -80,18 +80,18 @@
       <!-- FILTERS -->
       <div class="flex flex-wrap gap-3 mb-4">
 
-        <select id="courseFilter" class="border rounded px-3 py-2 text-sm">
+        <!-- <select id="courseFilter" class="border rounded px-3 py-2 text-sm">
           <option value="all">Filter by Course</option>
-          <% [...new Set(enquiries.map(e => e.courseName).filter(Boolean))].forEach(course => { %>
-            <option value="<%= course %>"><%= course %></option>
-          <% }) %>
-        </select>
+          </% [...new Set(enquiries.map(e => e.courseName).filter(Boolean))].forEach(course => { %>
+            <option value="</%= course %>"></%= course %></option>
+          </% }) %>
+        </select> -->
 
         <select id="statusFilter" class="border rounded px-3 py-2 text-sm">
           <option value="all">Status</option>
           <option value="new">New</option>
           <option value="contacted">Contacted</option>
-          <option value="enrolled">Enrolled</option>
+          <!-- <option value="enrolled">Enrolled</option> -->
           <option value="closed">Closed</option>
         </select>
 
@@ -113,8 +113,8 @@
               <th class="text-left py-2">Email</th>
               <th class="text-left py-2">Phone</th>
               <th class="text-left py-2">Source</th>
-              <th class="text-left py-2">Course</th>
-              <th class="text-left py-2">Status</th>
+              <!-- <th class="text-left py-2">Course</th>
+              <th class="text-left py-2">Status</th> -->
               <th class="text-left py-2">Actions</th>
             </tr>
           </thead>
@@ -130,8 +130,8 @@
                 <td class="py-3 font-medium"><%= enquiry.name %></td>
                 <td class="py-3"><%= enquiry.email %></td>
                 <td class="py-3"><%= enquiry.phone %></td>
-                <td class="py-3 capitalize"><%= enquiry.source %></td>
-                <td class="py-3"><%= enquiry.courseName || '-' %></td>
+                <!-- <td class="py-3 capitalize"></%= enquiry.source %></td>
+                <td class="py-3"></%= enquiry.courseName || '-' %></td> -->
 
                 <td class="py-3">
                   <span class="px-2 py-1 rounded-full text-xs font-semibold

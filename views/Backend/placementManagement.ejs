@@ -125,10 +125,15 @@
                                                     <% } %>
 
                                                         <button
-                                                            class="text-xs px-3 py-1 border border-gray-600 rounded text-gray-600 hover:bg-gray-600 hover:text-white transition"
-                                                            onclick="showInterviewTable('<%= p.enrollmentId %>')">
-                                                            View Interviews
-                                                        </button>
+  class="text-xs px-3 py-1 border border-gray-600 rounded
+         text-gray-600 hover:bg-gray-600 hover:text-white transition"
+  onclick="showInterviewTable(
+    '<%= p.student._id %>',
+    '<%= p.course._id %>'
+  )">
+  View Interviews
+</button>
+
                                             </td>
 
 
@@ -147,9 +152,11 @@
 
                                 <select class="border rounded px-2 py-1 text-sm">
                                     <option>All Status</option>
-                                    <option>Scheduled</option>
-                                    <option>Selected</option>
-                                    <option>Rejected</option>
+<option>Scheduled</option>
+<option>Placed</option>
+<option>Not Placed</option>
+<option>Absent</option>
+
                                 </select>
                                 <button onclick="backToPlacements()" class="mb-3 text-sm text-blue-600 hover:underline">
                                     ← Back to Placement List
@@ -194,34 +201,47 @@
                                             </td>
 
                                             <td class="py-3">
-                                                <% if (i.status==="selected" ) { %>
-                                                    <span
-                                                        class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
-                                                        Selected
-                                                    </span>
-                                                    <% } else if (i.status==="scheduled" ) { %>
-                                                        <span
-                                                            class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">
-                                                            Scheduled
-                                                        </span>
-                                                        <% } else { %>
-                                                            <span
-                                                                class="px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold">
-                                                                Rejected
-                                                            </span>
-                                                            <% } %>
-                                            </td>
+  <% if (i.status === "placed") { %>
+    <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
+      Placed
+    </span>
+
+  <% } else if (i.status === "scheduled" || i.status === "pending_result") { %>
+    <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">
+      Scheduled
+    </span>
+
+  <% } else if (i.status === "not_placed") { %>
+    <span class="px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold">
+      Not Placed
+    </span>
+
+  <% } else if (i.status === "absent") { %>
+    <span class="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-semibold">
+      Absent
+    </span>
+
+  <% } else { %>
+    <span class="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-semibold">
+      Unknown
+    </span>
+  <% } %>
+</td>
+
 
                                             <td class="py-3">
-                                                <% if (i.status==="scheduled" ) { %>
-                                                    <button class="text-xs px-3 py-1 border border-green-600 rounded
-                         text-green-600 hover:bg-green-600 hover:text-white transition">
-                                                        Mark Selected
-                                                    </button>
-                                                    <% } else { %>
-                                                        <span class="text-xs text-gray-400">No Action</span>
-                                                        <% } %>
-                                            </td>
+  <% if (i.status === "scheduled" || i.status === "pending_result") { %>
+    <button
+      class="text-xs px-3 py-1 border border-indigo-600 rounded
+             text-indigo-600 hover:bg-indigo-600 hover:text-white transition"
+      onclick="openResultModal('<%= i._id %>')">
+      Declare Result
+    </button>
+  <% } else { %>
+    <span class="text-xs text-gray-400">No Action</span>
+  <% } %>
+</td>
+
 
                                         </tr>
 
@@ -270,41 +290,30 @@
                 // ---------------- TABLE SWITCHING ----------------
                 let activeEnrollmentId = null;
 
-                function showInterviewTable(enrollmentId) {
-                    activeEnrollmentId = enrollmentId;
+                function showInterviewTable(studentId, courseId) {
 
-                    // switch views (UNCHANGED)
-                    document.getElementById("placementTableSection").classList.add("hidden");
-                    document.getElementById("interviewTableSection").classList.remove("hidden");
+  // switch views
+  document.getElementById("placementTableSection").classList.add("hidden");
+  document.getElementById("interviewTableSection").classList.remove("hidden");
 
-                    let hasAny = false;
+  let hasAny = false;
 
-                    // 🔽🔽🔽 NEW: GET STUDENT + COURSE FROM PLACEMENTS DATA 🔽🔽🔽
-                    const placement = placements.find(p => p.enrollmentId === enrollmentId);
-                    if (!placement) return;
+  document.querySelectorAll(".interview-row").forEach(row => {
+    if (
+      row.dataset.student === studentId &&
+      row.dataset.course === courseId
+    ) {
+      row.style.display = "";
+      hasAny = true;
+    } else {
+      row.style.display = "none";
+    }
+  });
 
-                    const studentId = placement.student._id;
-                    const courseId = placement.course._id;
-                    // 🔼🔼🔼 END NEW 🔼🔼🔼
-
-                    document.querySelectorAll(".interview-row").forEach(row => {
-                        // 🔽🔽🔽 MODIFIED MATCH CONDITION 🔽🔽🔽
-                        if (
-                            row.dataset.student === studentId &&
-                            row.dataset.course === courseId
-                        ) {
-                            row.style.display = "";
-                            hasAny = true;
-                        } else {
-                            row.style.display = "none";
-                        }
-                        // 🔼🔼🔼 END MODIFIED 🔼🔼🔼
-                    });
-
-                    document
-                        .getElementById("noInterviewRow")
-                        .classList.toggle("hidden", hasAny);
-                }
+  document
+    .getElementById("noInterviewRow")
+    .classList.toggle("hidden", hasAny);
+}
 
                 function backToPlacements() {
                     activeEnrollmentId = null;
@@ -316,6 +325,46 @@
                         row.style.display = "";
                     });
                 }
+
+                //open result MODAL
+                function openResultModal(interviewId) {
+  document.getElementById("resultInterviewId").value = interviewId;
+  document.getElementById("resultStatus").value = "";
+  document.getElementById("companyFeedback").value = "";
+  document.getElementById("adminRemarks").value = "";
+
+  document.getElementById("resultModal").classList.remove("hidden");
+}
+//close 
+function closeResultModal() {
+  document.getElementById("resultModal").classList.add("hidden");
+}
+//submit result
+async function submitResult(event) {
+  event.preventDefault(); 
+
+  const interviewId = document.getElementById("resultInterviewId").value;
+  const status = document.getElementById("resultStatus").value;
+  const companyFeedback = document.getElementById("companyFeedback").value;
+  const adminRemarks = document.getElementById("adminRemarks").value;
+
+  const res = await fetch(
+  `/placement-management/${interviewId}/declare-result`,
+  {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status, companyFeedback, adminRemarks })
+  }
+);
+
+
+  if (res.ok) {
+    location.reload();
+  } else {
+    alert("Failed to update interview result");
+  }
+}
+
             </script>
 
 </body>

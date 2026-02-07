@@ -287,20 +287,7 @@
         el.classList.toggle("hidden");
       }
 
-      new Chart(document.getElementById('enrollmentChart'), {
-        type: 'line',
-        data: {
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-          datasets: [{
-            label: 'Enrollments',
-            data: [40, 55, 70, 60, 80, 95, 110, 120, 100, 130, 150, 170],
-            borderColor: '#2563eb',
-            backgroundColor: 'rgba(37,99,235,0.1)',
-            tension: 0.4,
-            fill: true
-          }]
-        }
-      });
+      
 
       function showAddCoursePage() {
         document.getElementById('dashboardPage')?.classList.add('hidden');

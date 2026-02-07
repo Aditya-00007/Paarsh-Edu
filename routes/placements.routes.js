@@ -165,14 +165,14 @@ router.post("/interview/add", async (req, res) => {
   try {
     const {
       enrollmentId,
-      studentId,
+      studentId,   // ⚠️ received but will NOT be trusted
       companyId,
       scheduledAt,
       meetingLink,
       adminRemarks
     } = req.body;
 
-    if (!enrollmentId || !studentId || !companyId || !scheduledAt || !meetingLink) {
+    if (!enrollmentId || !companyId || !scheduledAt || !meetingLink) {
       return res.status(400).send("Missing required fields");
     }
 
@@ -182,7 +182,9 @@ router.post("/interview/add", async (req, res) => {
       return res.status(400).send("Placement not active");
     }
 
-    const courseId = enrollment.course;
+    // ✅ DERIVE FROM ENROLLMENT (SOURCE OF TRUTH)
+    const derivedStudentId = enrollment.student;
+    const derivedCourseId = enrollment.course;
 
     // ---------------- FIND PLACEMENT (ENROLLMENT-BASED) ----------------
     let placement = await Placement.findOne({
@@ -192,7 +194,7 @@ router.post("/interview/add", async (req, res) => {
     // ---------------- CREATE PLACEMENT IF NOT EXISTS ----------------
     if (!placement) {
       placement = await Placement.create({
-        enrollment: enrollmentId,     // ✅ only required identifier
+        enrollment: enrollmentId,
         callsUsed: 0,
         totalCallsAllowed: 4,
         currentStatus: "in_process"
@@ -208,14 +210,15 @@ router.post("/interview/add", async (req, res) => {
 
     // ---------------- CREATE INTERVIEW ----------------
     await Interview.create({
-      enrollment: enrollmentId,       // ✅ IMPORTANT (for filtering & counts)
-      student: studentId,
-      course: courseId,
+      enrollment: enrollmentId,        // ✅ helper field (works as you use it)
+      student: derivedStudentId,       // ✅ ALWAYS from enrollment
+      course: derivedCourseId,         // ✅ ALWAYS from enrollment
       company: companyId,
       interviewNo,
       scheduledAt,
       meetingLink,
       adminRemarks,
+      status: "scheduled",
       assignedBy: req.user?._id || null
     });
 
@@ -231,6 +234,93 @@ router.post("/interview/add", async (req, res) => {
     res.status(500).send("Server error while assigning interview");
   }
 });
+
+router.post("/:id/declare-result", async (req, res) => {
+  try {
+    const { status, companyFeedback, adminRemarks } = req.body;
+
+    // -------- VALIDATE STATUS --------
+    const allowedStatuses = ["placed", "not_placed", "absent"];
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({ message: "Invalid status" });
+    }
+
+    // -------- FETCH INTERVIEW --------
+    const interview = await Interview.findById(req.params.id);
+    if (!interview) {
+      return res.status(404).json({ message: "Interview not found" });
+    }
+
+    // -------- PREVENT RE-DECLARATION --------
+    if (interview.status !== "scheduled" && interview.status !== "pending_result") {
+      return res.status(400).json({
+        message: "Interview result already declared"
+      });
+    }
+
+    // -------- UPDATE INTERVIEW --------
+    interview.status = status;
+    interview.companyFeedback = companyFeedback;
+    interview.adminRemarks = adminRemarks;
+    await interview.save();
+
+    // -------- RESOLVE PLACEMENT SAFELY --------
+    let placement = null;
+
+    if (interview.enrollment) {
+      placement = await Placement.findOne({ enrollment: interview.enrollment });
+    }
+
+    if (!placement) {
+      const enrollment = await Enrollment.findOne({
+        student: interview.student,
+        course: interview.course
+      });
+      if (enrollment) {
+        placement = await Placement.findOne({ enrollment: enrollment._id });
+      }
+    }
+
+    if (!placement) {
+      return res.status(404).json({ message: "Placement not found" });
+    }
+
+    // -------- PLACEMENT STATUS LOGIC --------
+
+    // ✅ CASE 1: STUDENT PLACED (FINAL STATE)
+    if (status === "placed") {
+      placement.currentStatus = "placed";
+      placement.placedCompany = interview.company;
+      placement.placedAt = new Date();
+      await placement.save();
+
+      return res.json({ success: true });
+    }
+
+    // ⛔ DO NOT DOWNGRADE IF ALREADY PLACED
+    if (placement.currentStatus === "placed") {
+      return res.json({ success: true });
+    }
+
+    // ✅ CASE 2: NOT PLACED / ABSENT
+    if (status === "not_placed" || status === "absent") {
+      placement.currentStatus =
+        placement.callsUsed >= placement.totalCallsAllowed
+          ? "closed"        // ❌ all 4 attempts failed
+          : "in_process";   // 🔁 more attempts allowed
+
+      await placement.save();
+    }
+
+    res.json({ success: true });
+
+  } catch (err) {
+    console.error("DECLARE RESULT ERROR:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 
 
 export default router;

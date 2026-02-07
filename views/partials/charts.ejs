@@ -1,4 +1,4 @@
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 hidden">
+<div id="courseChartsSection" class="grid grid-cols-1 lg:grid-cols-2 gap-4 hidden">
   <!-- Course Completion Status -->
   <div class="bg-white rounded-xl shadow-sm p-4">
     <h5 class="font-semibold text-lg">Course Completion Status</h5>
@@ -27,86 +27,92 @@
 </div>
 
 <script>
-  document.addEventListener("DOMContentLoaded", async function () {
+  window.SHOW_COURSE_CHARTS = false; // 🔒 HR decision
+
+  let chartsInitialized = false;
+
+  async function initCourseCharts() {
+    if (chartsInitialized) return;
+    chartsInitialized = true;
+
     const res = await fetch("/admin-course/dashboard/course-stats");
     const data = await res.json();
 
-    /* 
-     Course Completion Doughnut
-  = */
-    const completionCtx = document
-      .getElementById("courseCompletionChart")
-      .getContext("2d");
+    /* ===============================
+       Course Completion Doughnut
+    =============================== */
+    const completionCanvas =
+      document.getElementById("courseCompletionChart");
+
+    const completionCtx = completionCanvas.getContext("2d");
     document.getElementById("chartLoading").classList.add("hidden");
-    document.getElementById("courseCompletionChart").classList.remove("hidden");
+    completionCanvas.classList.remove("hidden");
 
     new Chart(completionCtx, {
       type: "doughnut",
       data: {
         labels: ["Completed Courses", "In Progress Courses"],
-        datasets: [
-          {
-            data: [data.completed, data.inProgress],
-            backgroundColor: ["#10b981", "#f59e0b"],
-            borderWidth: 0,
-          },
-        ],
+        datasets: [{
+          data: [data.completed, data.inProgress],
+          backgroundColor: ["#10b981", "#f59e0b"],
+          borderWidth: 0
+        }]
       },
       options: {
         responsive: true,
         cutout: "70%",
         plugins: {
-          legend: {
-            position: "bottom",
-          },
-        },
-      },
+          legend: { position: "bottom" }
+        }
+      }
     });
 
-    /* 
-     Course Content Health Bar
-  = */
-    const healthCtx = document
-      .getElementById("courseHealthChart")
-      .getContext("2d");
+    /* ===============================
+       Course Content Health Bar
+    =============================== */
+    const healthCanvas =
+      document.getElementById("courseHealthChart");
 
+    const healthCtx = healthCanvas.getContext("2d");
     document.getElementById("chartLoading2").classList.add("hidden");
-    document.getElementById("courseHealthChart").classList.remove("hidden");
+    healthCanvas.classList.remove("hidden");
 
     new Chart(healthCtx, {
       type: "bar",
       data: {
         labels: ["Syllabus Missing", "Assignments Missing", "Tests Missing"],
-        datasets: [
-          {
-            label: "Courses",
-            data: [
-              data.health.syllabusMissing,
-              data.health.assignmentMissing,
-              data.health.testMissing,
-            ],
-            backgroundColor: ["#ef4444", "#f59e0b", "#6366f1"],
-            borderRadius: 6,
-          },
-        ],
+        datasets: [{
+          label: "Courses",
+          data: [
+            data.health.syllabusMissing,
+            data.health.assignmentMissing,
+            data.health.testMissing
+          ],
+          backgroundColor: ["#ef4444", "#f59e0b", "#6366f1"],
+          borderRadius: 6
+        }]
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false, // 🔥 REQUIRED
-        plugins: {
-          legend: {
-            display: false,
-          },
-        },
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
         scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              stepSize: 1,
-            },
-          },
-        },
-      },
+          y: { beginAtZero: true, ticks: { stepSize: 1 } }
+        }
+      }
     });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    if (!window.SHOW_COURSE_CHARTS) {
+      console.log("Course charts disabled (HR decision)");
+      return; // ⛔ STOP HERE
+    }
+
+    const section = document.getElementById("courseChartsSection");
+    section.classList.remove("hidden");
+
+    // wait for DOM paint
+    setTimeout(initCourseCharts, 0);
   });
 </script>

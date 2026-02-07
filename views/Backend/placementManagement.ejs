@@ -100,36 +100,20 @@
                                                 <%= p.callsUsed %> / <%= p.totalCallsAllowed %>
                                             </td>
                                             <td class="py-3">
-                                                <% if (p.currentStatus==="placed" ) { %>
-                                                    <span
-                                                        class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
-                                                        Placed
-                                                    </span>
-
-                                                    <% } else if (p.currentStatus==="closed" ) { %>
-                                                        <span
-                                                            class="px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold">
-                                                            Closed
-                                                        </span>
-
+                                                <% if (p.placementStatus==="placed" ) { %>
+                                                    Placed
+                                                    <% } else if (p.placementStatus==="closed" ) { %>
+                                                        Closed
                                                         <% } else if (p.interviewCount> 0) { %>
-                                                            <span
-                                                                class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">
-                                                                In Process
-                                                            </span>
-
+                                                            In Process
                                                             <% } else { %>
-                                                                <span
-                                                                    class="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-semibold">
-                                                                    Not Started
-                                                                </span>
+                                                                Not Started
                                                                 <% } %>
+
                                             </td>
-
-
                                             <td class="py-3">
-                                                <% if (p.currentStatus !=="placed" && p.callsUsed < p.totalCallsAllowed)
-                                                    { %>
+                                                <% if (p.placementStatus !=="placed" && p.callsUsed <
+                                                    p.totalCallsAllowed) { %>
                                                     <button
                                                         class="text-xs px-3 py-1 border border-blue-600 rounded text-blue-600 hover:bg-blue-600 hover:text-white transition"
                                                         onclick="openInterviewModal(
@@ -186,15 +170,15 @@
 
                                 <tbody>
                                     <tr id="noInterviewRow" class="hidden">
-  <td colspan="5" class="text-center py-6 text-gray-400">
-    No interviews for this enrollment
-  </td>
-</tr>
+                                        <td colspan="5" class="text-center py-6 text-gray-400">
+                                            No interviews for this enrollment
+                                        </td>
+                                    </tr>
 
                                     <% interviews.forEach(i=> { %>
 
-                                        <tr class="border-b interview-row"
-                                            data-enrollment="<%= i.enrollment ? i.enrollment.toString() : '' %>">
+                                        <tr class="border-b interview-row" data-student="<%= i.student?._id %>"
+                                            data-course="<%= i.course?._id %>">
 
                                             <td class="py-3">
                                                 <%= i.student?.name || "N/A" %>
@@ -255,71 +239,84 @@
         <%- include('../partials/placement-Actions.ejs') %>
 
             <script>
-  // ---------------- COMPANY MODAL ----------------
-  function openAddCompanyModal() {
-    document.getElementById("addCompanyModal").classList.remove("hidden");
-    document.body.classList.add("overflow-hidden");
-  }
+                // ---------------- COMPANY MODAL ----------------
+                function openAddCompanyModal() {
+                    document.getElementById("addCompanyModal").classList.remove("hidden");
+                    document.body.classList.add("overflow-hidden");
+                }
 
-  function closeAddCompanyModal() {
-    document.getElementById("addCompanyModal").classList.add("hidden");
-    document.body.classList.remove("overflow-hidden");
-  }
+                function closeAddCompanyModal() {
+                    document.getElementById("addCompanyModal").classList.add("hidden");
+                    document.body.classList.remove("overflow-hidden");
+                }
 
-  // ---------------- INTERVIEW MODAL ----------------
-  function openInterviewModal(enrollmentId, studentId) {
-    if (!enrollmentId) {
-      alert("Enrollment ID missing. Cannot assign interview.");
-      return;
-    }
+                // ---------------- INTERVIEW MODAL ----------------
+                function openInterviewModal(enrollmentId, studentId) {
+                    if (!enrollmentId) {
+                        alert("Enrollment ID missing. Cannot assign interview.");
+                        return;
+                    }
 
-    document.getElementById("interviewEnrollmentId").value = enrollmentId;
-    document.getElementById("interviewStudentId").value = studentId;
-    document.getElementById("assignInterviewModal").classList.remove("hidden");
-  }
+                    document.getElementById("interviewEnrollmentId").value = enrollmentId;
+                    document.getElementById("interviewStudentId").value = studentId;
+                    document.getElementById("assignInterviewModal").classList.remove("hidden");
+                }
 
-  function closeInterviewModal() {
-    document.getElementById("assignInterviewModal").classList.add("hidden");
-    document.body.classList.remove("overflow-hidden");
-  }
+                function closeInterviewModal() {
+                    document.getElementById("assignInterviewModal").classList.add("hidden");
+                    document.body.classList.remove("overflow-hidden");
+                }
 
-  // ---------------- TABLE SWITCHING ----------------
-  let activeEnrollmentId = null;
+                // ---------------- TABLE SWITCHING ----------------
+                let activeEnrollmentId = null;
 
-  function showInterviewTable(enrollmentId) {
-    activeEnrollmentId = enrollmentId;
+                function showInterviewTable(enrollmentId) {
+                    activeEnrollmentId = enrollmentId;
 
-    // switch views
-    document.getElementById("placementTableSection").classList.add("hidden");
-    document.getElementById("interviewTableSection").classList.remove("hidden");
+                    // switch views (UNCHANGED)
+                    document.getElementById("placementTableSection").classList.add("hidden");
+                    document.getElementById("interviewTableSection").classList.remove("hidden");
 
-    let hasAny = false;
+                    let hasAny = false;
 
-    document.querySelectorAll(".interview-row").forEach(row => {
-      if (row.dataset.enrollment === enrollmentId) {
-        row.style.display = "";
-        hasAny = true;
-      } else {
-        row.style.display = "none";
-      }
-    });
+                    // 🔽🔽🔽 NEW: GET STUDENT + COURSE FROM PLACEMENTS DATA 🔽🔽🔽
+                    const placement = placements.find(p => p.enrollmentId === enrollmentId);
+                    if (!placement) return;
 
-    document
-      .getElementById("noInterviewRow")
-      .classList.toggle("hidden", hasAny);
-  }
+                    const studentId = placement.student._id;
+                    const courseId = placement.course._id;
+                    // 🔼🔼🔼 END NEW 🔼🔼🔼
 
-  function backToPlacements() {
-    activeEnrollmentId = null;
+                    document.querySelectorAll(".interview-row").forEach(row => {
+                        // 🔽🔽🔽 MODIFIED MATCH CONDITION 🔽🔽🔽
+                        if (
+                            row.dataset.student === studentId &&
+                            row.dataset.course === courseId
+                        ) {
+                            row.style.display = "";
+                            hasAny = true;
+                        } else {
+                            row.style.display = "none";
+                        }
+                        // 🔼🔼🔼 END MODIFIED 🔼🔼🔼
+                    });
 
-    document.getElementById("interviewTableSection").classList.add("hidden");
-    document.getElementById("placementTableSection").classList.remove("hidden");
+                    document
+                        .getElementById("noInterviewRow")
+                        .classList.toggle("hidden", hasAny);
+                }
 
-    document.querySelectorAll(".interview-row").forEach(row => {
-      row.style.display = "";
-    });
-  }
-</script>
+                function backToPlacements() {
+                    activeEnrollmentId = null;
+
+                    document.getElementById("interviewTableSection").classList.add("hidden");
+                    document.getElementById("placementTableSection").classList.remove("hidden");
+
+                    document.querySelectorAll(".interview-row").forEach(row => {
+                        row.style.display = "";
+                    });
+                }
+            </script>
 
 </body>
 

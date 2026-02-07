@@ -27,49 +27,69 @@ router.get("/", async (req, res) => {
       .populate("course", "title")
       .sort({ updatedAt: -1 });
 
-    // ==================== 🔽 UPDATED: PLACEMENT FETCH 🔽 ====================
-    // Placement is now tied to enrollment (NOT student)
+    // ---------------- PLACEMENTS (ENROLLMENT-BASED) ----------------
     const placements = await Placement.find({
       enrollment: { $in: enrollments.map(e => e._id) }
     });
-    // ==================== 🔼 UPDATED: PLACEMENT FETCH 🔼 ====================
 
-    // ==================== 🔽 UPDATED: MAP BY ENROLLMENT 🔽 ====================
     const placementMap = {};
     placements.forEach(p => {
       placementMap[p.enrollment.toString()] = p;
     });
-    // ==================== 🔼 UPDATED: MAP BY ENROLLMENT 🔼 ====================
 
     const companies = await Company.find({ isActive: true })
       .sort({ name: 1 })
       .select("_id name");
 
-    // ---------------- INTERVIEW FETCH (SOURCE OF TRUTH) ----------------
+    // ====================================================================
+    // 🔽🔽🔽 MODIFIED INTERVIEW FETCH (DERIVED FROM ENROLLMENT) 🔽🔽🔽
+    // ====================================================================
     const interviews = await Interview.find({
-      enrollment: { $in: enrollments.map(e => e._id) }
+      $or: enrollments.map(e => ({
+        student: e.student._id,   // 🔹 MATCH BY STUDENT
+        course: e.course._id      // 🔹 MATCH BY COURSE
+      }))
     })
       .populate("student", "name")
       .populate("course", "title")
       .populate("company", "name")
-      .sort({ scheduledAt: -1 });
+      .sort({ scheduledAt: -1 }); // 🔹 LATEST FIRST (IMPORTANT)
+    // ====================================================================
 
-    // ---------------- BUILD INTERVIEW COUNT MAP (ENROLLMENT-BASED) ----------------
+    // ====================================================================
+    // 🔽🔽🔽 MODIFIED: BUILD ENROLLMENT-WISE INTERVIEW MAPS 🔽🔽🔽
+    // ====================================================================
     const interviewCountMap = {};
-    interviews.forEach(i => {
-      const eid = i.enrollment?.toString();
-      if (!eid) return;
+    const currentInterviewMap = {};
 
-      if (!interviewCountMap[eid]) interviewCountMap[eid] = 0;
-      interviewCountMap[eid]++;
+    interviews.forEach(i => {
+      // 🔹 FIND ENROLLMENT FOR THIS INTERVIEW
+      const enrollment = enrollments.find(e =>
+        e.student._id.equals(i.student._id) &&
+        e.course._id.equals(i.course._id)
+      );
+
+      if (!enrollment) return;
+
+      const eid = enrollment._id.toString();
+
+      // 🔹 COUNT INTERVIEWS PER ENROLLMENT
+      interviewCountMap[eid] = (interviewCountMap[eid] || 0) + 1;
+
+      // 🔹 SET CURRENT INTERVIEW (FIRST ONE DUE TO SORT)
+      if (!currentInterviewMap[eid]) {
+        currentInterviewMap[eid] = i;
+      }
     });
+    // ====================================================================
 
     // ---------------- FINAL PLACEMENT TABLE DATA ----------------
     const placementTableData = enrollments.map(enrollment => {
-      const placement = placementMap[enrollment._id.toString()];
+      const eid = enrollment._id.toString();
+      const placement = placementMap[eid];
 
       return {
-        enrollmentId: enrollment._id.toString(),
+        enrollmentId: eid,
         student: enrollment.student,
         course: enrollment.course,
 
@@ -79,8 +99,9 @@ router.get("/", async (req, res) => {
         totalCallsAllowed: placement?.totalCallsAllowed || 4,
         placementId: placement?._id || null,
 
-        // interview support
-        interviewCount: interviewCountMap[enrollment._id.toString()] || 0
+        // 🔹 INTERVIEW DATA (ENROLLMENT-WISE)
+        interviewCount: interviewCountMap[eid] || 0,
+        currentInterview: currentInterviewMap[eid] || null
       };
     });
 

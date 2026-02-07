@@ -68,13 +68,26 @@
                             <div class="flex justify-between items-center mb-3">
                                 <h5 class="font-semibold text-lg">Placement Candidates</h5>
 
+                                <input
+    id="searchInput"
+    type="text"
+    placeholder="🔍 Search student or course..."
+    class="border rounded px-3 py-1 text-sm w-56 focus:outline-none focus:ring-2 focus:ring-blue-500"
+    oninput="applyPlacementFilters()"
+  />
+
                                 <!-- Future Filters -->
-                                <select class="border rounded px-2 py-1 text-sm">
-                                    <option>All Status</option>
-                                    <option>In Process</option>
-                                    <option>Placed</option>
-                                    <option>Closed</option>
-                                </select>
+                                <select
+  id="statusFilter"
+  class="border rounded px-2 py-1 text-sm"
+  onchange="applyPlacementFilters()"
+>
+  <option value="all">All Status</option>
+  <option value="in_process">In Process</option>
+  <option value="placed">Placed</option>
+  <option value="closed">Closed</option>
+</select>
+
                             </div>
 
                             <table class="w-full text-sm">
@@ -90,7 +103,13 @@
 
                                 <tbody>
                                     <% placements.forEach(p=> { %>
-                                        <tr class="border-b">
+                                        <tr
+  class="border-b placement-row"
+  data-status="<%= p.placementStatus %>"
+  data-student="<%= (p.student?.name || '').toLowerCase() %>"
+  data-course="<%= (p.course?.title || '').toLowerCase() %>"
+>
+
                                             <td class="py-3">
                                                 <%= p.student?.name || "N/A" %>
                                             </td>
@@ -366,6 +385,36 @@ async function submitResult(event) {
   }
 }
 
+//filter placement table
+function applyPlacementFilters() {
+    const status =
+      document.getElementById("statusFilter").value;
+
+    const search =
+      document.getElementById("searchInput").value.toLowerCase();
+
+    const rows =
+      document.querySelectorAll(".placement-row");
+
+    rows.forEach(row => {
+      const rowStatus = row.dataset.status;
+      const student = row.dataset.student;
+      const course = row.dataset.course;
+
+      const statusMatch =
+        status === "all" ||
+        rowStatus === status ||
+        (status === "in_process" && rowStatus === "not_started");
+
+      const searchMatch =
+        !search ||
+        student.includes(search) ||
+        course.includes(search);
+
+      row.style.display =
+        statusMatch && searchMatch ? "" : "none";
+    });
+  }
             </script>
 
 </body>

@@ -19,6 +19,7 @@ import studentManagementRoutes from "./routes/studentManagement.js"
 import Student from "./models/Student.js";
 import Enrollment from "./models/Enrollment.js";
 import Enquiries from "./models/Enquiries.js";
+import Blog from "./models/Blog.js";
 import PlacemntRoutes from "./routes/placements.routes.js"
 
 dotenv.config();
@@ -72,12 +73,68 @@ app.get("/", (req, res) => {
 
 app.get("/dashboard", adminAuth, async (req, res) => {
   try {
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
     const courses = await Course.find().sort({ createdAt: -1 });
     const categories = await Category.find({ status: "active" });
+
+    // TOTAL COUNTS
     const totalStudents = await Student.countDocuments();
     const totalEnrollments = await Enrollment.countDocuments();
     const totalEnquirires = await Enquiries.countDocuments();
-    res.render("Backend/dashboard.ejs", { courses, categories,totalEnrollments,totalStudents,totalEnquirires });
+
+    // TODAY COUNTS
+    const todayStudents = await Student.countDocuments({
+      createdAt: { $gte: todayStart }
+    });
+
+    const todayEnrollments = await Enrollment.countDocuments({
+      enrolledAt: { $gte: todayStart }
+    });
+
+    const todayCourses = await Course.countDocuments({
+      createdAt: { $gte: todayStart }
+    });
+
+    const todayBlogs = await Blog.countDocuments({
+      createdAt: { $gte: todayStart }
+    });
+
+    const placementEligibleStudents = await Enrollment.countDocuments({
+      placementStatus: "active"
+    });
+
+    let enrollments = await Enrollment.find()
+      .populate("student", "name")
+      .populate("course", "title")
+      .sort({ enrolledAt: -1 })
+      .lean();
+
+    enrollments = enrollments.filter(e => e.student && e.course);
+
+    const enquiries = await Enquiries.find()
+      .sort({ createdAt: -1 })
+      .limit(3)
+      .lean();
+
+    res.render("Backend/dashboard.ejs", {
+      courses,
+      categories,
+      totalEnrollments,
+      totalStudents,
+      totalEnquirires,
+      enrollments,
+      enquiries,
+
+      // TODAY SUMMARY
+      todayStudents,
+      todayEnrollments,
+      todayCourses,
+      placementEligibleStudents,
+      todayBlogs
+    });
+
   } catch (err) {
     console.error(err);
     res.status(500).send("Failed to load Content");

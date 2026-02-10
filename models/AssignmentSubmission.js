@@ -2,20 +2,19 @@ import mongoose from "mongoose";
 
 const assignmentSubmissionSchema = new mongoose.Schema(
   {
-    /* ================= STUDENT ================= */
-    // AssignmentSubmission.js
-student: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: "Student",
-  required: true
-},
+    /*  STUDENT  */
+    student: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Student",
+      required: true,
+    },
 
     studentName: {
       type: String,
       required: true,
     },
 
-    /* ================= COURSE ================= */
+    /*  COURSE  */
     course: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Course",
@@ -27,7 +26,7 @@ student: {
       required: true,
     },
 
-    /* ================= ASSIGNMENT ================= */
+    /*  ASSIGNMENT  */
     assignment: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Assignment",
@@ -44,13 +43,13 @@ student: {
       required: true,
     },
 
-    /* ================= ANSWER ================= */
+    /*  ANSWER  */
     answerVideoUrl: {
       type: String,
       required: true, // YouTube link
     },
 
-    /* ================= EVALUATION ================= */
+    /*  EVALUATION  */
     score: {
       type: Number,
       default: null, // null until evaluated
@@ -70,10 +69,10 @@ student: {
       default: Date.now,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model(
   "AssignmentSubmission",
-  assignmentSubmissionSchema
+  assignmentSubmissionSchema,
 );

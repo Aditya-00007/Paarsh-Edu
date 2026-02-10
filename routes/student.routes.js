@@ -7,7 +7,7 @@ import AssignmentSubmission from "../models/AssignmentSubmission.js";
 import TestAttempt from "../models/TestAttempt.js";
 import Course from "../models/Course.js";
 
-/* ================= STUDENT LIST ================= */
+/*  STUDENT LIST  */
 router.get("/", async (req, res) => {
   try {
     let enrollments = await Enrollment.find()
@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
       .populate("course", "title level fee duration")
       .lean();
 
-    // ✅ SAFETY FILTER
+    //  SAFETY FILTER
     enrollments = enrollments.filter(e => e.student && e.course);
 
     res.render("Backend/studentmanagement", { enrollments });
@@ -25,7 +25,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-/* ================= VIEW STUDENT ================= */
+/*  VIEW STUDENT  */
 router.get("/enrollment/:enrollmentId/view", async (req, res) => {
   try {
     const { enrollmentId } = req.params;
@@ -74,8 +74,8 @@ router.get("/enrollment/:enrollmentId/view", async (req, res) => {
   }
 });
 
-/* ================= EDIT STUDENT ================= */
-// ✅ ROUTE MADE EXPLICIT TO AVOID CONFLICT
+/*  EDIT STUDENT  */
+
 router.get("/student/:id/edit", async (req, res) => {
   try {
     const student = await Student.findById(req.params.id).lean();

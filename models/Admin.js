@@ -5,7 +5,7 @@ const adminSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
 
     email: {
@@ -13,22 +13,22 @@ const adminSchema = new mongoose.Schema(
       required: true,
       unique: true,
       lowercase: true,
-      trim: true
+      trim: true,
     },
 
     password: {
       type: String,
-      required: true // store HASHED password only
+      required: true, // store HASHED password only
     },
 
     lastLoginAt: {
       type: Date,
-      default: null
-    }
+      default: null,
+    },
   },
   {
-    timestamps: true // adds createdAt & updatedAt automatically
-  }
+    timestamps: true, //
+  },
 );
 
 export default mongoose.model("Admin", adminSchema);

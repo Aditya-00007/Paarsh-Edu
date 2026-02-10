@@ -15,7 +15,7 @@ student: {
       required: true,
     },
 
-    /* ================= COURSE ================= */
+    /* COURSE */
     course: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Course",
@@ -27,7 +27,7 @@ student: {
       required: true,
     },
 
-    /* ================= TEST ================= */
+    /* TEST */
     test: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Test",
@@ -44,7 +44,7 @@ student: {
       required: true,
     },
 
-    /* ================= ANSWERS ================= */
+    /* ANSWERS */
     answers: [
       {
         questionIndex: Number,
@@ -54,7 +54,7 @@ student: {
       },
     ],
 
-    /* ================= RESULT ================= */
+    /* RESULT */
     totalQuestions: Number,
 
     totalMarks: Number,

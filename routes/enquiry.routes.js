@@ -3,9 +3,7 @@ import Enquiry from "../models/Enquiries.js";
 
 const router = express.Router();
 
-/* 
-   ENQUIRY LIST PAGE
- */
+/*   ENQUIRY LIST PAGE */
 router.get("/", async (req, res) => {
   try {
     const enquiries = await Enquiry.find().sort({ createdAt: -1 });
@@ -16,9 +14,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-/* 
-   VIEW SINGLE ENQUIRY
- */
+/*  VIEW SINGLE ENQUIRY */
 router.get("/:id", async (req, res) => {
   try {
     const enquiry = await Enquiry.findById(req.params.id);
@@ -34,9 +30,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-/* 
-   UPDATE ENQUIRY
- */
+/*   UPDATE ENQUIRY*/
 router.put("/:id", async (req, res) => {
   try {
     const { status, adminRemark } = req.body;

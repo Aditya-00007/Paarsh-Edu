@@ -87,7 +87,7 @@ router.get('/:id', async (req, res) => {
 router.get('/edit/:id', async (req, res) => {
     try {
 
-        // ❌ removed .lean()
+        //  removed .lean()
         const blog = await Blog.findById(req.params.id);
 
         if (!blog) {

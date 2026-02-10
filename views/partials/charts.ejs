@@ -38,9 +38,7 @@
     const res = await fetch("/admin-course/dashboard/course-stats");
     const data = await res.json();
 
-    /* ===============================
-       Course Completion Doughnut
-    =============================== */
+    /*       Course Completion Doughnut */
     const completionCanvas =
       document.getElementById("courseCompletionChart");
 
@@ -67,9 +65,8 @@
       }
     });
 
-    /* ===============================
-       Course Content Health Bar
-    =============================== */
+    /*       Course Content Health Bar
+  */
     const healthCanvas =
       document.getElementById("courseHealthChart");
 

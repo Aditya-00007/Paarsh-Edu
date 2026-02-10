@@ -6,29 +6,29 @@ import Course from "../models/Course.js";
 import Enrollment from "../models/Enrollment.js";
 import AssignmentSubmission from "../models/AssignmentSubmission.js";
 
-// ================= STUDENT DETAILS PAGE =================
+//  STUDENT DETAILS PAGE 
 router.get("/student-management/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    // 1️⃣ Student basic info
+    // Student basic info
     const student = await Student.findById(id);
     if (!student) {
       return res.redirect("/student-management");
     }
 
-    // 2️⃣ Enrollment & Course
+    //  Enrollment & Course
     const enrollment = await Enrollment.findOne({ student: id });
     const course = enrollment
       ? await Course.findById(enrollment.course)
       : null;
 
-    // 3️⃣ Assignments
+    //  Assignments
     const assignments = await AssignmentSubmission.find({
       student: id
     }).sort({ submittedAt: -1 });
 
-    // 4️⃣ Tests (dummy for now)
+    //  Tests (dummy for now)
     const tests = [];
 
     res.render("admin/student-details", {

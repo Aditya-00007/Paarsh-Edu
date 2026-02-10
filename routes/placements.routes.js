@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
-    // ---------------- STATS (Placement-based) ----------------
+    //  STATS 
     const [
       placedCount,
       inProcessCount,
@@ -19,7 +19,7 @@ router.get("/", async (req, res) => {
       Placement.countDocuments({ currentStatus: "closed" })
     ]);
 
-    // ---------------- ELIGIBLE ENROLLMENTS ----------------
+    //  ELIGIBLE ENROLLMENTS 
     const enrollments = await Enrollment.find({
       placementStatus: "active"
     })
@@ -27,7 +27,7 @@ router.get("/", async (req, res) => {
       .populate("course", "title")
       .sort({ updatedAt: -1 });
 
-    // ---------------- PLACEMENTS (ENROLLMENT-BASED) ----------------
+    // PLACEMENTS
     const placements = await Placement.find({
       enrollment: { $in: enrollments.map(e => e._id) }
     });
@@ -41,29 +41,24 @@ router.get("/", async (req, res) => {
       .sort({ name: 1 })
       .select("_id name");
 
-    // ====================================================================
-    // 🔽🔽🔽 MODIFIED INTERVIEW FETCH (DERIVED FROM ENROLLMENT) 🔽🔽🔽
-    // ====================================================================
+  
     const interviews = await Interview.find({
       $or: enrollments.map(e => ({
-        student: e.student._id,   // 🔹 MATCH BY STUDENT
-        course: e.course._id      // 🔹 MATCH BY COURSE
+        student: e.student._id,   //  MATCH BY STUDENT
+        course: e.course._id      //  MATCH BY COURSE
       }))
     })
       .populate("student", "name")
       .populate("course", "title")
       .populate("company", "name")
-      .sort({ scheduledAt: -1 }); // 🔹 LATEST FIRST (IMPORTANT)
-    // ====================================================================
-
-    // ====================================================================
-    // 🔽🔽🔽 MODIFIED: BUILD ENROLLMENT-WISE INTERVIEW MAPS 🔽🔽🔽
-    // ====================================================================
+      .sort({ scheduledAt: -1 }); //  LATEST FIRST (IMPORTANT)
+   
+   
     const interviewCountMap = {};
     const currentInterviewMap = {};
 
     interviews.forEach(i => {
-      // 🔹 FIND ENROLLMENT FOR THIS INTERVIEW
+      //  FIND ENROLLMENT FOR THIS INTERVIEW
       const enrollment = enrollments.find(e =>
         e.student._id.equals(i.student._id) &&
         e.course._id.equals(i.course._id)
@@ -73,17 +68,15 @@ router.get("/", async (req, res) => {
 
       const eid = enrollment._id.toString();
 
-      // 🔹 COUNT INTERVIEWS PER ENROLLMENT
+      //  COUNT INTERVIEWS PER ENROLLMENT
       interviewCountMap[eid] = (interviewCountMap[eid] || 0) + 1;
 
-      // 🔹 SET CURRENT INTERVIEW (FIRST ONE DUE TO SORT)
+      //  SET CURRENT INTERVIEW (FIRST ONE DUE TO SORT)
       if (!currentInterviewMap[eid]) {
         currentInterviewMap[eid] = i;
       }
     });
-    // ====================================================================
-
-    // ---------------- FINAL PLACEMENT TABLE DATA ----------------
+    //  FINAL PLACEMENT TABLE 
     const placementTableData = enrollments.map(enrollment => {
       const eid = enrollment._id.toString();
       const placement = placementMap[eid];
@@ -99,7 +92,7 @@ router.get("/", async (req, res) => {
         totalCallsAllowed: placement?.totalCallsAllowed || 4,
         placementId: placement?._id || null,
 
-        // 🔹 INTERVIEW DATA (ENROLLMENT-WISE)
+        //  INTERVIEW DATA (ENROLLMENT-WISE)
         interviewCount: interviewCountMap[eid] || 0,
         currentInterview: currentInterviewMap[eid] || null
       };
@@ -128,12 +121,12 @@ router.post("/company/add", async (req, res) => {
   try {
     const { name, industry, location, hrName, hrEmail,companyEmail } = req.body;
 
-    // --------- BASIC VALIDATION ----------
+    // BASIC VALIDATION 
     if (!name || !name.trim()) {
       return res.status(400).send("Company name is required");
     }
 
-    // --------- DUPLICATE CHECK ----------
+    //  DUPLICATE CHECK 
     const existingCompany = await Company.findOne({
       name: { $regex: `^${name}$`, $options: "i" }
     });
@@ -142,7 +135,7 @@ router.post("/company/add", async (req, res) => {
       return res.status(400).send("Company already exists");
     }
 
-    // --------- CREATE COMPANY ----------
+    // - CREATE COMPANY --
     await Company.create({
       name,
       industry,
@@ -152,7 +145,7 @@ router.post("/company/add", async (req, res) => {
       companyEmail
     });
 
-    // --------- SUCCESS ----------
+    //  SUCCESS 
     res.redirect("/placement-management/");
 
   } catch (error) {
@@ -165,7 +158,7 @@ router.post("/interview/add", async (req, res) => {
   try {
     const {
       enrollmentId,
-      studentId,   // ⚠️ received but will NOT be trusted
+      studentId,   //  received but will NOT be trusted
       companyId,
       scheduledAt,
       meetingLink,
@@ -176,22 +169,22 @@ router.post("/interview/add", async (req, res) => {
       return res.status(400).send("Missing required fields");
     }
 
-    // ---------------- VALIDATE ENROLLMENT ----------------
+    //  VALIDATE ENROLLMENT 
     const enrollment = await Enrollment.findById(enrollmentId);
     if (!enrollment || enrollment.placementStatus !== "active") {
       return res.status(400).send("Placement not active");
     }
 
-    // ✅ DERIVE FROM ENROLLMENT (SOURCE OF TRUTH)
+    //  DERIVE FROM ENROLLMENT 
     const derivedStudentId = enrollment.student;
     const derivedCourseId = enrollment.course;
 
-    // ---------------- FIND PLACEMENT (ENROLLMENT-BASED) ----------------
+    // FIND PLACEMENT 
     let placement = await Placement.findOne({
       enrollment: enrollmentId
     });
 
-    // ---------------- CREATE PLACEMENT IF NOT EXISTS ----------------
+    //  CREATE PLACEMENT IF NOT EXISTS
     if (!placement) {
       placement = await Placement.create({
         enrollment: enrollmentId,
@@ -201,18 +194,18 @@ router.post("/interview/add", async (req, res) => {
       });
     }
 
-    // ---------------- CHECK INTERVIEW LIMIT ----------------
+    // CHECK INTERVIEW LIMIT
     if (placement.callsUsed >= placement.totalCallsAllowed) {
       return res.status(400).send("Maximum interview limit reached");
     }
 
     const interviewNo = placement.callsUsed + 1;
 
-    // ---------------- CREATE INTERVIEW ----------------
+    //  CREATE INTERVIEW 
     await Interview.create({
-      enrollment: enrollmentId,        // ✅ helper field (works as you use it)
-      student: derivedStudentId,       // ✅ ALWAYS from enrollment
-      course: derivedCourseId,         // ✅ ALWAYS from enrollment
+      enrollment: enrollmentId,
+      student: derivedStudentId,       
+      course: derivedCourseId,         
       company: companyId,
       interviewNo,
       scheduledAt,
@@ -222,7 +215,7 @@ router.post("/interview/add", async (req, res) => {
       assignedBy: req.user?._id || null
     });
 
-    // ---------------- UPDATE PLACEMENT ----------------
+    //  UPDATE PLACEMENT 
     placement.callsUsed = interviewNo;
     placement.currentStatus = "in_process";
     await placement.save();
@@ -239,32 +232,32 @@ router.post("/:id/declare-result", async (req, res) => {
   try {
     const { status, companyFeedback, adminRemarks } = req.body;
 
-    // -------- VALIDATE STATUS --------
+    // VALIDATE STATUS 
     const allowedStatuses = ["placed", "not_placed", "absent"];
     if (!allowedStatuses.includes(status)) {
       return res.status(400).json({ message: "Invalid status" });
     }
 
-    // -------- FETCH INTERVIEW --------
+    //  FETCH INTERVIEW 
     const interview = await Interview.findById(req.params.id);
     if (!interview) {
       return res.status(404).json({ message: "Interview not found" });
     }
 
-    // -------- PREVENT RE-DECLARATION --------
+    //  PREVENT RE-DECLARATION 
     if (interview.status !== "scheduled" && interview.status !== "pending_result") {
       return res.status(400).json({
         message: "Interview result already declared"
       });
     }
 
-    // -------- UPDATE INTERVIEW --------
+    //  UPDATE INTERVIEW 
     interview.status = status;
     interview.companyFeedback = companyFeedback;
     interview.adminRemarks = adminRemarks;
     await interview.save();
 
-    // -------- RESOLVE PLACEMENT SAFELY --------
+    //  RESOLVE PLACEMENT SAFELY 
     let placement = null;
 
     if (interview.enrollment) {
@@ -285,9 +278,9 @@ router.post("/:id/declare-result", async (req, res) => {
       return res.status(404).json({ message: "Placement not found" });
     }
 
-    // -------- PLACEMENT STATUS LOGIC --------
+    //  PLACEMENT STATUS LOGIC 
 
-    // ✅ CASE 1: STUDENT PLACED (FINAL STATE)
+    //  CASE 1: STUDENT PLACED (FINAL STATE)
     if (status === "placed") {
       placement.currentStatus = "placed";
       placement.placedCompany = interview.company;
@@ -297,17 +290,17 @@ router.post("/:id/declare-result", async (req, res) => {
       return res.json({ success: true });
     }
 
-    // ⛔ DO NOT DOWNGRADE IF ALREADY PLACED
+    //  DO NOT DOWNGRADE IF ALREADY PLACED
     if (placement.currentStatus === "placed") {
       return res.json({ success: true });
     }
 
-    // ✅ CASE 2: NOT PLACED / ABSENT
+    //  CASE 2: NOT PLACED / ABSENT
     if (status === "not_placed" || status === "absent") {
       placement.currentStatus =
         placement.callsUsed >= placement.totalCallsAllowed
-          ? "closed"        // ❌ all 4 attempts failed
-          : "in_process";   // 🔁 more attempts allowed
+          ? "closed"        //  all 4 attempts failed
+          : "in_process";   //  more attempts allowed
 
       await placement.save();
     }

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const courseSchema = new mongoose.Schema(
   {
-    /* ================= BASIC INFO ================= */
+    /*  BASIC INFO  */
     title: {
       type: String,
       required: true,
@@ -27,7 +27,7 @@ const courseSchema = new mongoose.Schema(
       type: String, // video URL / uploaded path
     },
 
-    /* ================= META DETAILS ================= */
+    /*  META DETAILS  */
     duration: {
       type: String, // "30 Days"
       required: true,
@@ -50,7 +50,7 @@ const courseSchema = new mongoose.Schema(
       default: false,
     },
 
-    /* ================= PRICING ================= */
+    /*  PRICING  */
     fee: {
       type: Number,
       required: true,
@@ -67,7 +67,7 @@ const courseSchema = new mongoose.Schema(
       default: "Lifetime access",
     },
 
-    /* ================= COURSE CONTENT ================= */
+    /*  COURSE CONTENT  */
     courseIncludes: {
       type: [String],
       default: [
@@ -97,7 +97,7 @@ const courseSchema = new mongoose.Schema(
         type: String,
       },
     ],
-    /* ================= INSTRUCTOR ================= */
+    /*  INSTRUCTOR  */
 
     instructor: {
       name: {
@@ -114,7 +114,7 @@ const courseSchema = new mongoose.Schema(
       },
     },
 
-    /* ================= CATEGORY & TAGS ================= */
+    /*  CATEGORY & TAGS  */
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
@@ -127,7 +127,7 @@ const courseSchema = new mongoose.Schema(
       },
     ],
 
-    /* ================= REVIEWS & RATINGS ================= */
+    /*  REVIEWS & RATINGS  */
     averageRating: {
       type: Number,
       default: 0,
@@ -140,7 +140,7 @@ const courseSchema = new mongoose.Schema(
       default: 0,
     },
 
-    /* ================= ADMIN / SYSTEM ================= */
+    /*  ADMIN / SYSTEM  */
     intakeLimit: {
       type: Number,
       default: 10,

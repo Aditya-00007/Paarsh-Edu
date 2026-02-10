@@ -1,7 +1,7 @@
 import Enrollment from "../models/Enrollment.js";
 import AssignmentSubmission from "../models/AssignmentSubmission.js";
 import TestAttempt from "../models/TestAttempt.js";
-import Lecture from "../models/Lecture.js";
+import Lecture from "../models/lecture.js";
 
 export const listStudents = async (req, res) => {
   const enrollments = await Enrollment.find()
